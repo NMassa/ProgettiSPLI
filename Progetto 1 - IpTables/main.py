@@ -119,8 +119,8 @@ if __name__ == "__main__":
                             c.connect()
                             #threading._start_new_thread(c.connect,())
                             output(out_lck, "Sending %s requests.." % protocol)
-                        except Exception:           #Daniele: non so che Exception da il multithreading
-                            output(out_lck, "Thread not initialized")
+                        except Exception as e:           #Daniele: non so che Exception da il multithreading
+                            output(out_lck, str(e))
 
 
                 elif int_option == 2:
