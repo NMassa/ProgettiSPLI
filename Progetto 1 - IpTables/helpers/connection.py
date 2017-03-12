@@ -1,6 +1,6 @@
 import socket
-import config
-import helpers
+from helpers import config
+from helpers import helpers
 import threading
 
 out_lck = threading.Lock()
@@ -28,8 +28,8 @@ class Connection:
                     message = "I like Bananas"
                     self.socket.sendall(message)
 
-                except socket.error, msg:
-                    helpers.output(out_lck, "Connection error")
+                except socket.error as msg:
+                    helpers.output(out_lck, str(msg))
 
                 helpers.output(out_lck, "Done!")
                 self.socket.close()
@@ -45,8 +45,8 @@ class Connection:
                     for i in range(0, 40):
                         self.socket.sendall(message)
 
-                except socket.error, msg:
-                    helpers.output(out_lck, msg)
+                except socket.error as msg:
+                    helpers.output(out_lck, str(msg))
                 helpers.output(out_lck, "Done!")
                 self.socket.close()
             else:
@@ -68,7 +68,7 @@ class Connection:
                         conn, addr = self.socket.accept()
                         data = conn.recv(40)
                         helpers.output(out_lck, "Received: %s" % data)
-                except socket.error, msg:
+                except socket.error as msg:
                     helpers.output(out_lck, str(msg))
 
             #Ascolto socket UDP
@@ -83,7 +83,7 @@ class Connection:
                         data, address = self.socket.recvfrom(40)
                         helpers.output(out_lck, "Received: %s" % data)
 
-                except socket.error, msg:
+                except socket.error as msg:
                     helpers.output(out_lck, str(msg))
             else:
                 #errori
