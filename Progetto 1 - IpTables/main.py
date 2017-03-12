@@ -114,7 +114,7 @@ if __name__ == "__main__":
                                 output(out_lck, "Selected port: %i" % port)
 
                         # TODO: creare thread
-                        c = Connection(host, protocol, port)
+                        c = Connection(host, protocol, port, out_lck)
                         try:
                             c.connect()
                             #threading._start_new_thread(c.connect,())
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 
                     # TODO: creare thread
 
-                    c = Connection(None, protocol, port)
+                    c = Connection(None, protocol, port, out_lck)
                     try:
                         #threading._start_new_thread(c.listen, ())
                         c.listen()
