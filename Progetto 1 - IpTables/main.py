@@ -3,12 +3,14 @@ import sys
 #from pathl1ib import Path # if you haven't already done so          #Daniele: pathlib mi crea un errore. Senza funziona tutto lo stesso (o almeno sembra)
 #root = str(Path(__file__).resolve().parents[1])
 # Or
-#   from os.path import dirname, abspath
-#   root = dirname(dirname(abspath(__file__)))
-#sys.path.append(root)
+# from os.path import dirname, abspath
+# root = dirname(dirname(abspath(__file__)))
+# sys.path.append(root)
+
 from helpers.helpers import output
 from helpers.connection import Connection
 from helpers import config
+
 if __name__ == "__main__":
 
     out_lck = threading.Lock()

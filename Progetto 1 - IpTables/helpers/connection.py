@@ -21,7 +21,7 @@ class Connection:
             #Socket TCP
             if str(self.protocol) == "TCP":
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
                     self.socket.connect((self.host, self.port))
                     #qui devo fare un ciclo o un timer per mandare le richieste
@@ -37,7 +37,7 @@ class Connection:
             #Socket Datagram
             elif str(self.protocol) == "UDP":
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
                     self.socket.connect((self.host, self.port))
                     # qui devo fare un ciclo o un timer per mandare le richieste
@@ -60,14 +60,17 @@ class Connection:
 
                 #Ascolto socket TCP
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
-                    self.socket.bind(('localhost', self.port))  # inizializzazione della connessione
-                    self.socket.listen(10)
+                    self.socket.bind(('', self.port))  # inizializzazione della connessione
+                    self.socket.listen(100)
                     helpers.output(out_lck, "Listening on port %s" % (self.port))
-                    while True:
-                        conn, addr = self.socket.accept()
-                        data = conn.recv(40)
+                    conn, addr = self.socket.accept()
+                    size = 1024
+                    data = conn.recv(size)
+                    while len(data) > 0:
                         helpers.output(out_lck, "Received: %s" % data)
+                        data = conn.recv(size)
                 except socket.error as msg:
                     helpers.output(out_lck, str(msg))
 
@@ -75,7 +78,7 @@ class Connection:
             elif str(self.protocol) == "UDP":
 
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
                     self.socket.bind(('localhost', self.port))  # inizializzazione della connessione
                     helpers.output(out_lck, "Listening on port %s" % (self.port))
