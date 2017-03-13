@@ -83,5 +83,12 @@
 # Previene DoS, limita il numero di connessioni al minuto permesse
 # iptables -A INPUT -p tcp --dport 80 -m limit --limit 25/minute --limit-burst 100 -j ACCEPT
 
+# Load balancing CHE FUNZIONA (una volta sola)
+iptables -A FORWARD -p udp -m udp --dport 3000 -j ACCEPT
 
+# iptables -t nat -A PREROUTING -p udp --dport 3000 -m state --state NEW -m statistic --mode nth --every 3 --packet 0 -j DNAT --to-destination 192.168.1.1:3000
+# iptables -t nat -A PREROUTING -p udp --dport 3000 -m state --state NEW -m statistic --mode nth --every 3 --packet 1 -j DNAT --to-destination 192.168.1.3:3000
+# iptables -t nat -A PREROUTING -p udp --dport 3000 -m state --state NEW -m statistic --mode nth --every 3 --packet 2 -j DNAT --to-destination 192.168.1.9:3000
 
+# iptables -t nat -A POSTROUTING -j ACCEPT
+# iptables -t nat -A POSTROUTING -j MASQUERADE
