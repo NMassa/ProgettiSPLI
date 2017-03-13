@@ -1,0 +1,143 @@
+mport sys
+import os.system
+import subprocess
+
+###INTERFACCIA DA METTERE IN DEFAULT####
+#Menu richieste
+def menu():
+    print 'Inserisci Protocollo '
+    proto=raw_input()
+    print " Inserisci interfaccia "
+    interface = raw_input()
+    print "Inserisci porta da bloccare"
+    porta = raw_input()
+    print" Inserisci il numero di connessioni "
+    nconn =raw_input()
+    print"#### MENU RICHIESTE ###" \
+         "1)BLOCCA SORGENTE IP" \
+         "2)BLOCCA PROTOCOLLO" \
+         "3)BLOCCA PORTA SOLO PER INDIRIZZO O CLASSE DI INDIRIZZI" \
+         "4)BLOCCA IN USCITA PER INDIRIZZO O CLASSE" \
+         "5)LIMITA RISPOSTE AL PING" \
+         "6)RESTRINGI IL NUMERO DI CONNESSIONI PARALLELE AD UN SERVER PER CLIENT IP" \
+         "7)POST FORWARDING" \
+         "8)RIDIREZIONE PACCHETTI ALTRO DESTINATARIO"
+    scelta=input()
+    if scelta==1 :
+        print ' Inserisci Ip da bloccare:'
+        ip = raw_input()
+        block_IPsorg(ip)
+    if scelta==2:
+        print 'Inserisci Protocollo '
+        proto = raw_input()
+        block_proto(proto)
+    if scelta == 3:
+        print ' Inserisci protocollo '
+        pt = raw_input()
+        print 'Inserisci ip da bloccare'
+        ipb= raw_input()
+        print 'Inserisci porta su cui eseguire il blocco'
+        pb=raw_input()
+        block_sel_port(interface,pt,ipb,pb)
+    if scelta == 4:
+        print 'Inserisci Ip '
+        ip = raw_input()
+        block_out_sel(interface,ip)
+    if scelta== 5:
+        lim_risp_ping()
+    if scelta ==6:
+        print 'Inserisci Protocollo '
+        proto = raw_input()
+        print 'Inserisci porta '
+        porta = raw_input()
+        print ' Inserisci il numero di connessioni '
+        nconn = raw_input()
+        rest_conn_Ip(proto,porta,nconn)
+    if scelta == 7:
+        print 'Inserisci Ip1 '
+        ip1 = raw_input()
+        print 'Inserisci Ip2 '
+        ip2 = raw_input()
+        print 'Inserisci proto'
+        proto =raw_input()
+        post_forw(interf,proto,ip1,ip2)
+    if scelta == 8:
+        print 'Inserisci Ip destinazione '
+        ipdest = raw_input()
+        print 'Inserisci Ip locale '
+        iplocal = raw_input()
+        print 'Inserisci proto'
+        proto = raw_input()
+        print 'Inserisci porta'
+        port= raw_input()
+        ridirection(ipdest, iplocal, proto, port)
+# Blocca sorgente IP
+# iptables -I INPUT -s 202.54.1.2 -j DROP
+def block_IPsorg(ip):
+    cmd="iptables -I INPUT -s "+ip+" -j DROP"
+    os.system(cmd)
+
+# Blocca protocollo
+# iptables -t filter -A FORWARD -p udp -s 0/0 -d 0/0 -j DROP[Invio]
+def block_proto(proto):
+    cmd="iptables -t filter -A FORWARD -p "+proto+" -s 0/0 -d 0/0 -j DROP"
+    os.system(cmd)
+
+#no utilizzo
+# Blocca porta
+# iptables -A INPUT -i eth1 -p tcp --dport 80 -j DROP
+def block_port(interface,proto,porta):
+    cmd="iptables -A INPUT -i "+interface+" -p "+proto+" --dport "+porta+" -j DROP"
+    os.system(cmd)
+
+#Blocca porta solo per indirizzo (o classe)
+# iptables -A INPUT -i eth1 -p tcp -s 192.168.1.0/24 --dport 80 -j DROP
+def block_sel_port(interface,proto,ip,porta):
+    cmd="iptables -A INPUT -i "+interface+" -p "+proto+" -s "+ip+" --dport "+porta+" -j DROP"
+    os.system(cmd)
+
+# Blocca in uscita per indirizzo (o classe)
+# iptables -A OUTPUT -o eth1 -d 192.168.1.0/24 -j DROP
+def block_out_sel(interface,ip):
+    cmd="iptables -A OUTPUT -o "+interface+" -d "+ip+" -j DROP"
+    os.system()
+
+# Limita le risposte al ping
+# iptables -A INPUT  -p icmp -m limit --limit 10/second -j ACCEPT
+# iptables -A INPUT  -p icmp -j DROP
+def lim_risp_ping():
+    cmd="iptables -A INPUT  -p icmp -m limit --limit 10/second -j ACCEPT"
+    cmd1="iptables -A INPUT  -p icmp -j DROP"
+    os.system(cmd)
+    os.system(cmd1)
+
+# Restrict the Number of Parallel Connections To a Server Per Client IP
+# iptables -A INPUT -p tcp --syn --dport 22 -m connlimit --connlimit-above 3 -j REJECT
+def rest_conn_Ip(proto,porta,nconn):
+    cmd="iptables -A INPUT -p "+proto+" --syn --dport "+porta+" -m connlimit --connlimit-above "+nconn+" -j REJECT"
+    os.system(cmd)
+
+# Port Forwarding
+# iptables -t nat -A PREROUTING -p tcp -d 192.168.102.37 --dport 422 -j DNAT --to 192.168.102.37:22
+# iptables -A INPUT -i eth0 -p tcp --dport 422 -m state --state NEW,ESTABLISHED -j ACCEPT
+# iptables -A OUTPUT -o eth0 -p tcp --sport 422 -m state --state ESTABLISHED -j A
+def post_forw(interf,proto,ip1,ip2):
+    cmd="iptables -t nat -A PREROUTING -p "+proto+" -d "+ip1+" --dport 422 -j DNAT --to "+ip2""
+    cmd1="iptables -A INPUT -i "+interf+" -p "+proto+" --dport 422 -m state --state NEW,ESTABLISHED -j ACCEPT"
+    cmd2="iptables -A OUTPUT -o "+interf+" -p "+proto+" --sport 422 -m state --state ESTABLISHED -j A"
+    os.system(cmd)
+    os.system(cmd1)
+    os.system(cmd2)
+
+# Ridireziona pacchetti ad un altro destinatario
+# iptables -A FORWARD -d 172.30.2.1 -i wlp2s0 -p tcp -m tcp --dport 3389 -j ACCEPT   #172.30.2.1 è la destinazione
+# iptables -t nat -A PREROUTING -d 172.30.2.3 -p tcp -m tcp --dport 3389 -j DNAT --to-destination 172.30.2.1   #172.30.2.3 è l'indirizzo della macchina "locale"
+# iptables -t nat -A POSTROUTING -o wlp2s0 -j MASQUERADE #serve a sostituire l'indirizzo sorgente con quello di mezzo
+def ridirection(ipdest,iplocal,proto,port):
+    #proto,ip tutti e 2 , porta unica, interfaccia da standard
+    cmd="iptables -A FORWARD -d "+ipdest+" -i wlp2s0 -p tcp -m "+proto+" --dport "+port+" -j ACCEPT"
+    cmd1="iptables -t nat -A PREROUTING -d "+iplocal+" -p tcp -m "+proto+" --dport "+port+" -j DNAT"
+    cmd2="iptables -t nat -A POSTROUTING -o wlp2s0 -j MASQUERADE"
+    os.system(cmd)
+    os.system(cmd1)
+    os.system(cmd2)
