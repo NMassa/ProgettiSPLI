@@ -47,7 +47,6 @@ class Connection:
                         message = bytes("Sicurezza, Progettazione e Laboratorio Internet", encoding="utf8")
 
                         self.socket.sendall(message)
-                        self.socket.send('0'+ SIGEND)
 
                         helpers.output(self.out_lck, "%d" % i)
                         self.socket.close()
@@ -55,7 +54,6 @@ class Connection:
                     except socket.error as msg:
                         helpers.output(self.out_lck, str(msg))
 
-                    time.sleep(0.5)
             else:
                 #errori
                 exit()
@@ -84,13 +82,13 @@ class Connection:
             #Ascolto socket UDP
             elif str(self.protocol) == "UDP":
 
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                _socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
-                    self.socket.bind(('localhost', self.port))  # inizializzazione della connessione
+                    _socket.bind(("", self.port))  # inizializzazione della connessione
                     helpers.output(self.out_lck, "Listening on port %s" % (self.port))
                     while True:
-                        data, address = self.socket.recvfrom(40)
+                        data, address = _socket.recvfrom(1024)
                         helpers.output(self.out_lck, "Received: %s" % data)
 
                 except socket.error as msg:
