@@ -47,7 +47,7 @@ iptables -t nat -A PREROUTING -d 172.30.2.3 -p tcp -m tcp --dport 3389 -j DNAT -
 iptables -t nat -A POSTROUTING -o wlp2s0 -j MASQUERADE #serve a sostituire l'indirizzo sorgente con quello di mezzo
 
 Ridireziona pacchetti modificando il contenuto con mangle
-DA FARE
+iptables -t mangle -A PREROUTING -i eth0 -j TTL --ttl-set 1
 
 Load Balancing
 iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --counter 0 --every 3 --packet 0 -j DNAT --to-destination 192.168.1.101:443

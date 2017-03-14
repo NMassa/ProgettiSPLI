@@ -3,9 +3,9 @@ import sys
 #from pathl1ib import Path # if you haven't already done so          #Daniele: pathlib mi crea un errore. Senza funziona tutto lo stesso (o almeno sembra)
 #root = str(Path(__file__).resolve().parents[1])
 # Or
-# from os.path import dirname, abspath
-# root = dirname(dirname(abspath(__file__)))
-# sys.path.append(root)
+#from os.path import dirname, abspath
+#root = dirname(dirname(abspath(__file__)))
+#sys.path.append(root)
 
 from helpers.helpers import output
 from helpers.connection import Connection
@@ -25,6 +25,7 @@ if __name__ == "__main__":
         output(out_lck, "3: Apply iptables rules ")
         output(out_lck, "4: Reset iptables rules ")
         output(out_lck, "5: Show iptables ")
+        output(out_lck, "6: Server-Client ")
 
         int_option = None
         try:
@@ -443,6 +444,12 @@ if __name__ == "__main__":
                 elif int_option == 5:
                     rules.show_tables(out_lck)
                     output(out_lck, "Rule Applied!\n")
+
+                elif int_option == 6:
+                    c = connections()
+                    c.client_server(out_lck)
+                    output(out_lck, "Routing finish!\n")
+
                 else:
                     output(out_lck, "Option " + str(int_option) + " not available")
 
