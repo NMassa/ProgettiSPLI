@@ -85,7 +85,7 @@ def rest_conn_Ip(out_lck, proto, porta, nconn):
 
 # Port Forwarding
 def port_forw(out_lck, interf, proto, ip1, ip2, port):
-    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + port + " -j DNAT --to" + ip2
+    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + port + " -j DNAT --to " + ip2
     cmd1 = "iptables -A INPUT -i " + interf + " -p " + proto + " --dport " + port + " -m state --state NEW,ESTABLISHED -j ACCEPT"
     cmd2 = "iptables -A OUTPUT -o " + interf + " -p " + proto + " --sport " + port + " -m state --state ESTABLISHED -j ACCEPT"
     os.system(cmd)
@@ -131,3 +131,8 @@ def out_ssh(out_lck,interface,proto,porta):
     os.system(cmd1)
     output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
     output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
+
+def set_TTL(out_lck,ttl):
+    cmd = "iptables - t mangle - A PREROUTING - i wlp2s0 - j TTL - -ttl - set " +ttl
+    os.system(cmd)
+    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")

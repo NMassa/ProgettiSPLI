@@ -123,7 +123,8 @@ if __name__ == "__main__":
                                                     "Limita Ping",
                                                     "SYN",
                                                     "Port Forwarding",
-                                                    "Ridirezione ad altro destinatario"])
+                                                    "Ridirezione ad altro destinatario",
+                                                    "Variazione TTL pacchetto"])
 
             if action is not None:
                 #Blocco IP
@@ -337,6 +338,16 @@ if __name__ == "__main__":
                                         output(out_lck, "Rule Applied!\n")
                                     else:
                                         output(out_lck, "Please insert a number")
+
+                elif action == 9:
+                    output(out_lck, "Please insert the number of TTL")  # Da controllare
+                    ttl = input()
+                    try:
+                        str_ttl = str(ttl)
+                    except ValueError:
+                        output(out_lck, "A number is required")
+                    else:
+                        rules.set_TTL(out_lck, str_ttl)
 
         elif main_menu == 4:
             rules.flush_tables(out_lck)
