@@ -344,9 +344,28 @@ if __name__ == "__main__":
             rules.show_tables(out_lck)
             output(out_lck, "Rule Applied!\n")
 
-        elif int_option == 6:
+        elif main_menu == 6:
             c = Connection(None, 3000, None, out_lck)
             c.client_server(out_lck)
+            output(out_lck, "Routing finish!\n")
+
+        elif main_menu == 6:
+            output(out_lck, "Please insert destination IP")
+            destinazione = input()
+            try:
+                dest = str(destinazione)
+            except ValueError:
+                output(out_lck, "A number is required")
+
+            output(out_lck, "Please insert port")
+            porta = input()
+            try:
+                 port = str(porta)
+            except ValueError:
+                output(out_lck, "A number is required")
+
+            c = Connection(dest, None, port, out_lck)
+            c.client_server()
             output(out_lck, "Routing finish!\n")
 
 
