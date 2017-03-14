@@ -144,29 +144,44 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
         output(out_lck, "Rules not applied")
 
 
-#Allow incoming SSH
-#iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-#iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+# Allow incoming SSH
+# iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 def inc_ssh(out_lck,interface,proto,porta):
     cmd= "iptables -A INPUT -i "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
     cmd1="iptables -A OUTPUT -o "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
-    os.system(cmd)
-    os.system(cmd1)
-    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
-    output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
+    failed = os.system(cmd)
+    failed1 = os.system(cmd1)
+    if not (failed and failed1):
+        output(out_lck, "Applied rules:")
+        output(out_lck, cmd)
+        output(out_lck, cmd1)
+    else:
+        output(out_lck, "Rules not applied")
 
-#Allow outgoing SSH
-#iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-#iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow outgoing SSH
+# iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 def out_ssh(out_lck,interface,proto,porta):
     cmd= "iptables -A OUTPUT -o "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
     cmd1="iptables -A INPUT -i "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
-    os.system(cmd)
-    os.system(cmd1)
-    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
-    output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
+    failed = os.system(cmd)
+    failed1 = os.system(cmd1)
+    if not (failed and failed1):
+        output(out_lck, "Applied rules:")
+        output(out_lck, cmd)
+        output(out_lck, cmd1)
+    else:
+        output(out_lck, "Rules not applied")
 
-def set_TTL(out_lck,ttl):
-    cmd = "iptables - t mangle - A PREROUTING - i wlp2s0 - j TTL - -ttl - set " +ttl
-    os.system(cmd)
-    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
+
+# Modifica ttl
+def set_TTL(out_lck,ttl, interface):
+    cmd = "iptables - t mangle - A PREROUTING - i " + interface + " - j TTL - -ttl - set " + ttl
+    failed = os.system(cmd)
+    if not failed:
+        output(out_lck, "Applied rules:")
+        output(out_lck, cmd)
+    else:
+        output(out_lck, "Rules not applied")

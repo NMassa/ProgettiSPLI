@@ -111,15 +111,16 @@ if __name__ == "__main__":
                         output(out_lck, "Thread not initialized")
 
             elif main_menu == 3:
-                action = loop_menu(out_lck, "action", [ "Blocca sorgente IP",
-                                                        "Blocca Protocollo",
-                                                        "Blocca Porta",
-                                                        "Blocca Traffico in uscita",
-                                                        "Limita Ping",
-                                                        "SYN",
+                action = loop_menu(out_lck, "action", [ "Block IP source",
+                                                        "Block Port",
+                                                        "Block Protocol",
+                                                        "Block outbound traffic",
+                                                        "Ping limit",
+                                                        "SSH",
+                                                        "SYN defense",
                                                         "Port Forwarding",
-                                                        "Ridirezione ad altro destinatario",
-                                                        "Variazione TTL pacchetto"])
+                                                        "Redirection (destination)",
+                                                        "Packet alteration (ttl)"])
 
                 if action is not None:
                     #Blocco IP
@@ -129,29 +130,9 @@ if __name__ == "__main__":
                         host = config._base + selected
                         rules.block_IPsorg(out_lck, "%s" % host)
 
+
                     #Blocco Porta
                     elif action == 2:
-                        output(out_lck, "Please select the rotocol")
-                        output(out_lck, "\n1: TCP\n2: UDP\n3: ICMP")
-                        proto = input()
-                        try:
-                            protocol = int(proto)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            if protocol == 1:
-                                rules.block_proto(out_lck, "tcp")
-
-                            elif protocol == 2:
-                                rules.block_proto(out_lck, "udp")
-
-                            elif protocol == 3:
-                                rules.block_proto(out_lck, "icmp")
-
-                            else:
-                                output(out_lck, "Please insert a number")
-                    #Blocco Protocollo
-                    elif action == 3:
                         output(out_lck, "Please insert port number")
                         porta = input()
                         protocol = None
@@ -175,7 +156,27 @@ if __name__ == "__main__":
 
                                 elif proto == 3:
                                     rules.block_port(out_lck, interface, "icmp", porta)
+                    # Blocco Protocollo
+                    elif action == 3:
+                        output(out_lck, "Please select the protocol")
+                        output(out_lck, "\n1: TCP\n2: UDP\n3: ICMP")
+                        proto = input()
+                        try:
+                            protocol = int(proto)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
+                            if protocol == 1:
+                                rules.block_proto(out_lck, "tcp")
 
+                            elif protocol == 2:
+                                rules.block_proto(out_lck, "udp")
+
+                            elif protocol == 3:
+                                rules.block_proto(out_lck, "icmp")
+
+                            else:
+                                output(out_lck, "Please insert a number")
 
                     #Blocco traffico in uscita
                     elif action == 4:
@@ -192,8 +193,13 @@ if __name__ == "__main__":
                     elif action == 5:
                         rules.lim_risp_ping(out_lck)
 
-                    #SYN
+                    # SSH
                     elif action == 6:
+
+                        output(out_lck)
+
+                    # SYN
+                    elif action == 7:
                         output(out_lck, "Please insert port number")
                         porta = input()
                         try:
@@ -227,8 +233,8 @@ if __name__ == "__main__":
 
                                     else:
                                         output(out_lck, "Please insert a number")
-                    #Port Forwarding
-                    elif action == 7:
+                    # Port Forwarding
+                    elif action == 8:
                         output(out_lck, "Please insert Network Interface")
 
                         interface = input()  # manca gestione errore
@@ -278,8 +284,8 @@ if __name__ == "__main__":
 
                                         else:
                                             output(out_lck, "Please insert a number")
-                    #Redirezione
-                    elif action == 8:
+                    # Redirezione
+                    elif action == 9:
                         output(out_lck, "Please insert the number of local IP")  # Da controllare
                         temphost = input()
                         try:
@@ -324,15 +330,16 @@ if __name__ == "__main__":
                                         else:
                                             output(out_lck, "Please insert a number")
 
-                elif action == 9:
-                    output(out_lck, "Please insert the number of TTL")  # Da controllare
-                    ttl = input()
-                    try:
-                        str_ttl = str(ttl)
-                    except ValueError:
-                        output(out_lck, "A number is required")
-                    else:
-                        rules.set_TTL(out_lck, str_ttl)
+                    # Alterazione pacchetto (mangle)
+                    elif action == 10:
+                        output(out_lck, "Please insert the number of TTL")  # Da controllare
+                        ttl = input()
+                        try:
+                            str_ttl = str(ttl)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
+                            rules.set_TTL(out_lck, str_ttl)
 
             elif main_menu == 4:
                 rules.flush_tables(out_lck)
