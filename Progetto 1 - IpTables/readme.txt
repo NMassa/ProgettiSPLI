@@ -2,6 +2,10 @@ echo "1" > /proc/sys/net/ipv4/ip_forward
 echo "0" > /proc/sys/net/ipv4/conf/eth0/send_redirects
 echo "1" > /proc/sys/net/ipv4/conf/all/rp_filter
 
+iptables -t nat -A PREROUTING -j LOG --log-prefix ": prerouting " --log-level 7
+iptables -t nat -A FORWARD -j LOG --log-prefix ": postrouting " --log-level 7
+iptables -A FORWARD -j LOG --log-prefix ": forward " --log-level 7
+
 Log
 iptables -A INPUT -i eth1 -s 10.0.0.0/8 -j LOG --log-prefix "esempio di prefisso: "
 

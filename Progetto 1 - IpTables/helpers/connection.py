@@ -22,19 +22,21 @@ class Connection:
         def connect(self):
             #Socket TCP
             if str(self.protocol) == "TCP":
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                try:
-                    self.socket.connect((self.host, self.port))
-                    #qui devo fare un ciclo o un timer per mandare le richieste
-                    message = bytes("Sicurezza, Progettazione e Laboratorio Internet", encoding="utf8")
-                    self.socket.sendall(message)
+                for i in range(0, 20):
+                    _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    try:
+                        _socket.connect((self.host, self.port))
+                        #qui devo fare un ciclo o un timer per mandare le richieste
+                        message = bytes("Sicurezza, Progettazione e Laboratorio Internet", encoding="utf8")
+                        _socket.sendall(message)
 
-                except socket.error as msg:
-                    helpers.output(self.out_lck, str(msg))
+                    except socket.error as msg:
+                        helpers.output(self.out_lck, str(msg))
+
+                    _socket.close()
 
                 helpers.output(self.out_lck, "Done!")
-                self.socket.close()
 
             #Socket Datagram
             elif str(self.protocol) == "UDP":
