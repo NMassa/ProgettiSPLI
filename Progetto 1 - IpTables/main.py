@@ -255,6 +255,7 @@ if __name__ == "__main__":
                                         output(out_lck, "Please insert a number")
                     # Port Forwarding
                     elif action == 8:
+                        # TODO: DA SISTEMARE 8PARAMETRI DELLA FUNZIONE rules.port_forw E PROTOCOLLI
                         output(out_lck, "Please insert Network Interface")
 
                         interface = input()  # manca gestione errore
