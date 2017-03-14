@@ -33,7 +33,7 @@ def flush_tables(out_lck):
 
 # Blocca sorgente IP
 def block_IPsorg(out_lck, ip):
-    cmd = "iptables -I INPUT -s " + ip + " -j DROP"
+    cmd = "iptables -A FORWARD -s " + ip + " -j DROP"
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "Applied rules:")
@@ -44,7 +44,7 @@ def block_IPsorg(out_lck, ip):
 
 # Blocca protocollo
 def block_proto(out_lck, proto):
-    cmd = "iptables -t filter -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j DROP"
+    cmd = "iptables -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j DROP"
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "Applied rules:")
@@ -55,7 +55,7 @@ def block_proto(out_lck, proto):
 
 # Blocca porta
 def block_port(out_lck, interface, proto, porta):
-    cmd = "iptables -A INPUT -i " + interface + " -p " + proto + " --dport " + porta + " -j DROP"
+    cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " --dport " + porta + " -j DROP"
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "Applied rules:")
@@ -65,8 +65,8 @@ def block_port(out_lck, interface, proto, porta):
 
 
 # Blocca porta solo per indirizzo (o classe)
-def block_sel_port(out_lck, interface ,proto, ip,porta):
-    cmd = "iptables -A INPUT -i " + interface + " -p " + proto + " -s " + ip + " --dport " + porta + " -j DROP"
+def block_sel_port(out_lck, interface, proto, ip, porta):
+    cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " -s " + ip + " --dport " + porta + " -j DROP"
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "Applied rules:")
@@ -147,9 +147,9 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
 # Allow incoming SSH
 # iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 # iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-def inc_ssh(out_lck,interface,proto,porta):
-    cmd= "iptables -A INPUT -i "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
-    cmd1="iptables -A OUTPUT -o "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
+def inc_ssh(out_lck, interface):
+    cmd = "iptables -A INPUT -i " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
+    cmd1 = "iptables -A OUTPUT -o " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     if not (failed and failed1):
@@ -163,9 +163,9 @@ def inc_ssh(out_lck,interface,proto,porta):
 # Allow outgoing SSH
 # iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 # iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-def out_ssh(out_lck,interface,proto,porta):
-    cmd= "iptables -A OUTPUT -o "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
-    cmd1="iptables -A INPUT -i "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
+def out_ssh(out_lck, interface):
+    cmd = "iptables -A OUTPUT -o " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
+    cmd1 = "iptables -A INPUT -i " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     if not (failed and failed1):

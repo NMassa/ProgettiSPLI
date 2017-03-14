@@ -38,11 +38,11 @@ if __name__ == "__main__":
                         except SyntaxError:
                             option = None
 
-                            if option is None:
-                                output(out_lck, "Please insert destination host number")
-                            else:
-                                host = config._base + option
-                                output(out_lck, "Selected host: %s" % host)
+                        if option is None:
+                            output(out_lck, "Please insert destination host number")
+                        else:
+                            host = config._base + option
+                            output(out_lck, "Selected host: %s" % host)
 
                     port = None
                     output(out_lck, "Insert destination port number:")
@@ -64,12 +64,38 @@ if __name__ == "__main__":
                                 port = int_option
                                 output(out_lck, "Selected port: %i" % port)
 
-                        c = Connection(host, protocol, port, out_lck)
-                        try:
-                            c.connect()
-                            output(out_lck, "Sending %s requests.." % protocol)
-                        except Exception as e:
-                            output(out_lck, str(e))
+                    c = Connection(host, protocol, port, out_lck)
+                    try:
+                        c.connect()
+                        output(out_lck, "Sending %s requests.." % protocol)
+                    except Exception as e:
+                         output(out_lck, str(e))
+
+                    # per sicurezza teniamo
+
+                    # n = None
+                    # output(out_lck, "Insert packet number:")
+                    #
+                    # while n is None:
+                    #     try:
+                    #         option = input()
+                    #     except SyntaxError:
+                    #         option = None
+                    #
+                    #     if option is None:
+                    #         output(out_lck, "Please insert packet number")
+                    #     else:
+                    #         try:
+                    #             int_option = int(option)
+                    #         except ValueError:
+                    #             output(out_lck, "A number is required")
+                    #         else:
+                    #             n = int_option
+                    #
+                    # output(out_lck, "Insert message: ")
+                    # msg = input()
+                    #
+                    # Connection.send_udp(n, msg, host, port)
 
             elif main_menu == 2:
                 protocol = loop_menu(out_lck, "protocol", ["TCP", "UDP"])
@@ -192,12 +218,6 @@ if __name__ == "__main__":
                     #Limita ping
                     elif action == 5:
                         rules.lim_risp_ping(out_lck)
-
-                    # SSH
-                    elif action == 6:
-
-                        output(out_lck)
-
                     # SYN
                     elif action == 7:
                         output(out_lck, "Please insert port number")
@@ -343,7 +363,7 @@ if __name__ == "__main__":
 
             elif main_menu == 4:
                 rules.flush_tables(out_lck)
-                output(out_lck, "Rule Applied!\n")
+
             elif main_menu == 4:
                 rules.flush_tables(out_lck)
 

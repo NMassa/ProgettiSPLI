@@ -1,6 +1,7 @@
 import socket
 from helpers import config
 from helpers import helpers
+import os
 import time
 import threading
 
@@ -13,7 +14,7 @@ class Connection:
         out_lck = None
 
         def __init__(self, host, protocol, port, out_lock):
-                self.host = "%s%s" % (config._base,host)
+                self.host = host
                 self.protocol = protocol
                 self. port = int(port)
                 self.out_lck = out_lock
@@ -22,7 +23,7 @@ class Connection:
         def connect(self):
             #Socket TCP
             if str(self.protocol) == "TCP":
-                for i in range(0, 20):
+                for i in range(0, 10):
                     _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     try:
@@ -40,7 +41,7 @@ class Connection:
 
             #Socket Datagram
             elif str(self.protocol) == "UDP":
-                for i in range(0, 30):
+                for i in range(0, 10):
                     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                     #self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     try:
@@ -130,3 +131,9 @@ class Connection:
 
             except socket.error as msg:
                 helpers.output(self.out_lck, str(msg))
+
+
+        def send_udp(n, msg, addr, port):
+            for i in range(0, n):
+                cmd = "echo \"" + msg + "\" | nc -4u -w1 " + addr + " " + str(port)
+                os.system(cmd)
