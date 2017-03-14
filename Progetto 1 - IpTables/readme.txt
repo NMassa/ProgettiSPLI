@@ -2,6 +2,10 @@ echo "1" > /proc/sys/net/ipv4/ip_forward
 echo "0" > /proc/sys/net/ipv4/conf/eth0/send_redirects
 echo "1" > /proc/sys/net/ipv4/conf/all/rp_filter
 
+iptables -t nat -A PREROUTING -j LOG --log-prefix ": prerouting " --log-level 7
+iptables -t nat -A FORWARD -j LOG --log-prefix ": postrouting " --log-level 7
+iptables -A FORWARD -j LOG --log-prefix ": forward " --log-level 7
+
 Log
 iptables -A INPUT -i eth1 -s 10.0.0.0/8 -j LOG --log-prefix "esempio di prefisso: "
 
@@ -47,7 +51,7 @@ iptables -t nat -A PREROUTING -d 172.30.2.3 -p tcp -m tcp --dport 3389 -j DNAT -
 iptables -t nat -A POSTROUTING -o wlp2s0 -j MASQUERADE #serve a sostituire l'indirizzo sorgente con quello di mezzo
 
 Ridireziona pacchetti modificando il contenuto con mangle
-DA FARE
+iptables -t mangle -A PREROUTING -i eth0 -j TTL --ttl-set 1r
 
 Load Balancing
 iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --counter 0 --every 3 --packet 0 -j DNAT --to-destination 192.168.1.101:443
