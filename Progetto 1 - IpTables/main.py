@@ -42,12 +42,12 @@ if __name__ == "__main__":
                         output(out_lck, "Please insert destination host number")
                     else:
                         try:
-                            int_option = int(option)
+                            int_option = option
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            host = int_option
-                            output(out_lck, "Selected host: %s%i" % (config._base,host))
+                            host = config._base + int_option
+                            output(out_lck, "Selected host: %s" % host)
 
                 port = None
                 output(out_lck, "Insert destination port number:")
@@ -72,7 +72,7 @@ if __name__ == "__main__":
                     c = Connection(host, protocol, port, out_lck)
                     try:
                         c.connect()
-                        output(out_lck, "Sending %s requests.." % rule)
+                        output(out_lck, "Sending %s requests.." % protocol)
                     except Exception as e:
                         output(out_lck, str(e))
 
@@ -135,7 +135,8 @@ if __name__ == "__main__":
                     except ValueError:
                         output(out_lck, "A number is required")
                     else:
-                        rules.block_IPsorg(out_lck, "%s%i" % (config._base, selected))
+                        host = config._base + selected
+                        rules.block_IPsorg(out_lck, "%s" % host)
                         output(out_lck, "Rule Applied!\n")
                 #Blocco Porta
                 elif action == 2:
@@ -198,7 +199,8 @@ if __name__ == "__main__":
                     except ValueError:
                         output(out_lck, "A number is required")
                     else:
-                        rules.block_out_sel(out_lck, interface, "%s%i" % (config._base, host))
+                        host2 = config._base + host
+                        rules.block_out_sel(out_lck, interface, "%s" % host2)
                         output(out_lck, "Rule Applied!\n")
                 #Limita ping
                 elif action == 5:
