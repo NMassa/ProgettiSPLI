@@ -352,6 +352,9 @@ if __name__ == "__main__":
 
                     # Alterazione pacchetto (mangle)
                     elif action == 10:
+                        output(out_lck, "Please insert Network Interface")
+                        interface = input()  # manca gestione errore
+
                         output(out_lck, "Please insert the number of TTL")  # Da controllare
                         ttl = input()
                         try:
@@ -359,7 +362,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            rules.set_TTL(out_lck, str_ttl)
+                            rules.set_TTL(out_lck, str_ttl, interface)
 
             elif main_menu == 4:
                 rules.flush_tables(out_lck)

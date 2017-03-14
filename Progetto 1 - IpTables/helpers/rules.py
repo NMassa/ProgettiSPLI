@@ -16,17 +16,23 @@ def flush_tables(out_lck):
     cmd1 = "iptables -F"
     cmd2 = "iptables -t nat -X"
     cmd3 = "iptables -t nat -F"
+    cmd4 = "iptables -t mangle -X"
+    cmd5 = "iptables -t mangle -F"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     failed2 = os.system(cmd2)
     failed3 = os.system(cmd3)
+    failed4 = os.system(cmd4)
+    failed5 = os.system(cmd5)
 
-    if not (failed and failed1 and failed2 and failed3):
+    if not (failed and failed1 and failed2 and failed3 and failed4 and failed5):
         output(out_lck, "Applied rules: ")
         output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
         output(out_lck, cmd3)
+        output(out_lck, cmd4)
+        output(out_lck, cmd5)
     else:
         output(out_lck, "Rules not applied")
 
@@ -88,14 +94,14 @@ def block_out_sel(out_lck, interface, ip):
 
 # Limita le risposte al ping
 def lim_risp_ping(out_lck):
-    cmd = "iptables -A INPUT  -p icmp -m limit --limit 10/second -j ACCEPT"
-    cmd1 = "iptables -A INPUT  -p icmp -j DROP"
+    cmd = "iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 4/minute --limit-burst 3 -j ACCEPT"
+    #cmd1 = "iptables -A INPUT -p icmp -j DROP"
     failed = os.system(cmd)
-    failed2 = os.system(cmd1)
-    if not (failed and failed2):
+    #failed2 = os.system(cmd1)
+    if not (failed):
         output(out_lck, "Applied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
+        #output(out_lck, cmd1)
     else:
         output(out_lck, "Rules not applied")
 
@@ -177,8 +183,8 @@ def out_ssh(out_lck, interface):
 
 
 # Modifica ttl
-def set_TTL(out_lck,ttl, interface):
-    cmd = "iptables - t mangle - A PREROUTING - i " + interface + " - j TTL - -ttl - set " + ttl
+def set_TTL(out_lck, ttl):
+    cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "Applied rules:")
