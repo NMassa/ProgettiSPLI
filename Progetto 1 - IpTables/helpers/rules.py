@@ -118,18 +118,20 @@ def rest_conn_Ip(out_lck, proto, porta, nconn):
 
 
 # Port Forwarding
-def port_forw(out_lck, interf, proto, ip1, ip2, port):
-    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + port + " -j DNAT --to " + ip2
-    cmd1 = "iptables -A INPUT -i " + interf + " -p " + proto + " --dport " + port + " -m state --state NEW,ESTABLISHED -j ACCEPT"
-    cmd2 = "iptables -A OUTPUT -o " + interf + " -p " + proto + " --sport " + port + " -m state --state ESTABLISHED -j ACCEPT"
+def port_forw(out_lck, interf, proto, ip1, port, port2):
+    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + port + " -j DNAT --to " + ip1 + ":" + port2
+    # in teoria non servono
+    #cmd1 = "iptables -A INPUT -i " + interf + " -p " + proto + " --dport " + port + " -m state --state NEW,ESTABLISHED -j ACCEPT"
+    #cmd2 = "iptables -A OUTPUT -o " + interf + " -p " + proto + " --sport " + port + " -m state --state ESTABLISHED -j ACCEPT"
     failed = os.system(cmd)
-    failed1 = os.system(cmd1)
+    ##failed1 = os.system(cmd1)
     failed2 = os.system(cmd2)
-    if not (failed and failed1 and failed2):
+    #if not (failed and failed1 and failed2):
+    if not failed:
         output(out_lck, "Applied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
-        output(out_lck, cmd2)
+        #output(out_lck, cmd1)
+        #output(out_lck, cmd2)
     else:
         output(out_lck, "Rules not applied")
 
