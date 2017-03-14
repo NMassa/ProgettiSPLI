@@ -107,3 +107,27 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
     output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
     output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
     output(out_lck, "Regola 3 applicata:\n####################################\n" + cmd2 + "\n####################################\n")
+
+#Allow incoming SSH
+#iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+#iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+def inc_ssh(out_lck,interface,proto,porta):
+    cmd= "iptables -A INPUT -i "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
+    cmd1="iptables -A OUTPUT -o "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
+    os.system(cmd)
+    os.system(cmd1)
+    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
+    output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
+
+#Allow outgoing SSH
+#iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+#iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+def out_ssh(out_lck,interface,proto,porta):
+    cmd= "iptables -A OUTPUT -o "+interface+" -p "+proto+" --dport "+porta+" -m state --state NEW,ESTABLISHED -j ACCEPT"
+    cmd1="iptables -A INPUT -i "+interface+" -p "+proto+" --sport "+porta+" -m state --state ESTABLISHED -j ACCEPT"
+    os.system(cmd)
+    os.system(cmd1)
+    output(out_lck, "Regola 1 applicata:\n####################################\n" + cmd + "\n####################################\n")
+    output(out_lck, "Regola 2 applicata:\n####################################\n" + cmd1 + "\n####################################\n")
