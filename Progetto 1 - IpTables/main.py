@@ -446,7 +446,7 @@ if __name__ == "__main__":
                     output(out_lck, "Rule Applied!\n")
 
                 elif int_option == 6:
-                    c = connections()
+                    c = Connection(None, 3000, None, out_lck)
                     c.client_server(out_lck)
                     output(out_lck, "Routing finish!\n")
 

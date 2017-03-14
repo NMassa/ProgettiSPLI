@@ -1,5 +1,5 @@
 # Indirizzi
-_base = "192.168.1."
+_base = "192.168."
 _daniele = "%s1" % _base
 _zotti = "%s2" % _base
 _massa = "%s3" % _base
