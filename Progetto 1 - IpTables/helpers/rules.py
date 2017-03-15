@@ -36,7 +36,7 @@ def flush_tables(out_lck):
     failed5 = os.system(cmd5)
 
     if not (failed and failed1 and failed2 and failed3 and failed4 and failed5):
-        output(out_lck, "\nApplied rules:")
+        output(out_lck, "Applied rules: ")
         output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
@@ -71,11 +71,20 @@ def block_IPsorg(out_lck, ip):
 
 # Blocca protocollo
 def block_proto(out_lck, proto):
-    cmd = "iptables -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
@@ -83,11 +92,20 @@ def block_proto(out_lck, proto):
 
 # Blocca porta
 def block_port(out_lck, interface, proto, porta):
-    cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " --dport " + porta + " -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A FORWARD -i " + interface + " -p " + proto + " --dport " + porta + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
@@ -96,11 +114,20 @@ def block_port(out_lck, interface, proto, porta):
 
 # Blocca porta solo per indirizzo (o classe)
 def block_sel_port(out_lck, interface, proto, ip, porta):
-    cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " -s " + ip + " --dport " + porta + " -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A FORWARD -i " + interface + " -p " + proto + " -s " + ip + " --dport " + porta + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
@@ -109,11 +136,20 @@ def block_sel_port(out_lck, interface, proto, ip, porta):
 
 # Blocca in uscita per indirizzo (o classe)
 def block_out_sel(out_lck, interface, ip):
-    cmd = "iptables -A OUTPUT -o " + interface + " -d " + ip + " -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A OUTPUT -o " + interface + " -d " + ip + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
