@@ -39,11 +39,20 @@ def flush_tables(out_lck):
 
 # Blocca sorgente IP
 def block_IPsorg(out_lck, ip):
-    cmd = "iptables -A FORWARD -s " + ip + " -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A FORWARD -s " + ip + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "Applied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
