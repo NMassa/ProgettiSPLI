@@ -188,7 +188,7 @@ def lim_risp_ping(out_lck):
 # Restrict the Number of Parallel Connections To a Server Per Client IP
 def rest_conn_Ip(out_lck, proto, porta, nconn):
     cmd = "iptables -A INPUT -p " + proto + " --syn --dport " + porta + " -m connlimit --connlimit-above " + nconn + " -j REJECT"
-    cmd1 = cmd2 = "iptables -A REJECT -j LOG --log-prefix "'[Drop_Packet]'"  --log-level 4"
+    cmd1 = "iptables -A REJECT -j LOG --log-prefix "'[Drop_Packet]'"  --log-level 4"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     if not (failed and failed1):
@@ -229,7 +229,7 @@ def port_forw(out_lck, proto, ip1, port, port2):
 # Ridireziona pacchetti ad un altro destinatario
 def redirection(out_lck, ipdest, iplocal, proto, port):
     cmd = "iptables -A FORWARD -d " + ipdest + " -p " + proto + " -m " + proto + " --dport " + port + " -j ACCEPT"
-    cmd1 = "iptables -t nat -A PREROUTING -d " + iplocal + " -p " + proto + " -m " + proto + " --dport " + port + " -j DNAT"
+    cmd1 = "iptables -t nat -A PREROUTING -d " + iplocal + " -p " + proto + " -m " + proto + " --dport " + port + " -j DNAT --to-destination " + ipdest
     #cmd2 = "iptables -t nat -A POSTROUTING -j MASQUERADE"
     cmd2 = "iptables -A DNAT -j LOG --log-prefix "'[Redirect_Packet]'"  --log-level 4"
     failed = os.system(cmd)
@@ -249,15 +249,17 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
 
 # Modifica ttl
 def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
-    cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
+    cmd = "iptables -t mangle -A FORWARD -s " + ip_sorg + " -d " + ip_dest + " -j TTL --ttl-set " + ttl
 
-    cmd1 = "iptables -N LOGGING3"
-    cmd2 = "iptables -A INPUT -s " + ip_sorg + " -j LOGGING3"
-    cmd3 = "iptables -A LOGGING3 -j LOG --log-prefix "'[Pre_Mangle]'" --log-level 4"
+    cmd1 = "iptables -t nat -N PRELOG"
+    cmd2 = "iptables -t nat -A PREROUTING -s " + ip_sorg + " -d " + ip_dest + " -j PRELOG"
+    cmd3 = "iptables -t nat -A PRELOG -j LOG --log-prefix "'[Pre_Mangle]'" --log-level 4"
+    cmd4 = "iptables -t nat -A PRELOG -j ACCEPT"
 
-    cmd4 = "iptables - N LOGGING4"
-    cmd5 = "iptables - A FORWARD - s " + ip_dest + " - j LOGGING4"
-    cmd6 = "iptables - A LOGGING4 - j LOG - -log - prefix "'[Post_Mangle]'" --log-level 4"
+    cmd5 = "iptables -t nat -N POSTLOG"
+    cmd6 = "iptables -t nat -A POSTROUTING -s " + ip_sorg + " -d " + ip_dest + " -j POSTLOG"
+    cmd7 = "iptables -t nat -A POSTLOG -j LOG --log-prefix "'[Post_Mangle]'" --log-level 4"
+    cmd8 = "iptables -t nat -A POSTLOG -j ACCEPT"
 
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
@@ -266,8 +268,10 @@ def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
     failed4 = os.system(cmd4)
     failed5 = os.system(cmd5)
     failed6 = os.system(cmd6)
+    failed7 = os.system(cmd7)
+    failed8 = os.system(cmd8)
 
-    if not (failed and failed1 and failed2 and failed3 and failed4 and failed5 and failed6):
+    if not (failed and failed1 and failed2 and failed3 and failed4 and failed5 and failed6 and failed7 and failed8):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
@@ -276,6 +280,8 @@ def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
         output(out_lck, cmd4)
         output(out_lck, cmd5)
         output(out_lck, cmd6)
+        output(out_lck, cmd7)
+        output(out_lck, cmd8)
     else:
         output(out_lck, "Rules not applied")
 

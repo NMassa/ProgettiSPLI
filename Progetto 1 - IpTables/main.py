@@ -172,7 +172,7 @@ if __name__ == "__main__":
                     # Blocco Protocollo
                     if action == 1:
                         output(out_lck, "Please select the protocol")
-                        output(out_lck, "\n1: TCP\n2: UDP\n3: ICMP")
+                        output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
                         proto = input()
                         try:
                             protocol = int(proto)
@@ -317,10 +317,10 @@ if __name__ == "__main__":
 
                     # Redirect
                     elif action == 6:
-                        output(out_lck, "Please insert the number of local IP")
+                        output(out_lck, "Please insert original destination IP")
                         ip1 = input()
 
-                        output(out_lck, "Please insert the number of the receiver")
+                        output(out_lck, "Please insert new destination IP")
                         ip2 = input()
 
                         output(out_lck, "Please insert port number")
@@ -369,14 +369,14 @@ if __name__ == "__main__":
                             output(out_lck, "Please source IP: ")
                             ip = input()
                             try:
-                                ip_sorg = config._base + str(ttl)
+                                ip_sorg = config._base + ip
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
                                 output(out_lck, "Please destination IP: ")
                                 ip = input()
                                 try:
-                                    ip_dest = config._base + str(ttl)
+                                    ip_dest = config._base + ip
                                 except ValueError:
                                     output(out_lck, "A number is required")
                                 rules.set_TTL(out_lck, ip_sorg, ip_dest, str_ttl)
@@ -431,14 +431,14 @@ if __name__ == "__main__":
                                                          "[Post_Mangle]",
                                                          "[Redirect_Packet]"])
                 if prefix == 1:
-                    prefix = "[Drop_Packet]"
+                    prefix = "Drop_Packet"
                 elif prefix == 2:
-                    prefix = "[Pre_Mangle]"
+                    prefix = "Pre_Mangle"
                 elif prefix == 3:
-                    prefix = "[Post_Mangle]"
+                    prefix = "Post_Mangle"
                 elif prefix == 4:
-                    prefix = "[Redirect_Packet]"
-                cmd = "grep -in " + prefix + " /var/log/iptables.log"
+                    prefix = "Redirect_Packet"
+                cmd = "grep -in " + prefix + " /var/log/iptables.log | tail -10"
                 output(out_lck, "\ncommand: %s" % cmd)
                 failed = os.system(cmd)
                 if not failed:
