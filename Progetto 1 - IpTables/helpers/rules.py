@@ -36,7 +36,7 @@ def flush_tables(out_lck):
     failed5 = os.system(cmd5)
 
     if not (failed and failed1 and failed2 and failed3 and failed4 and failed5):
-        output(out_lck, "Applied rules: ")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
@@ -134,22 +134,26 @@ def block_sel_port(out_lck, interface, proto, ip, porta):
     output(out_lck, "\n")
 
 
-# Blocca in uscita per indirizzo (o classe)
-def block_out_sel(out_lck, interface, ip):
-    cmd = "iptables -N LOGGING"
-    cmd1 = "iptables -A OUTPUT -o " + interface + " -d " + ip + " -j LOGGING"
-    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
-    cmd3 = "iptables -A LOGGING -j DROP"
+# Blocca in input
+def block_input(out_lck, dip, dport, protocol):
+    cmd = "iptables -A INPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j DROP"
     failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    failed2 = os.system(cmd2)
-    failed3 = os.system(cmd3)
-    if not (failed and failed1 and failed2 and failed3):
+    if not failed:
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
-        output(out_lck, cmd2)
-        output(out_lck, cmd3)
+    else:
+        output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
+
+
+# Blocca in uscita
+def block_output(out_lck, dip, dport, protocol):
+    cmd = "iptables -A OUTPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j DROP"
+    failed = os.system(cmd)
+    if not failed:
+        output(out_lck, "\nApplied rules:")
+        output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
 

@@ -31,7 +31,8 @@ if __name__ == "__main__":
                                                     "Receive messages ",
                                                     "Apply iptables rules ",
                                                     "Reset iptables rules ",
-                                                    "Show iptables "])
+                                                    "Show iptables",
+                                                    "Show logs "])
         if main_menu is not None:
             if main_menu == 1:
                 protocol = loop_menu(out_lck, "protocol", ["TCP", "UDP"])
@@ -110,7 +111,6 @@ if __name__ == "__main__":
                     # msg = input()
                     #
                     # Connection.send_udp(n, msg, host, port)
-
             elif main_menu == 2:
                 protocol = loop_menu(out_lck, "protocol", ["TCP", "UDP"])
                 if protocol is not None:
@@ -149,7 +149,6 @@ if __name__ == "__main__":
                         output(out_lck, "Listening on port %s.." % port)
                     except Exception:                               # Daniele: non so che Exception da il multithreading
                         output(out_lck, "Thread not initialized")
-
             elif main_menu == 3:
                 action = loop_menu(out_lck, "action", [ "Block Protocol",
                                                         "Block IP source",
@@ -180,14 +179,13 @@ if __name__ == "__main__":
                                 rules.block_proto(out_lck, "icmp")
                             else:
                                 output(out_lck, "Option not available")
-
-                    #Blocco IP
+                    # Blocco IP
                     elif action == 2:
                         output(out_lck, "Please insert the number of the host (or class)")
                         option = input()
-                        host = config._base + selected
+                        host = config._base + option
                         rules.block_IPsorg(out_lck, "%s" % host)
-                    #Blocco Porta
+                    # Blocco Porta
                     elif action == 3:
                         output(out_lck, "Please insert port number")
                         porta = input()
@@ -253,64 +251,97 @@ if __name__ == "__main__":
                                             rules.port_forw(out_lck, "icmp", ip1, dport, dport2)
                                         else:
                                             output(out_lck, "Option not available")
-
                     # Block inbound or outbound traffic
                     elif action == 5:
-                        output(out_lck, "Please insert Network Interface")
-
-                        interface = input()  # manca gestione errore
-
-                        output(out_lck, "Please insert the number of the host")
-                        selected = input()
-                        host2 = config._base + selected
-                        rules.block_out_sel(out_lck, interface, "%s" % host2)
-
-                    # Redirect
-                    elif action == 6:
-                        output(out_lck, "Please insert the number of local IP")  # Da controllare
-                        temphost = input()
+                        output(out_lck, "Insert destination port:")
+                        p = input()
                         try:
-                            ip1 = str(temphost)
+                            port = str(p)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck,
-                                   "Please insert the number of the receiver")  # Da controllare
-                            temphost = input()
+                            output(out_lck, "Please select a protocol:")
+                            output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
+                            proto = input()
                             try:
-                                ip2 = str(temphost)
+                                protocol = int(proto)
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please insert port number")
-                                porta = input()
+                                my_ip = "192.168.1.254"
+                                output(out_lck, "Block input or output?: ")
+                                output(out_lck, "1: Input")
+                                output(out_lck, "2: Output")
+
+                                option = input()
                                 try:
-                                    port = str(porta)
+                                    int_option = int(option)
                                 except ValueError:
                                     output(out_lck, "A number is required")
                                 else:
-                                    output(out_lck, "Please select a protocol")
-                                    output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                                    proto = input()
-                                    try:
-                                        protocol = int(proto)
-                                    except ValueError:
-                                        output(out_lck, "A number is required")
-                                    else:
+                                    if int_option == 1:
                                         if protocol == 1:
-                                            rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                              "%s%s" % (config._base, ip1), "tcp", port)
-
+                                            rules.block_input(out_lck, my_ip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                              "%s%s" % (config._base, ip1), "udp", port)
-
+                                            rules.block_input(out_lck, my_ip, port, "udp")
                                         elif protocol == 3:
-                                            rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                              "%s%s" % (config._base, ip1), "icmp", port)
-
+                                            rules.block_input(out_lck, my_ip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
+                                    elif int_option == 2:
+
+                                        output(out_lck, "Insert destination:")
+                                        dip = input()
+
+                                        if protocol == 1:
+                                            rules.block_output(out_lck, dip, port, "tcp")
+                                        elif protocol == 2:
+                                            rules.block_output(out_lck, dip, port, "udp")
+                                        elif protocol == 3:
+                                            rules.block_output(out_lck, dip, port, "icmp")
+                                        else:
+                                            output(out_lck, "Option not available")
+                                    else:
+                                        output(out_lck, "Option not available")
+
+
+                    # Redirect
+                    elif action == 6:
+                        output(out_lck, "Please insert the number of local IP")
+                        ip1 = input()
+
+                        output(out_lck, "Please insert the number of the receiver")
+                        ip2 = input()
+
+                        output(out_lck, "Please insert port number")
+                        porta = input()
+                        try:
+                            port = str(porta)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
+                            output(out_lck, "Please select a protocol")
+                            output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
+                            proto = input()
+                            try:
+                                protocol = int(proto)
+                            except ValueError:
+                                output(out_lck, "A number is required")
+                            else:
+                                if protocol == 1:
+                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
+                                                      "%s%s" % (config._base, ip1), "tcp", port)
+
+                                elif protocol == 2:
+                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
+                                                      "%s%s" % (config._base, ip1), "udp", port)
+
+                                elif protocol == 3:
+                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
+                                                      "%s%s" % (config._base, ip1), "icmp", port)
+
+                                else:
+                                    output(out_lck, "Option not available")
 
                     # Alterazione pacchetto (mangle)
                     elif action == 7:
@@ -326,7 +357,7 @@ if __name__ == "__main__":
                         else:
                             rules.set_TTL(out_lck, str_ttl)
 
-                    #Limita ping
+                    # Limita ping
                     elif action == 8:
                         rules.lim_risp_ping(out_lck)
                     # SYN
@@ -368,6 +399,9 @@ if __name__ == "__main__":
                 rules.flush_tables(out_lck)
             elif main_menu == 5:
                 rules.show_tables(out_lck)
+            elif main_menu == 6:
+                # Show logs
+                print("logs")
             # elif main_menu == 6:
             #     output(out_lck, "Please insert destination IP")
             #     destinazione = input()
