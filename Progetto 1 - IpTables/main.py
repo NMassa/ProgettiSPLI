@@ -382,43 +382,43 @@ if __name__ == "__main__":
                                 rules.set_TTL(out_lck, ip_sorg, ip_dest, str_ttl)
 
                     # Limita ping
-                    elif action == 8:
-                        rules.lim_risp_ping(out_lck)
-                    # SYN
-                    elif action == 9:
-                        output(out_lck, "Please insert port number")
-                        porta = input()
-                        try:
-                            port = str(porta)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            output(out_lck, "Please max number of connections")
-                            connections = input()
-                            try:
-                                conn = str(connections)
-                            except ValueError:
-                                output(out_lck, "A number is required")
-                            else:
-                                output(out_lck, "Please select a protocol")
-                                output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                                proto = input()
-                                try:
-                                    protocol = int(proto)
-                                except ValueError:
-                                    output(out_lck, "A number is required")
-                                else:
-                                    if protocol == 1:
-                                        rules.rest_conn_Ip(out_lck, "tcp", port, conn)
-
-                                    elif protocol == 2:
-                                        rules.rest_conn_Ip(out_lck, "udp", port, conn)
-
-                                    elif protocol == 3:
-                                        rules.rest_conn_Ip(out_lck, "icmp", port, conn)
-
-                                    else:
-                                        output(out_lck, "Option not available")
+                    # elif action == 8:
+                    #     rules.lim_risp_ping(out_lck)
+                    # # SYN
+                    # elif action == 9:
+                    #     output(out_lck, "Please insert port number")
+                    #     porta = input()
+                    #     try:
+                    #         port = str(porta)
+                    #     except ValueError:
+                    #         output(out_lck, "A number is required")
+                    #     else:
+                    #         output(out_lck, "Please max number of connections")
+                    #         connections = input()
+                    #         try:
+                    #             conn = str(connections)
+                    #         except ValueError:
+                    #             output(out_lck, "A number is required")
+                    #         else:
+                    #             output(out_lck, "Please select a protocol")
+                    #             output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
+                    #             proto = input()
+                    #             try:
+                    #                 protocol = int(proto)
+                    #             except ValueError:
+                    #                 output(out_lck, "A number is required")
+                    #             else:
+                    #                 if protocol == 1:
+                    #                     rules.rest_conn_Ip(out_lck, "tcp", port, conn)
+                    #
+                    #                 elif protocol == 2:
+                    #                     rules.rest_conn_Ip(out_lck, "udp", port, conn)
+                    #
+                    #                 elif protocol == 3:
+                    #                     rules.rest_conn_Ip(out_lck, "icmp", port, conn)
+                    #
+                    #                 else:
+                    #                     output(out_lck, "Option not available")
             elif main_menu == 4:
                 rules.flush_tables(out_lck)
             elif main_menu == 5:
@@ -429,7 +429,8 @@ if __name__ == "__main__":
                 prefix = loop_menu(out_lck, "protocol", ["[Drop_Packet]",
                                                          "[Pre_Mangle]",
                                                          "[Post_Mangle]",
-                                                         "[Redirect_Packet]"])
+                                                         "[Pre_Redirect]",
+                                                         "[Post_Redirect]"])
                 if prefix == 1:
                     prefix = "Drop_Packet"
                 elif prefix == 2:
@@ -437,8 +438,11 @@ if __name__ == "__main__":
                 elif prefix == 3:
                     prefix = "Post_Mangle"
                 elif prefix == 4:
-                    prefix = "Redirect_Packet"
-                cmd = "grep -in " + prefix + " /var/log/iptables.log | tail -10"
+                    prefix = "Pre_Redirect"
+                elif prefix == 5:
+                    prefix = "Post_Redirect"
+
+                cmd = "grep -in \'" + prefix + "\' /var/log/iptables.log | tail -10"
                 output(out_lck, "\ncommand: %s" % cmd)
                 failed = os.system(cmd)
                 if not failed:

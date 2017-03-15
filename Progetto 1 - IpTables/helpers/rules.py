@@ -228,19 +228,40 @@ def port_forw(out_lck, proto, ip1, port, port2):
 
 # Ridireziona pacchetti ad un altro destinatario
 def redirection(out_lck, ipdest, iplocal, proto, port):
-    cmd = "iptables -A FORWARD -d " + ipdest + " -p " + proto + " -m " + proto + " --dport " + port + " -j ACCEPT"
-    cmd1 = "iptables -t nat -A PREROUTING -d " + iplocal + " -p " + proto + " -m " + proto + " --dport " + port + " -j DNAT --to-destination " + ipdest
-    #cmd2 = "iptables -t nat -A POSTROUTING -j MASQUERADE"
-    cmd2 = "iptables -A DNAT -j LOG --log-prefix "'[Redirect_Packet]'"  --log-level 4"
-    failed = os.system(cmd)
+    cmd1 = "iptables -t nat -N PRELOG"
+    cmd2 = "iptables -t nat -A PREROUTING -d " + iplocal + " -p " + proto + " -m " + proto + " --dport " + port + " -j PRELOG"
+    cmd3 = "iptables -t nat -A PRELOG -j LOG --log-prefix "'[Pre_Redirect]'" --log-level 4"
+    cmd4 = "iptables -t nat -A PRELOG -j DNAT --to-destination " + ipdest
+
+    cmd5 = "iptables -N POSTLOG"
+    cmd6 = "iptables -A FORWARD -d " + ipdest + " -p " + proto + " -m " + proto + " --dport " + port + " -j POSTLOG"
+    cmd7 = "iptables -A POSTLOG -j LOG --log-prefix "'[Post_Redirect]'" --log-level 4"
+    #cmd8 = "iptables -A POSTLOG -j ACCEPT"
+
+    #cmd5 = "iptables -t nat -A POSTROUTING -j MASQUERADE"
+
+    #failed = os.system(cmd)
     failed1 = os.system(cmd1)
     failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    failed4 = os.system(cmd4)
+    failed5 = os.system(cmd5)
+    failed6 = os.system(cmd6)
+    failed7 = os.system(cmd7)
+    #failed8 = os.system(cmd8)
+
+    #failed5 = os.system(cmd5)
     #os.system(cmd2)
-    if not (failed and failed1 and failed2):
+    if not (failed1 and failed2 and failed3 and failed4 and failed5 and failed6 and failed7 ):
         output(out_lck, "\nApplied rules:")
-        output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
+        output(out_lck, cmd3)
+        output(out_lck, cmd4)
+        output(out_lck, cmd5)
+        output(out_lck, cmd6)
+        output(out_lck, cmd7)
+        #output(out_lck, cmd8)
     else:
         output(out_lck, "Rules not applied")
 
