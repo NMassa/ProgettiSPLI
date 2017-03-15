@@ -36,7 +36,7 @@ def flush_tables(out_lck):
     failed5 = os.system(cmd5)
 
     if not (failed and failed1 and failed2 and failed3 and failed4 and failed5):
-        output(out_lck, "Applied rules: ")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
@@ -59,7 +59,7 @@ def block_IPsorg(out_lck, ip):
     failed2 = os.system(cmd2)
     failed3 = os.system(cmd3)
     if not (failed and failed1 and failed2 and failed3):
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
         output(out_lck, cmd2)
@@ -74,7 +74,7 @@ def block_proto(out_lck, proto):
     cmd = "iptables -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j DROP"
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
@@ -86,7 +86,7 @@ def block_port(out_lck, interface, proto, porta):
     cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " --dport " + porta + " -j DROP"
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
@@ -99,7 +99,7 @@ def block_sel_port(out_lck, interface, proto, ip, porta):
     cmd = "iptables -A FORWARD -i " + interface + " -p " + proto + " -s " + ip + " --dport " + porta + " -j DROP"
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
@@ -112,7 +112,7 @@ def block_out_sel(out_lck, interface, ip):
     cmd = "iptables -A OUTPUT -o " + interface + " -d " + ip + " -j DROP"
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
@@ -127,7 +127,7 @@ def lim_risp_ping(out_lck):
     failed = os.system(cmd)
     #failed2 = os.system(cmd1)
     if not (failed):
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         #output(out_lck, cmd1)
     else:
@@ -141,7 +141,7 @@ def rest_conn_Ip(out_lck, proto, porta, nconn):
     cmd = "iptables -A INPUT -p " + proto + " --syn --dport " + porta + " -m connlimit --connlimit-above " + nconn + " -j REJECT"
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
@@ -160,7 +160,7 @@ def port_forw(out_lck, proto, ip1, port, port2):
     #failed2 = os.system(cmd2)
     #if not (failed and failed1 and failed2):
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         #output(out_lck, cmd1)
         #output(out_lck, cmd2)
@@ -179,7 +179,7 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
     failed1 = os.system(cmd1)
     #os.system(cmd2)
     if not (failed and failed1):
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
     else:
@@ -197,7 +197,7 @@ def inc_ssh(out_lck, interface):
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     if not (failed and failed1):
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
     else:
@@ -215,7 +215,7 @@ def out_ssh(out_lck, interface):
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
     if not (failed and failed1):
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
     else:
@@ -229,7 +229,7 @@ def set_TTL(out_lck, ttl):
     cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
     failed = os.system(cmd)
     if not failed:
-        output(out_lck, "Applied rules:")
+        output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
