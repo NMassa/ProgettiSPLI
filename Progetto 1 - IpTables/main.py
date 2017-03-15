@@ -1,5 +1,6 @@
 import threading
 import sys
+import os
 from helpers.helpers import output
 from helpers.connection import Connection
 from helpers import config
@@ -418,7 +419,27 @@ if __name__ == "__main__":
                 rules.show_tables(out_lck)
             elif main_menu == 6:
                 # Show logs
-                print("logs")
+                output(out_lck, "\nShow LOG, select prefix: ")
+                prefix = loop_menu(out_lck, "protocol", ["[Drop_Packet]",
+                                                         "[Pre_Mangle]",
+                                                         "[Post_Mangle]",
+                                                         "[Redirect_Packet]"])
+                if prefix == 1:
+                    prefix = "[Drop_Packet]"
+                elif prefix == 2:
+                    prefix = "[Pre_Mangle]"
+                elif prefix == 3:
+                    prefix = "[Post_Mangle]"
+                elif prefix == 4:
+                    prefix = "[Redirect_Packet]"
+                cmd = "grep -in " + prefix + " /var/log/iptables.log"
+                output(out_lck, "\ncommand: %s" % cmd)
+                failed = os.system(cmd)
+                if not failed:
+                    output(out_lck, "\nApplied rules:")
+                    output(out_lck, cmd)
+
+
             # elif main_menu == 6:
             #     output(out_lck, "Please insert destination IP")
             #     destinazione = input()
