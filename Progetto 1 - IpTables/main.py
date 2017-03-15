@@ -21,6 +21,7 @@ if __name__ == "__main__":
             output(out_lck, "Please insert your IP number")
         else:
             my_ip = config._base + ip
+
     output(out_lck, "Source IP: " + my_ip)
     while True:
         # Main Menu
@@ -268,7 +269,6 @@ if __name__ == "__main__":
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                my_ip = "192.168.1.254"
                                 output(out_lck, "Block input or output?: ")
                                 output(out_lck, "1: Input")
                                 output(out_lck, "2: Output")
