@@ -10,8 +10,23 @@ from helpers import rules
 if __name__ == "__main__":
 
     out_lck = threading.Lock()
+    output(out_lck, "Insert your IP: ")
+    ip = None
+    while ip is None:
+        try:
+            ip = input()
+        except SyntaxError:
+            ip = None
+        if ip is None:
+            output(out_lck, "Please insert your IP number")
+        else:
+            my_ip = config._base + ip
+    output(out_lck, "Source IP: " + my_ip)
     while True:
         # Main Menu
+        #output(out_lck, "Insert your IP: ")
+
+
         main_menu = loop_menu(out_lck, "action", [  "Send messages ",
                                                     "Receive messages ",
                                                     "Apply iptables rules ",
@@ -63,7 +78,7 @@ if __name__ == "__main__":
                                 port = int_option
                                 output(out_lck, "Selected port: %i" % port)
 
-                    c = Connection(host, protocol, port, out_lck)
+                    c = Connection(host, protocol, port, my_ip, out_lck)
                     try:
                         c.connect()
                         output(out_lck, "Sending %s requests.." % protocol)
@@ -128,7 +143,7 @@ if __name__ == "__main__":
 
                     output(out_lck, "Selected port: %i" % port)
 
-                    c = Connection(None, protocol, port, out_lck)
+                    c = Connection(None, protocol, port, my_ip, out_lck)
                     try:
                         c.listen()
                         output(out_lck, "Listening on port %s.." % port)
