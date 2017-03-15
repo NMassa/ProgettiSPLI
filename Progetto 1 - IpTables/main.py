@@ -164,9 +164,7 @@ if __name__ == "__main__":
                                                         "Port Forwarding",
                                                         "Block inbound or outbound traffic",
                                                         "Redirection (destination)",
-                                                        "Packet alteration (ttl)",
-                                                        "Ping limit",
-                                                        "SYN defense"])
+                                                        "Packet alteration (ttl)"])
 
                 if action is not None:
                     # Blocco Protocollo
