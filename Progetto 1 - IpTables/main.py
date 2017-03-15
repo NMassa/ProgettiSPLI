@@ -243,13 +243,13 @@ if __name__ == "__main__":
                                         output(out_lck, "A number is required")
                                     else:
                                         if protocol == 1:
-                                            rules.port_forw(out_lck, "tcp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "tcp", config._base + ip1, dport, dport2)
 
                                         elif protocol == 2:
-                                            rules.port(out_lck, "udp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "udp", config._base + ip1, dport, dport2)
 
                                         elif protocol == 3:
-                                            rules.port_forw(out_lck, "icmp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "icmp", config._base + ip1, dport, dport2)
                                         else:
                                             output(out_lck, "Option not available")
                     # Block inbound or outbound traffic
@@ -284,11 +284,11 @@ if __name__ == "__main__":
                                         dip = input()
 
                                         if protocol == 1:
-                                            rules.block_input(out_lck, dip, port, "tcp")
+                                            rules.block_input(out_lck, config._base + dip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_input(out_lck, dip, port, "udp")
+                                            rules.block_input(out_lck, config._base + dip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_input(out_lck, dip, port, "icmp")
+                                            rules.block_input(out_lck, config._base + dip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     elif int_option == 2:
@@ -297,11 +297,11 @@ if __name__ == "__main__":
                                         dip = input()
 
                                         if protocol == 1:
-                                            rules.block_output(out_lck, dip, port, "tcp")
+                                            rules.block_output(out_lck, config._base + dip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_output(out_lck, dip, port, "udp")
+                                            rules.block_output(out_lck, config._base + dip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_output(out_lck, dip, port, "icmp")
+                                            rules.block_output(out_lck, config._base + dip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     else:
