@@ -6,8 +6,18 @@ from helpers.helpers import output
 def show_tables(out_lck):
     cmd = "iptables -L"
     cmd1 = "iptables -t nat -L"
+    cmd2 = "iptables -t mangle -L"
+
+    output(out_lck, "\n----------------------- MAIN TABLE -----------------------\n")
     os.system(cmd)
+    output(out_lck, "\n----------------------------------------------------------\n")
+    output(out_lck, "\n----------------------- NAT TABLE ------------------------\n")
     os.system(cmd1)
+    output(out_lck, "\n----------------------------------------------------------\n")
+    output(out_lck, "\n---------------------- MANGLE TABLE ----------------------\n")
+    os.system(cmd2)
+    output(out_lck, "\n----------------------------------------------------------\n")
+    output(out_lck, "\n")
 
 
 # Flush di tutte le tavole
@@ -36,6 +46,7 @@ def flush_tables(out_lck):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
 
 # Blocca sorgente IP
 def block_IPsorg(out_lck, ip):
@@ -56,6 +67,7 @@ def block_IPsorg(out_lck, ip):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
 
 # Blocca protocollo
 def block_proto(out_lck, proto):
@@ -67,6 +79,7 @@ def block_proto(out_lck, proto):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
 
 # Blocca porta
 def block_port(out_lck, interface, proto, porta):
@@ -77,6 +90,8 @@ def block_port(out_lck, interface, proto, porta):
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
 
 
 # Blocca porta solo per indirizzo (o classe)
@@ -89,6 +104,8 @@ def block_sel_port(out_lck, interface, proto, ip, porta):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
+
 
 # Blocca in uscita per indirizzo (o classe)
 def block_out_sel(out_lck, interface, ip):
@@ -99,6 +116,8 @@ def block_out_sel(out_lck, interface, ip):
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
 
 
 # Limita le risposte al ping
@@ -114,6 +133,8 @@ def lim_risp_ping(out_lck):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
+
 
 # Restrict the Number of Parallel Connections To a Server Per Client IP
 def rest_conn_Ip(out_lck, proto, porta, nconn):
@@ -125,10 +146,12 @@ def rest_conn_Ip(out_lck, proto, porta, nconn):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
+
 
 # Port Forwarding
 def port_forw(out_lck, proto, ip1, port, port2):
-    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + port + " -j DNAT --to " + ip1 + ":" + port2
+    cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + str(port) + " -j DNAT --to " + ip1 + ":" + str(port2)
     # in teoria non servono
     #cmd1 = "iptables -A INPUT -i " + interf + " -p " + proto + " --dport " + port + " -m state --state NEW,ESTABLISHED -j ACCEPT"
     #cmd2 = "iptables -A OUTPUT -o " + interf + " -p " + proto + " --sport " + port + " -m state --state ESTABLISHED -j ACCEPT"
@@ -143,6 +166,8 @@ def port_forw(out_lck, proto, ip1, port, port2):
         #output(out_lck, cmd2)
     else:
         output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
 
 
 # Ridireziona pacchetti ad un altro destinatario
@@ -160,6 +185,8 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
+
 
 # Allow incoming SSH
 # iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
@@ -175,6 +202,8 @@ def inc_ssh(out_lck, interface):
         output(out_lck, cmd1)
     else:
         output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
 
 
 # Allow outgoing SSH
@@ -192,6 +221,8 @@ def out_ssh(out_lck, interface):
     else:
         output(out_lck, "Rules not applied")
 
+    output(out_lck, "\n")
+
 
 # Modifica ttl
 def set_TTL(out_lck, ttl):
@@ -202,3 +233,5 @@ def set_TTL(out_lck, ttl):
         output(out_lck, cmd)
     else:
         output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
