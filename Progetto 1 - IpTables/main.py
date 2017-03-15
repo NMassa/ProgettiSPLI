@@ -202,7 +202,7 @@ if __name__ == "__main__":
                                 rules.block_proto(out_lck, "icmp")
 
                             else:
-                                output(out_lck, "Please insert a number")
+                                output(out_lck, "option not available")
 
                     #Blocco traffico in uscita
                     elif action == 4:
@@ -256,29 +256,25 @@ if __name__ == "__main__":
                     # Port Forwarding
                     elif action == 8:
                         # TODO: DA SISTEMARE 8PARAMETRI DELLA FUNZIONE rules.port_forw E PROTOCOLLI
-                        output(out_lck, "Please insert Network Interface")
 
-                        interface = input()  # manca gestione errore
-
-                        output(out_lck, "Please insert the number of the source  !!!!DA CONTROLLARE!!!!")    #Da controllare
+                        output(out_lck, "Please insert the destination host")    #Da controllare
                         temphost = input()
                         try:
                             ip1 = str(temphost)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck,
-                                   "Please insert the number of the receiver  !!!!DA CONTROLLARE!!!!")  # Da controllare
-                            temphost = input()
+                            output(out_lck, "Please insert destination port number")
+                            dport = input()
                             try:
-                                ip2 = str(temphost)
+                                dport = int(dport)
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please insert port number")
-                                porta = input()
+                                output(out_lck, "Please insert destination port number")
+                                dport2 = input()
                                 try:
-                                    port = str(porta)
+                                    dport2 = int(dport2)
                                 except ValueError:
                                     output(out_lck, "A number is required")
                                 else:
@@ -291,20 +287,16 @@ if __name__ == "__main__":
                                         output(out_lck, "A number is required")
                                     else:
                                         if protocol == 1:
-                                            rules.port_forw(out_lck, interface, "tcp", "%s%s" % (config._base, ip1), "%s%s" % (config._base, ip2), port)
+                                            rules.port_forw(out_lck, "tcp", ip1, dport, dport2)
 
                                         elif protocol == 2:
-                                            rules.port_forw(out_lck, interface, "udp",
-                                                            "%s%s" % (config._base, ip1),
-                                                            "%s%s" % (config._base, ip2), port)
+                                            rules.port(out_lck, "udp", ip1, dport, dport2)
 
                                         elif protocol == 3:
-                                            rules.port_forw(out_lck, interface, "icmp",
-                                                            "%s%s" % (config._base, ip1),
-                                                            "%s%s" % (config._base, ip2), port)
-
+                                            rules.port_forw(out_lck, "icmp", ip1, dport, dport2)
                                         else:
-                                            output(out_lck, "Please insert a number")
+                                            output(out_lck, "option not available")
+
                     # Redirezione
                     elif action == 9:
                         output(out_lck, "Please insert the number of local IP")  # Da controllare
