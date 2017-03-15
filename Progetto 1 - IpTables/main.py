@@ -127,7 +127,7 @@ if __name__ == "__main__":
                     output(out_lck, "Selected protocol: %s" % protocol)
 
                     port = None
-                    output(out_lck, "Insert destination port number:")
+                    output(out_lck, "Insert port number:")
 
                     while port is None:
                         try:
@@ -136,7 +136,7 @@ if __name__ == "__main__":
                             option = None
 
                         if option is None:
-                            output(out_lck, "Please insert destination port number")
+                            output(out_lck, "Please insert port number")
                         else:
                             try:
                                 int_option = int(option)
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
                     output(out_lck, "Selected port: %i" % port)
 
-                    subprocess.Popen(["xterm", "-e", "python3 ./helpers/server.py " + protocol + " " + str(port) + " " + my_ip ])
+                    subprocess.Popen(["xterm", "-e", "python3 ./helpers/server.py " + protocol + " " + str(port)])
 
                     # proc = subprocess.Popen(args=["gnome-terminal", "--disable-factory", " --command=python ./helpers/server.py.bak"],
                     #                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, preexec_fn=os.setpgrp)
