@@ -280,12 +280,15 @@ if __name__ == "__main__":
                                     output(out_lck, "A number is required")
                                 else:
                                     if int_option == 1:
+                                        output(out_lck, "Insert destination:")
+                                        dip = input()
+
                                         if protocol == 1:
-                                            rules.block_input(out_lck, my_ip, port, "tcp")
+                                            rules.block_input(out_lck, dip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_input(out_lck, my_ip, port, "udp")
+                                            rules.block_input(out_lck, dip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_input(out_lck, my_ip, port, "icmp")
+                                            rules.block_input(out_lck, dip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     elif int_option == 2:
