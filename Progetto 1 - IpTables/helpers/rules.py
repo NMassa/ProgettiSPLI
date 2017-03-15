@@ -136,11 +136,20 @@ def block_sel_port(out_lck, interface, proto, ip, porta):
 
 # Blocca in input
 def block_input(out_lck, dip, dport, protocol):
-    cmd = "iptables -A INPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j DROP"
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A INPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
@@ -179,10 +188,13 @@ def lim_risp_ping(out_lck):
 # Restrict the Number of Parallel Connections To a Server Per Client IP
 def rest_conn_Ip(out_lck, proto, porta, nconn):
     cmd = "iptables -A INPUT -p " + proto + " --syn --dport " + porta + " -m connlimit --connlimit-above " + nconn + " -j REJECT"
+    cmd1 = cmd2 = "iptables -A REJECT -j LOG --log-prefix "'[Drop_Packet]'"  --log-level 4"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    if not (failed and failed1):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
     else:
         output(out_lck, "Rules not applied")
 
@@ -192,16 +204,20 @@ def rest_conn_Ip(out_lck, proto, porta, nconn):
 # Port Forwarding
 def port_forw(out_lck, proto, ip1, port, port2):
     cmd = "iptables -t nat -A PREROUTING -p " + proto + " -d " + ip1 + " --dport " + str(port) + " -j DNAT --to " + ip1 + ":" + str(port2)
+
+    cmd1 = "iptables -A DNAT -j LOG --log-prefix "'[Redirect_Packet]'"  --log-level 4"
     # in teoria non servono
     #cmd1 = "iptables -A INPUT -i " + interf + " -p " + proto + " --dport " + port + " -m state --state NEW,ESTABLISHED -j ACCEPT"
     #cmd2 = "iptables -A OUTPUT -o " + interf + " -p " + proto + " --sport " + port + " -m state --state ESTABLISHED -j ACCEPT"
     failed = os.system(cmd)
+    failed1 = os.system(cmd1)
     #failed1 = os.system(cmd1)
     #failed2 = os.system(cmd2)
     #if not (failed and failed1 and failed2):
-    if not failed:
+    if not (failed and failed1):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
         #output(out_lck, cmd1)
         #output(out_lck, cmd2)
     else:
@@ -215,13 +231,16 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
     cmd = "iptables -A FORWARD -d " + ipdest + " -p " + proto + " -m " + proto + " --dport " + port + " -j ACCEPT"
     cmd1 = "iptables -t nat -A PREROUTING -d " + iplocal + " -p " + proto + " -m " + proto + " --dport " + port + " -j DNAT"
     #cmd2 = "iptables -t nat -A POSTROUTING -j MASQUERADE"
+    cmd2 = "iptables -A DNAT -j LOG --log-prefix "'[Redirect_Packet]'"  --log-level 4"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
     #os.system(cmd2)
-    if not (failed and failed1):
+    if not (failed and failed1 and failed2):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
+        output(out_lck, cmd2)
     else:
         output(out_lck, "Rules not applied")
 
@@ -265,12 +284,34 @@ def out_ssh(out_lck, interface):
 
 
 # Modifica ttl
-def set_TTL(out_lck, ttl):
+def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
     cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
+
+    cmd1 = "iptables -N LOGGING3"
+    cmd2 = "iptables -A INPUT -s " + ip_sorg + " -j LOGGING3"
+    cmd3 = "iptables -A LOGGING3 -j LOG --log-prefix "'[Pre_Mangle]'" --log-level 4"
+
+    cmd4 = "iptables - N LOGGING4"
+    cmd5 = "iptables - A FORWARD - s " + ip_dest + " - j LOGGING4"
+    cmd6 = "iptables - A LOGGING4 - j LOG - -log - prefix "'[Post_Mangle]'" --log-level 4"
+
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    failed4 = os.system(cmd4)
+    failed5 = os.system(cmd5)
+    failed6 = os.system(cmd6)
+
+    if not (failed and failed1 and failed2 and failed3 and failed4 and failed5 and failed6):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
+        output(out_lck, cmd4)
+        output(out_lck, cmd5)
+        output(out_lck, cmd6)
     else:
         output(out_lck, "Rules not applied")
 

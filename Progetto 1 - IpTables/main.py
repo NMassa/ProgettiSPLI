@@ -350,7 +350,8 @@ if __name__ == "__main__":
                     elif action == 7:
                         # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
                         # interface = input()  # manca gestione errore
-
+                        ip_sorg = None
+                        ip_dest = None
                         output(out_lck, "Please insert the number of TTL")  # Da controllare
                         ttl = input()
                         try:
@@ -358,7 +359,20 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            rules.set_TTL(out_lck, str_ttl)
+                            output(out_lck, "Please source IP: ")
+                            ip = input()
+                            try:
+                                ip_sorg = config._base + str(ttl)
+                            except ValueError:
+                                output(out_lck, "A number is required")
+                            else:
+                                output(out_lck, "Please destination IP: ")
+                                ip = input()
+                                try:
+                                    ip_dest = config._base + str(ttl)
+                                except ValueError:
+                                    output(out_lck, "A number is required")
+                                rules.set_TTL(out_lck, ip_sorg, ip_dest, str_ttl)
 
                     # Limita ping
                     elif action == 8:
