@@ -7,6 +7,9 @@ from helpers import config
 from helpers.helpers import loop_menu
 #import iptc     #Daniele: potrebbe servire in un secondo momento...
 from helpers import rules
+from helpers import server
+import subprocess
+import os
 
 if __name__ == "__main__":
 
@@ -117,12 +120,11 @@ if __name__ == "__main__":
                 protocol = loop_menu(out_lck, "protocol", ["TCP", "UDP"])
                 if protocol is not None:
                     if protocol == 1:
-                        protocol = "TCP"
+                        protocol = "tcp"
                     elif protocol == 2:
-                        protocol = "UDP"
+                        protocol = "udp"
 
                     output(out_lck, "Selected protocol: %s" % protocol)
-
 
                     port = None
                     output(out_lck, "Insert destination port number:")
@@ -145,12 +147,16 @@ if __name__ == "__main__":
 
                     output(out_lck, "Selected port: %i" % port)
 
-                    c = Connection(None, protocol, port, my_ip, out_lck)
-                    try:
-                        c.listen()
-                        output(out_lck, "Listening on port %s.." % port)
-                    except Exception:                               # Daniele: non so che Exception da il multithreading
-                        output(out_lck, "Thread not initialized")
+                    subprocess.Popen(["xterm", "-e", "python3 ./helpers/server.py " + protocol + " " + str(port) + " " + my_ip ])
+
+                    # proc = subprocess.Popen(args=["gnome-terminal", "--disable-factory", " --command=python ./helpers/server.py.bak"],
+                    #                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, preexec_fn=os.setpgrp)
+                    # c = Connection(None, protocol, port, my_ip, out_lck)
+                    # try:
+                    #     c.listen()
+                    #     output(out_lck, "Listening on port %s.." % port)
+                    # except Exception:                               # Daniele: non so che Exception da il multithreading
+                    #     output(out_lck, "Thread not initialized")
             elif main_menu == 3:
                 action = loop_menu(out_lck, "action", [ "Block Protocol",
                                                         "Block IP source",

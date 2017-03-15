@@ -247,42 +247,6 @@ def redirection(out_lck, ipdest, iplocal, proto, port):
     output(out_lck, "\n")
 
 
-# Allow incoming SSH
-# iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-# iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-def inc_ssh(out_lck, interface):
-    cmd = "iptables -A INPUT -i " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
-    cmd1 = "iptables -A OUTPUT -o " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
-    failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    if not (failed and failed1):
-        output(out_lck, "\nApplied rules:")
-        output(out_lck, cmd)
-        output(out_lck, cmd1)
-    else:
-        output(out_lck, "Rules not applied")
-
-    output(out_lck, "\n")
-
-
-# Allow outgoing SSH
-# iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-# iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-def out_ssh(out_lck, interface):
-    cmd = "iptables -A OUTPUT -o " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
-    cmd1 = "iptables -A INPUT -i " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
-    failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    if not (failed and failed1):
-        output(out_lck, "\nApplied rules:")
-        output(out_lck, cmd)
-        output(out_lck, cmd1)
-    else:
-        output(out_lck, "Rules not applied")
-
-    output(out_lck, "\n")
-
-
 # Modifica ttl
 def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
     cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
@@ -316,3 +280,39 @@ def set_TTL(out_lck, ip_sorg, ip_dest, ttl):
         output(out_lck, "Rules not applied")
 
     output(out_lck, "\n")
+
+
+# # Allow incoming SSH
+# # iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# # iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+# def inc_ssh(out_lck, interface):
+#     cmd = "iptables -A INPUT -i " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
+#     cmd1 = "iptables -A OUTPUT -o " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
+#     failed = os.system(cmd)
+#     failed1 = os.system(cmd1)
+#     if not (failed and failed1):
+#         output(out_lck, "\nApplied rules:")
+#         output(out_lck, cmd)
+#         output(out_lck, cmd1)
+#     else:
+#         output(out_lck, "Rules not applied")
+#
+#     output(out_lck, "\n")
+#
+#
+# # Allow outgoing SSH
+# # iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# # iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+# def out_ssh(out_lck, interface):
+#     cmd = "iptables -A OUTPUT -o " + interface + " -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT"
+#     cmd1 = "iptables -A INPUT -i " + interface + " -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT"
+#     failed = os.system(cmd)
+#     failed1 = os.system(cmd1)
+#     if not (failed and failed1):
+#         output(out_lck, "\nApplied rules:")
+#         output(out_lck, cmd)
+#         output(out_lck, cmd1)
+#     else:
+#         output(out_lck, "Rules not applied")
+#
+#     output(out_lck, "\n")

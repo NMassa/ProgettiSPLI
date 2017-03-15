@@ -32,7 +32,7 @@ class Connection:
                     try:
                         _socket.connect((self.host, self.port))
                         #qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, N: " + str(i), encoding="utf8")
                         _socket.sendall(message)
 
                     except socket.error as msg:
@@ -50,7 +50,7 @@ class Connection:
                     try:
                         self.socket.connect((self.host, self.port))
                         # qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, N: " + str(i), encoding="utf8")
 
                         self.socket.sendall(message)
 
