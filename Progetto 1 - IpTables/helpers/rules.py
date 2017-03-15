@@ -158,11 +158,29 @@ def block_input(out_lck, dip, dport, protocol):
 
 # Blocca in uscita
 def block_output(out_lck, dip, dport, protocol):
-    cmd = "iptables -A OUTPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j DROP"
+    # cmd = "iptables -A OUTPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j DROP"
+    # failed = os.system(cmd)
+    # if not failed:
+    #     output(out_lck, "\nApplied rules:")
+    #     output(out_lck, cmd)
+    # else:
+    #     output(out_lck, "Rules not applied")
+    #
+    # output(out_lck, "\n")
+    cmd = "iptables -N LOGGING"
+    cmd1 = "iptables -A OUTPUT -p " + protocol + " -d " + dip + " --dport " + dport + " -j LOGGING"
+    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
+    cmd3 = "iptables -A LOGGING -j DROP"
     failed = os.system(cmd)
-    if not failed:
+    failed1 = os.system(cmd1)
+    failed2 = os.system(cmd2)
+    failed3 = os.system(cmd3)
+    if not (failed and failed1 and failed2 and failed3):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 

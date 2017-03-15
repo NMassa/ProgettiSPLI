@@ -28,6 +28,7 @@ class Connection:
                 for i in range(0, 10):
                     _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    _socket.settimeout(1)
                     try:
                         _socket.connect((self.host, self.port))
                         #qui devo fare un ciclo o un timer per mandare le richieste

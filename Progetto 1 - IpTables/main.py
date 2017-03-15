@@ -27,6 +27,7 @@ if __name__ == "__main__":
             my_ip = config._base + ip
 
     output(out_lck, "Source IP: " + my_ip)
+    #my_ip = config._base + "1.254"
     while True:
         # Main Menu
         #output(out_lck, "Insert your IP: ")
@@ -187,7 +188,7 @@ if __name__ == "__main__":
                                 output(out_lck, "Option not available")
                     # Blocco IP
                     elif action == 2:
-                        output(out_lck, "Please insert the number of the host (or class)")
+                        output(out_lck, "Please insert the number of the source host (or subnet)")
                         option = input()
                         host = config._base + option
                         rules.block_IPsorg(out_lck, "%s" % host)
@@ -225,14 +226,14 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck, "Please insert destination port number")
+                            output(out_lck, "Please insert original port")
                             dport = input()
                             try:
                                 dport = int(dport)
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please insert destination port number")
+                                output(out_lck, "Please insert new destination port")
                                 dport2 = input()
                                 try:
                                     dport2 = int(dport2)
@@ -259,7 +260,7 @@ if __name__ == "__main__":
                                             output(out_lck, "Option not available")
                     # Block inbound or outbound traffic
                     elif action == 5:
-                        output(out_lck, "Insert destination port:")
+                        output(out_lck, "Insert port:")
                         p = input()
                         try:
                             port = str(p)
@@ -285,15 +286,13 @@ if __name__ == "__main__":
                                     output(out_lck, "A number is required")
                                 else:
                                     if int_option == 1:
-                                        output(out_lck, "Insert destination:")
-                                        dip = input()
 
                                         if protocol == 1:
-                                            rules.block_input(out_lck, config._base + dip, port, "tcp")
+                                            rules.block_input(out_lck, my_ip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_input(out_lck, config._base + dip, port, "udp")
+                                            rules.block_input(out_lck, my_ip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_input(out_lck, config._base + dip, port, "icmp")
+                                            rules.block_input(out_lck, my_ip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     elif int_option == 2:
