@@ -3,115 +3,73 @@ from helpers.helpers import output
 
 
 # Show tables state
-def show_tables(out_lck):
-    cmd = "iptables -L"
-    cmd1 = "iptables -t nat -L"
-    cmd2 = "iptables -t mangle -L"
-
-    output(out_lck, "\n----------------------- MAIN TABLE -----------------------\n")
+def show_tc(out_lck):
+    cmd = "tc -s qdisc"
     os.system(cmd)
-    output(out_lck, "\n----------------------------------------------------------\n")
-    output(out_lck, "\n----------------------- NAT TABLE ------------------------\n")
-    os.system(cmd1)
-    output(out_lck, "\n----------------------------------------------------------\n")
-    output(out_lck, "\n---------------------- MANGLE TABLE ----------------------\n")
-    os.system(cmd2)
-    output(out_lck, "\n----------------------------------------------------------\n")
     output(out_lck, "\n")
 
 
 # Flush di tutte le tavole
-def flush_tables(out_lck):
-    cmd = "iptables -X"
-    cmd1 = "iptables -F"
-    cmd2 = "iptables -t nat -X"
-    cmd3 = "iptables -t nat -F"
-    cmd4 = "iptables -t mangle -X"
-    cmd5 = "iptables -t mangle -F"
+def flush_tc(out_lck):
+    cmd = "tc qdisc del dev eth0 root"
+    cmd1 = "tc qdisc del dev wlan0 root"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
-    failed2 = os.system(cmd2)
-    failed3 = os.system(cmd3)
-    failed4 = os.system(cmd4)
-    failed5 = os.system(cmd5)
-
-    if not (failed and failed1 and failed2 and failed3 and failed4 and failed5):
+    if not (failed and failed1 and failed2):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
-        output(out_lck, cmd2)
-        output(out_lck, cmd3)
-        output(out_lck, cmd4)
-        output(out_lck, cmd5)
     else:
         output(out_lck, "Rules not applied")
-
     output(out_lck, "\n")
 
-# Blocca sorgente IP
-def block_IPsorg(out_lck, ip):
-    cmd = "iptables -N LOGGING"
-    cmd1 = "iptables -A FORWARD -s " + ip + " -j LOGGING"
-    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
-    cmd3 = "iptables -A LOGGING -j DROP"
+
+# Delay
+def delay(out_lck, dev,num):
+    cmd = "tc qdisc add dev " + dev + " root netem delay " + num + "ms"
     failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    failed2 = os.system(cmd2)
-    failed3 = os.system(cmd3)
-    if not (failed and failed1 and failed2 and failed3):
+    if not (failed):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
-        output(out_lck, cmd2)
-        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
-
     output(out_lck, "\n")
 
-# Blocca protocollo
-def block_proto(out_lck, proto):
-    cmd = "iptables -N LOGGING"
-    cmd1 = "iptables -A FORWARD -p " + proto + " -s 0/0 -d 0/0 -j LOGGING"
-    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
-    cmd3 = "iptables -A LOGGING -j DROP"
+# Delay Random
+def delay(out_lck, dev,num):
+    cmd = "tc qdisc change dev " + dev + " root netem delay " + num + "ms " + num2 + "ms"
     failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    failed2 = os.system(cmd2)
-    failed3 = os.system(cmd3)
-    if not (failed and failed1 and failed2 and failed3):
+    if not (failed):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
-        output(out_lck, cmd2)
-        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
-
     output(out_lck, "\n")
 
-# Blocca porta
-def block_port(out_lck, interface, proto, porta):
-    cmd = "iptables -N LOGGING"
-    cmd1 = "iptables -A FORWARD -i " + interface + " -p " + proto + " --dport " + porta + " -j LOGGING"
-    cmd2 = "iptables -A LOGGING  -j LOG --log-prefix "'[Drop_Packet]'" --log-level 4"
-    cmd3 = "iptables -A LOGGING -j DROP"
+# Lost packets
+def lost_pck(out_lck, dev, n):
+    cmd = "tc qdisc change dev " + dev + " root netem loss " + n + "%"
     failed = os.system(cmd)
-    failed1 = os.system(cmd1)
-    failed2 = os.system(cmd2)
-    failed3 = os.system(cmd3)
-    if not (failed and failed1 and failed2 and failed3):
+    if not (failed):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
-        output(out_lck, cmd1)
-        output(out_lck, cmd2)
-        output(out_lck, cmd3)
     else:
         output(out_lck, "Rules not applied")
 
     output(out_lck, "\n")
 
 
+# Duplicate
+def lost_pck(out_lck, dev, n):
+    cmd = "tc qdisc change dev " + dev + " root netem duplicate " + n + "%"
+    failed = os.system(cmd)
+    if not (failed):
+        output(out_lck, "\nApplied rules:")
+        output(out_lck, cmd)
+    else:
+        output(out_lck, "Rules not applied")
+
+    output(out_lck, "\n")
 # Blocca porta solo per indirizzo (o classe)
 def block_sel_port(out_lck, interface, proto, ip, porta):
     cmd = "iptables -N LOGGING"
@@ -275,3 +233,4 @@ def set_TTL(out_lck, ttl):
         output(out_lck, "Rules not applied")
 
     output(out_lck, "\n")
+

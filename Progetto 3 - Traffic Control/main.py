@@ -30,9 +30,9 @@ if __name__ == "__main__":
 
         main_menu = loop_menu(out_lck, "action", [  "Send messages ",
                                                     "Receive messages ",
-                                                    "Apply iptables rules ",
-                                                    "Reset iptables rules ",
-                                                    "Show iptables",
+                                                    "Apply tc rules ",
+                                                    "Reset tc rules ",
+                                                    "Show tc rules",
                                                     "Show logs "])
         if main_menu is not None:
             if main_menu == 1:
@@ -151,9 +151,9 @@ if __name__ == "__main__":
                     except Exception:                               # Daniele: non so che Exception da il multithreading
                         output(out_lck, "Thread not initialized")
             elif main_menu == 3:
-                action = loop_menu(out_lck, "action", [ "Block Protocol",
-                                                        "Block IP source",
-                                                        "Block Port",
+                action = loop_menu(out_lck, "action", [ "Delay",
+                                                        "Delay Random",
+                                                        "Lost Packets",
                                                         "Port Forwarding",
                                                         "Block inbound or outbound traffic",
                                                         "Redirection (destination)",
@@ -162,57 +162,99 @@ if __name__ == "__main__":
                                                         "SYN defense"])
 
                 if action is not None:
-                    # Blocco Protocollo
+                    # Delay
                     if action == 1:
-                        output(out_lck, "Please select the protocol")
-                        output(out_lck, "\n1: TCP\n2: UDP\n3: ICMP")
-                        proto = input()
+                        output(out_lck, "Please insert time of delay:")
+                        n_delay = input()
                         try:
-                            protocol = int(proto)
+                            num = str(n_delay)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        dev = input()
+                        try:
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            if protocol == 1:
-                                rules.block_proto(out_lck, "tcp")
-                            elif protocol == 2:
-                                rules.block_proto(out_lck, "udp")
-                            elif protocol == 3:
-                                rules.block_proto(out_lck, "icmp")
+                            if device == 1:
+                                rules.delay(out_lck, "wlan0",num)
+                            elif device == 2:
+                                rules.delay(out_lck, "eth0",num)
                             else:
                                 output(out_lck, "Option not available")
-                    # Blocco IP
-                    elif action == 2:
-                        output(out_lck, "Please insert the number of the host (or class)")
-                        option = input()
-                        host = config._base + option
-                        rules.block_IPsorg(out_lck, "%s" % host)
-                    # Blocco Porta
-                    elif action == 3:
-                        output(out_lck, "Please insert port number")
-                        porta = input()
-                        protocol = None
-                        interface = None
+                    #Delay Random
+                    if action == 2:
+                        output(out_lck, "Please insert the range1 time of delay:")
+                        n_delay = input()
+                        output(out_lck, "Please insert the range2 time of delay:")
+                        n_delay2 = input()
                         try:
-                            port = int(porta)
+                            num = str(n_delay)
+                            num2 = str(n_delay2)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        dev = input()
+                        try:
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck, "Please insert Network Interface")
-
-                            interface = input()             #manca gestione errore
-
-                            proto = loop_menu(out_lck, "protocol", ["TCP", "UDP", "ICMP"])
-                            if proto is not None:
-                                if proto == 1:
-                                    rules.block_port(out_lck, interface, "tcp", porta)
-
-                                elif proto == 2:
-                                    rules.block_port(out_lck, interface, "udp", porta)
-
-                                elif proto == 3:
-                                    rules.block_port(out_lck, interface, "icmp", porta)
-                    # Port Forwarding
+                            if device == 1:
+                                rules.delay(out_lck, "wlan0",num,num2)
+                            elif device == 2:
+                                rules.delay(out_lck, "eth0",num,num2)
+                            else:
+                                output(out_lck, "Option not available")
+                    # Lost Packets
+                    elif action == 3:
+                        output(out_lck, "Please insert the number %: ")
+                        option = input()
+                        try:
+                            n=str(option)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                            output(out_lck, "Please select Wlan or Eth")
+                            output(out_lck, "\n1: Wlan\n2: Eth")
+                            dev = input()
+                            try:
+                                device = int(dev)
+                            except ValueError:
+                                output(out_lck, "A number is required")
+                            else:
+                                if device == 1:
+                                     rules.delay(out_lck, "wlan0", n)
+                                elif device == 2:
+                                     rules.delay(out_lck, "eth0", n)
+                                else:
+                                     output(out_lck, "Option not available")
+                    # Lost Packets
                     elif action == 4:
+                         output(out_lck, "Please insert the number %: ")
+                         option = input()
+                         try:
+                             n = str(option)
+                         except ValueError:
+                             output(out_lck, "A number is required")
+                             output(out_lck, "Please select Wlan or Eth")
+                             output(out_lck, "\n1: Wlan\n2: Eth")
+                             dev = input()
+                             try:
+                                device = int(dev)
+                             except ValueError:
+                                output(out_lck, "A number is required")
+                             else:
+                                if device == 1:
+                                     rules.delay(out_lck, "wlan0", n)
+                                elif device == 2:
+                                     rules.delay(out_lck, "eth0", n)
+                                else:
+                                     output(out_lck, "Option not available")
+                    # Port Forwarding
+                    elif action == 5:
                         output(out_lck, "Please insert the destination host")  # Da controllare
                         temphost = input()
                         try:
@@ -253,7 +295,7 @@ if __name__ == "__main__":
                                         else:
                                             output(out_lck, "Option not available")
                     # Block inbound or outbound traffic
-                    elif action == 5:
+                    elif action == 6:
                         output(out_lck, "Insert destination port:")
                         p = input()
                         try:
@@ -306,10 +348,8 @@ if __name__ == "__main__":
                                             output(out_lck, "Option not available")
                                     else:
                                         output(out_lck, "Option not available")
-
-
                     # Redirect
-                    elif action == 6:
+                    elif action == 7:
                         output(out_lck, "Please insert the number of local IP")
                         ip1 = input()
 
@@ -345,9 +385,8 @@ if __name__ == "__main__":
 
                                 else:
                                     output(out_lck, "Option not available")
-
                     # Alterazione pacchetto (mangle)
-                    elif action == 7:
+                    elif action == 8:
                         # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
                         # interface = input()  # manca gestione errore
 
@@ -359,12 +398,11 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             rules.set_TTL(out_lck, str_ttl)
-
                     # Limita ping
-                    elif action == 8:
+                    elif action == 9:
                         rules.lim_risp_ping(out_lck)
                     # SYN
-                    elif action == 9:
+                    elif action == 10:
                         output(out_lck, "Please insert port number")
                         porta = input()
                         try:
@@ -399,9 +437,9 @@ if __name__ == "__main__":
                                     else:
                                         output(out_lck, "Option not available")
             elif main_menu == 4:
-                rules.flush_tables(out_lck)
+                rules.flush_tc(out_lck)
             elif main_menu == 5:
-                rules.show_tables(out_lck)
+                rules.show_tc(out_lck)
             elif main_menu == 6:
                 # Show logs
                 print("logs")
