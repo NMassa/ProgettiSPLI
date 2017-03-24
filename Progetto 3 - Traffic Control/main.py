@@ -301,8 +301,8 @@ if __name__ == "__main__":
                                 device = int(dev)
                             except ValueError:
                                 output(out_lck, "A number is required")
-                            output(out_lck, "Please select Kbits or Mbits")
-                            output(out_lck, "\nK: Kbit\nM: Mbits")
+                            output(out_lck, "Please select Kbpss or Mbpss")
+                            output(out_lck, "\nk: Kbit\nm: Mbits")
                             bit = input()
                             try:
                                 bit1 = str(bit)

@@ -245,11 +245,11 @@ def corrupt(out_lck, dev,num):
         output(out_lck, "Rules not applied")
     output(out_lck, "\n")
 
-#Bit-rate limitata
+#Bit-rate limitata       DA CONTROLLARE--- lanciando questi comandi da terminale funzionano, qua mi danno errore
 def limit_bitrate(out_lck, dev,num,bit):
     cmd = "tc qdisc add dev " + dev + " handle 1: root htb default 11"
     #cmd1 = "tc class add dev eth0 parent 1: classid 1:1 htb rate 1kbps"
-    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:11 htb rate " + num + "  " + bit + "bits"
+    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:11 htb rate " + num + "  " + bit + "bps"
     failed = os.system(cmd)
     failed2 = os.system(cmd2)
     if not (failed and failed2):
