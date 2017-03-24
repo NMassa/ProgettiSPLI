@@ -1,0 +1,52 @@
+#Crea l'albero con infiniti figli e di conseguenza infinite regole di controllo 
+tc qdisc add dev wlan0 handle 1: root htb
+
+#La classe root non ha nessuna regola che gli limita il traffico (gli do 1000MB/s)
+tc class add dev wlan0 parent 1: classid 1:1 htb rate 1000Mbps
+
+#Creo i figli specificando il padre e ad ognuno associo una bit-rate sempre non limitante (100 MB/s)
+tc class add dev eth0 parent 1:1 classid 1:11 htb rate 100Mbps
+tc class add dev eth0 parent 1:1 classid 1:12 htb rate 100Mbps
+tc class add dev eth0 parent 1:1 classid 1:13 htb rate 100Mbps
+
+#Limito bit-rate con tbf
+tc qdisc add dev eth0 parent 1:13 handle 30: tbf rate 20kbit buffer 1600 limit 3000
+
+#Filtro su un IP destinatario
+tc filter add dev eth0 protocol ip prio 1 u32 match ip dst "ip_destinatario" flowid 1:12
+
+#Filtro su una porta specifica
+tc filter add dev eth0 protocol ip prio 1 u32 match ip dport "porta_dest" 0xffff flowid 1:13
+
+#Ritarda tutti i pacchetti di 90ms che arrivano a interfaccia eth0
+tc qdisc add dev eth0 root netem delay 90ms
+
+#visualizzare le regole attive
+tc -s qdisc
+
+#rimuovere le regole netem
+tc qdisc del dev eth0 root netem
+
+#rimuovere tutte le regole
+tc qdisc del dev eth0 root
+
+#delay random da 100ms a 10ms
+tc qdisc change dev eth0 root netem delay 100ms 10ms
+
+#perdita pacchetti in percentuale
+tc qdisc change dev eth0 root netem loss 0.1%
+
+#perdita pacchetti con successiva perdita 1/4 della precedente
+tc qdisc change dev eth0 root netem loss 0.3% 25%
+
+#duplicare i pacchetti
+tc qdisc change dev eth0 root netem duplicate 1%
+
+#corrompe i pacchetti ( inserisce un singolo bit di errore)
+tc qdisc change dev eth0 root netem corrupt 0.1%
+
+#mangle mark packets per PRE-POST ROUTING
+sudo iptables -t mangle -A FORWARD -s "ip_sorgente" -d "ip_destinatario" -j MARK;
+sudo iptables -t nat -A PREROUTING -t mangle -p "protocollo" -j MARK --set-mark "numero";
+sudo iptables -t nat -A POSTROUTING -t mangle "ip_sorgente" -d "destinatario" -j MARK
+
