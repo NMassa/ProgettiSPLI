@@ -1,0 +1,55 @@
+import threading
+import socket
+import sys
+
+if __name__ == '__main__':
+    class Server(threading.Thread):
+        socket = None
+        host = None
+        protocol = None
+        port = None
+        my_ip = None
+
+        def __init__(self):
+                self.host = sys.argv[1]
+                self.protocol = sys.argv[2]
+                self.port = sys.argv[3]
+                self.my_ip = sys.argv[4]
+
+        def run(self):
+            if str(self.protocol) == "TCP":
+
+                # Ascolto socket TCP
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+                    self.socket.bind(('', self.port))  # inizializzazione della connessione
+                    self.socket.listen(100)
+                    print("Listening on port %s" % (self.port))
+                    conn, addr = self.socket.accept()
+                    size = 1024
+                    data = conn.recv(size)
+                    while len(data) > 0:
+                        print("Received: %s" % data)
+                        data = conn.recv(size)
+                except socket.error as msg:
+                    print(str(msg))
+
+            # Ascolto socket UDP
+            elif str(self.protocol) == "UDP":
+
+                _socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+                    _socket.bind(("", self.port))  # inizializzazione della connessione
+                    print("Listening on port %s" % (self.port))
+                    while True:
+                        data, address = _socket.recvfrom(1024)
+                        print("Received: %s" % data)
+
+                except socket.error as msg:
+                    print(str(msg))
+            else:
+                # errori
+                exit()
+

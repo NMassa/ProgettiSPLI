@@ -1,11 +1,15 @@
 import threading
 import sys
+import os
 from helpers.helpers import output
 from helpers.connection import Connection
 from helpers import config
 from helpers.helpers import loop_menu
 #import iptc     #Daniele: potrebbe servire in un secondo momento...
 from helpers import rules
+from helpers import server
+import subprocess
+import os
 
 if __name__ == "__main__":
 
@@ -23,6 +27,7 @@ if __name__ == "__main__":
             my_ip = config._base + ip
 
     output(out_lck, "Source IP: " + my_ip)
+    #my_ip = config._base + "1.254"
     while True:
         # Main Menu
         #output(out_lck, "Insert your IP: ")
@@ -116,15 +121,14 @@ if __name__ == "__main__":
                 protocol = loop_menu(out_lck, "protocol", ["TCP", "UDP"])
                 if protocol is not None:
                     if protocol == 1:
-                        protocol = "TCP"
+                        protocol = "tcp"
                     elif protocol == 2:
-                        protocol = "UDP"
+                        protocol = "udp"
 
                     output(out_lck, "Selected protocol: %s" % protocol)
 
-
                     port = None
-                    output(out_lck, "Insert destination port number:")
+                    output(out_lck, "Insert port number:")
 
                     while port is None:
                         try:
@@ -133,7 +137,7 @@ if __name__ == "__main__":
                             option = None
 
                         if option is None:
-                            output(out_lck, "Please insert destination port number")
+                            output(out_lck, "Please insert port number")
                         else:
                             try:
                                 int_option = int(option)
@@ -144,12 +148,16 @@ if __name__ == "__main__":
 
                     output(out_lck, "Selected port: %i" % port)
 
-                    c = Connection(None, protocol, port, my_ip, out_lck)
-                    try:
-                        c.listen()
-                        output(out_lck, "Listening on port %s.." % port)
-                    except Exception:                               # Daniele: non so che Exception da il multithreading
-                        output(out_lck, "Thread not initialized")
+                    subprocess.Popen(["xterm", "-e", "python3 ./helpers/server.py " + protocol + " " + str(port)])
+
+                    # proc = subprocess.Popen(args=["gnome-terminal", "--disable-factory", " --command=python ./helpers/server.py.bak"],
+                    #                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, preexec_fn=os.setpgrp)
+                    # c = Connection(None, protocol, port, my_ip, out_lck)
+                    # try:
+                    #     c.listen()
+                    #     output(out_lck, "Listening on port %s.." % port)
+                    # except Exception:                               # Daniele: non so che Exception da il multithreading
+                    #     output(out_lck, "Thread not initialized")
             elif main_menu == 3:
                 action = loop_menu(out_lck, "action", [ "Block Protocol",
                                                         "Block IP source",
@@ -157,15 +165,13 @@ if __name__ == "__main__":
                                                         "Port Forwarding",
                                                         "Block inbound or outbound traffic",
                                                         "Redirection (destination)",
-                                                        "Packet alteration (ttl)",
-                                                        "Ping limit",
-                                                        "SYN defense"])
+                                                        "Packet alteration (ttl)"])
 
                 if action is not None:
                     # Blocco Protocollo
                     if action == 1:
                         output(out_lck, "Please select the protocol")
-                        output(out_lck, "\n1: TCP\n2: UDP\n3: ICMP")
+                        output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
                         proto = input()
                         try:
                             protocol = int(proto)
@@ -182,7 +188,7 @@ if __name__ == "__main__":
                                 output(out_lck, "Option not available")
                     # Blocco IP
                     elif action == 2:
-                        output(out_lck, "Please insert the number of the host (or class)")
+                        output(out_lck, "Please insert the number of the source host (or subnet)")
                         option = input()
                         host = config._base + option
                         rules.block_IPsorg(out_lck, "%s" % host)
@@ -220,14 +226,14 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck, "Please insert destination port number")
+                            output(out_lck, "Please insert original port")
                             dport = input()
                             try:
                                 dport = int(dport)
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please insert destination port number")
+                                output(out_lck, "Please insert new destination port")
                                 dport2 = input()
                                 try:
                                     dport2 = int(dport2)
@@ -243,18 +249,18 @@ if __name__ == "__main__":
                                         output(out_lck, "A number is required")
                                     else:
                                         if protocol == 1:
-                                            rules.port_forw(out_lck, "tcp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "tcp", config._base + ip1, dport, dport2)
 
                                         elif protocol == 2:
-                                            rules.port(out_lck, "udp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "udp", config._base + ip1, dport, dport2)
 
                                         elif protocol == 3:
-                                            rules.port_forw(out_lck, "icmp", ip1, dport, dport2)
+                                            rules.port_forw(out_lck, "icmp", config._base + ip1, dport, dport2)
                                         else:
                                             output(out_lck, "Option not available")
                     # Block inbound or outbound traffic
                     elif action == 5:
-                        output(out_lck, "Insert destination port:")
+                        output(out_lck, "Insert port:")
                         p = input()
                         try:
                             port = str(p)
@@ -280,15 +286,13 @@ if __name__ == "__main__":
                                     output(out_lck, "A number is required")
                                 else:
                                     if int_option == 1:
-                                        output(out_lck, "Insert destination:")
-                                        dip = input()
 
                                         if protocol == 1:
-                                            rules.block_input(out_lck, dip, port, "tcp")
+                                            rules.block_input(out_lck, my_ip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_input(out_lck, dip, port, "udp")
+                                            rules.block_input(out_lck, my_ip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_input(out_lck, dip, port, "icmp")
+                                            rules.block_input(out_lck, my_ip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     elif int_option == 2:
@@ -297,11 +301,11 @@ if __name__ == "__main__":
                                         dip = input()
 
                                         if protocol == 1:
-                                            rules.block_output(out_lck, dip, port, "tcp")
+                                            rules.block_output(out_lck, config._base + dip, port, "tcp")
                                         elif protocol == 2:
-                                            rules.block_output(out_lck, dip, port, "udp")
+                                            rules.block_output(out_lck, config._base + dip, port, "udp")
                                         elif protocol == 3:
-                                            rules.block_output(out_lck, dip, port, "icmp")
+                                            rules.block_output(out_lck, config._base + dip, port, "icmp")
                                         else:
                                             output(out_lck, "Option not available")
                                     else:
@@ -310,10 +314,10 @@ if __name__ == "__main__":
 
                     # Redirect
                     elif action == 6:
-                        output(out_lck, "Please insert the number of local IP")
+                        output(out_lck, "Please insert original destination IP")
                         ip1 = input()
 
-                        output(out_lck, "Please insert the number of the receiver")
+                        output(out_lck, "Please insert new destination IP")
                         ip2 = input()
 
                         output(out_lck, "Please insert port number")
@@ -350,7 +354,8 @@ if __name__ == "__main__":
                     elif action == 7:
                         # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
                         # interface = input()  # manca gestione errore
-
+                        ip_sorg = None
+                        ip_dest = None
                         output(out_lck, "Please insert the number of TTL")  # Da controllare
                         ttl = input()
                         try:
@@ -358,53 +363,90 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            rules.set_TTL(out_lck, str_ttl)
-
-                    # Limita ping
-                    elif action == 8:
-                        rules.lim_risp_ping(out_lck)
-                    # SYN
-                    elif action == 9:
-                        output(out_lck, "Please insert port number")
-                        porta = input()
-                        try:
-                            port = str(porta)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            output(out_lck, "Please max number of connections")
-                            connections = input()
+                            output(out_lck, "Please source IP: ")
+                            ip = input()
                             try:
-                                conn = str(connections)
+                                ip_sorg = config._base + ip
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please select a protocol")
-                                output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                                proto = input()
+                                output(out_lck, "Please destination IP: ")
+                                ip = input()
                                 try:
-                                    protocol = int(proto)
+                                    ip_dest = config._base + ip
                                 except ValueError:
                                     output(out_lck, "A number is required")
-                                else:
-                                    if protocol == 1:
-                                        rules.rest_conn_Ip(out_lck, "tcp", port, conn)
+                                rules.set_TTL(out_lck, ip_sorg, ip_dest, str_ttl)
 
-                                    elif protocol == 2:
-                                        rules.rest_conn_Ip(out_lck, "udp", port, conn)
-
-                                    elif protocol == 3:
-                                        rules.rest_conn_Ip(out_lck, "icmp", port, conn)
-
-                                    else:
-                                        output(out_lck, "Option not available")
+                    # Limita ping
+                    # elif action == 8:
+                    #     rules.lim_risp_ping(out_lck)
+                    # # SYN
+                    # elif action == 9:
+                    #     output(out_lck, "Please insert port number")
+                    #     porta = input()
+                    #     try:
+                    #         port = str(porta)
+                    #     except ValueError:
+                    #         output(out_lck, "A number is required")
+                    #     else:
+                    #         output(out_lck, "Please max number of connections")
+                    #         connections = input()
+                    #         try:
+                    #             conn = str(connections)
+                    #         except ValueError:
+                    #             output(out_lck, "A number is required")
+                    #         else:
+                    #             output(out_lck, "Please select a protocol")
+                    #             output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
+                    #             proto = input()
+                    #             try:
+                    #                 protocol = int(proto)
+                    #             except ValueError:
+                    #                 output(out_lck, "A number is required")
+                    #             else:
+                    #                 if protocol == 1:
+                    #                     rules.rest_conn_Ip(out_lck, "tcp", port, conn)
+                    #
+                    #                 elif protocol == 2:
+                    #                     rules.rest_conn_Ip(out_lck, "udp", port, conn)
+                    #
+                    #                 elif protocol == 3:
+                    #                     rules.rest_conn_Ip(out_lck, "icmp", port, conn)
+                    #
+                    #                 else:
+                    #                     output(out_lck, "Option not available")
             elif main_menu == 4:
                 rules.flush_tables(out_lck)
             elif main_menu == 5:
                 rules.show_tables(out_lck)
             elif main_menu == 6:
                 # Show logs
-                print("logs")
+                output(out_lck, "\nShow LOG, select prefix: ")
+                prefix = loop_menu(out_lck, "protocol", ["[Drop_Packet]",
+                                                         "[Pre_Mangle]",
+                                                         "[Post_Mangle]",
+                                                         "[Pre_Redirect]",
+                                                         "[Post_Redirect]"])
+                if prefix == 1:
+                    prefix = "Drop_Packet"
+                elif prefix == 2:
+                    prefix = "Pre_Mangle"
+                elif prefix == 3:
+                    prefix = "Post_Mangle"
+                elif prefix == 4:
+                    prefix = "Pre_Redirect"
+                elif prefix == 5:
+                    prefix = "Post_Redirect"
+
+                cmd = "grep -in \'" + prefix + "\' /var/log/iptables.log | tail -10"
+                output(out_lck, "\ncommand: %s" % cmd)
+                failed = os.system(cmd)
+                if not failed:
+                    output(out_lck, "\nApplied rules:")
+                    output(out_lck, cmd)
+
+
             # elif main_menu == 6:
             #     output(out_lck, "Please insert destination IP")
             #     destinazione = input()

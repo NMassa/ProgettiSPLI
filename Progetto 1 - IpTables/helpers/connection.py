@@ -6,7 +6,6 @@ import time
 import threading
 
 
-
 class Connection:
         socket = None
         host = None
@@ -26,14 +25,17 @@ class Connection:
         def connect(self):
             #Socket TCP
             if str(self.protocol) == "TCP":
-                for i in range(0, 1):
+                for i in range(0, 10):
                     _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    _socket.settimeout(1)
                     try:
                         _socket.connect((self.host, self.port))
                         #qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, N: " + str(i), encoding="utf8")
                         _socket.sendall(message)
+
+                        helpers.output(self.out_lck, "Sent %d" % i)
 
                     except socket.error as msg:
                         helpers.output(self.out_lck, str(msg))
@@ -50,11 +52,11 @@ class Connection:
                     try:
                         self.socket.connect((self.host, self.port))
                         # qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, N: " + str(i), encoding="utf8")
 
                         self.socket.sendall(message)
 
-                        helpers.output(self.out_lck, "%d" % i)
+                        helpers.output(self.out_lck, "Sent %d" % i)
                         self.socket.close()
 
                     except socket.error as msg:
