@@ -223,8 +223,8 @@ def out_ssh(out_lck, interface):
 
 
 # Modifica ttl
-def set_TTL(out_lck, ttl):
-    cmd = "iptables -t mangle -A FORWARD -j TTL --ttl-set " + ttl
+def set_MARK(out_lck, mark):
+    cmd = "iptables -t mangle -A FORWARD -j MARK --set-mark " + mark
     failed = os.system(cmd)
     if not failed:
         output(out_lck, "\nApplied rules:")
@@ -234,3 +234,28 @@ def set_TTL(out_lck, ttl):
 
     output(out_lck, "\n")
 
+# Corrompe pacchetti
+def corrupt(out_lck, dev,num):
+    cmd = "tc qdisc change dev " + dev + " root netem corrupt " + num + "%"
+    failed = os.system(cmd)
+    if not (failed):
+        output(out_lck, "\nApplied rules:")
+        output(out_lck, cmd)
+    else:
+        output(out_lck, "Rules not applied")
+    output(out_lck, "\n")
+
+#Bit-rate limitata
+def limit_bitrate(out_lck, dev,num,bit):
+    cmd = "tc qdisc add dev " + dev + " handle 1: root htb default 11"
+    #cmd1 = "tc class add dev eth0 parent 1: classid 1:1 htb rate 1kbps"
+    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:11 htb rate " + num + "  " + bit + "bits"
+    failed = os.system(cmd)
+    failed2 = os.system(cmd2)
+    if not (failed and failed2):
+        output(out_lck, "\nApplied rules:")
+        output(out_lck, cmd)
+        output(out_lck,cmd2)
+    else:
+        output(out_lck, "Rules not applied")
+    output(out_lck, "\n")

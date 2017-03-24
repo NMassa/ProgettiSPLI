@@ -155,11 +155,9 @@ if __name__ == "__main__":
                                                         "Delay Random",
                                                         "Lost Packets",
                                                         "Duplicate",
-                                                        "Block inbound or outbound traffic",
-                                                        "Redirection (destination)",
-                                                        "Packet alteration (ttl)",
-                                                        "Ping limit",
-                                                        "SYN defense"])
+                                                        "Corrupt",
+                                                        "Packet alteration (Mark)",
+                                                        "Limit bit-rate"])
 
                 if action is not None:
                     # Delay
@@ -253,189 +251,71 @@ if __name__ == "__main__":
                                      rules.duplicate(out_lck, "lo", n)
                                 else:
                                      output(out_lck, "Option not available")
-                    # Port Forwarding
+                    # Corrupt Packets
                     elif action == 5:
-                        output(out_lck, "Please insert the destination host")  # Da controllare
-                        temphost = input()
+                        output(out_lck, "Please insert % of corruption:")
+                        n = input()
                         try:
-                            ip1 = str(temphost)
+                            num = str(n)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        dev = input()
+                        try:
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            output(out_lck, "Please insert destination port number")
-                            dport = input()
-                            try:
-                                dport = int(dport)
-                            except ValueError:
-                                output(out_lck, "A number is required")
+                            if device == 1:
+                                rules.corrupt(out_lck, "wlp2s0", num)
+                            elif device == 2:
+                                rules.corrupt(out_lck, "lo", num)
                             else:
-                                output(out_lck, "Please insert destination port number")
-                                dport2 = input()
-                                try:
-                                    dport2 = int(dport2)
-                                except ValueError:
-                                    output(out_lck, "A number is required")
-                                else:
-                                    output(out_lck, "Please select the Protocol")
-                                    output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                                    proto = input()
-                                    try:
-                                        protocol = int(proto)
-                                    except ValueError:
-                                        output(out_lck, "A number is required")
-                                    else:
-                                        if protocol == 1:
-                                            rules.port_forw(out_lck, "tcp", ip1, dport, dport2)
-
-                                        elif protocol == 2:
-                                            rules.port(out_lck, "udp", ip1, dport, dport2)
-
-                                        elif protocol == 3:
-                                            rules.port_forw(out_lck, "icmp", ip1, dport, dport2)
-                                        else:
-                                            output(out_lck, "Option not available")
-                    # Block inbound or outbound traffic
+                                output(out_lck, "Option not available")
+                    # Alterazione pacchetto (mangle MARK)
                     elif action == 6:
-                        output(out_lck, "Insert destination port:")
-                        p = input()
-                        try:
-                            port = str(p)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            output(out_lck, "Please select a protocol:")
-                            output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                            proto = input()
-                            try:
-                                protocol = int(proto)
-                            except ValueError:
-                                output(out_lck, "A number is required")
-                            else:
-                                output(out_lck, "Block input or output?: ")
-                                output(out_lck, "1: Input")
-                                output(out_lck, "2: Output")
-
-                                option = input()
-                                try:
-                                    int_option = int(option)
-                                except ValueError:
-                                    output(out_lck, "A number is required")
-                                else:
-                                    if int_option == 1:
-                                        output(out_lck, "Insert destination:")
-                                        dip = input()
-
-                                        if protocol == 1:
-                                            rules.block_input(out_lck, dip, port, "tcp")
-                                        elif protocol == 2:
-                                            rules.block_input(out_lck, dip, port, "udp")
-                                        elif protocol == 3:
-                                            rules.block_input(out_lck, dip, port, "icmp")
-                                        else:
-                                            output(out_lck, "Option not available")
-                                    elif int_option == 2:
-
-                                        output(out_lck, "Insert destination:")
-                                        dip = input()
-
-                                        if protocol == 1:
-                                            rules.block_output(out_lck, dip, port, "tcp")
-                                        elif protocol == 2:
-                                            rules.block_output(out_lck, dip, port, "udp")
-                                        elif protocol == 3:
-                                            rules.block_output(out_lck, dip, port, "icmp")
-                                        else:
-                                            output(out_lck, "Option not available")
-                                    else:
-                                        output(out_lck, "Option not available")
-                    # Redirect
-                    elif action == 7:
-                        output(out_lck, "Please insert the number of local IP")
-                        ip1 = input()
-
-                        output(out_lck, "Please insert the number of the receiver")
-                        ip2 = input()
-
-                        output(out_lck, "Please insert port number")
-                        porta = input()
-                        try:
-                            port = str(porta)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            output(out_lck, "Please select a protocol")
-                            output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                            proto = input()
-                            try:
-                                protocol = int(proto)
-                            except ValueError:
-                                output(out_lck, "A number is required")
-                            else:
-                                if protocol == 1:
-                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                      "%s%s" % (config._base, ip1), "tcp", port)
-
-                                elif protocol == 2:
-                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                      "%s%s" % (config._base, ip1), "udp", port)
-
-                                elif protocol == 3:
-                                    rules.redirection(out_lck, "%s%s" % (config._base, ip2),
-                                                      "%s%s" % (config._base, ip1), "icmp", port)
-
-                                else:
-                                    output(out_lck, "Option not available")
-                    # Alterazione pacchetto (mangle)
-                    elif action == 8:
                         # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
                         # interface = input()  # manca gestione errore
 
-                        output(out_lck, "Please insert the number of TTL")  # Da controllare
-                        ttl = input()
+                        output(out_lck, "Please insert the number of MARK")
+                        mark = input()
                         try:
-                            str_ttl = str(ttl)
+                            str_mark = str(mark)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            rules.set_TTL(out_lck, str_ttl)
-                    # Limita ping
-                    elif action == 9:
-                        rules.lim_risp_ping(out_lck)
-                    # SYN
-                    elif action == 10:
-                        output(out_lck, "Please insert port number")
-                        porta = input()
-                        try:
-                            port = str(porta)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            output(out_lck, "Please max number of connections")
-                            connections = input()
+                            rules.set_MARK(out_lck, str_mark)
+                    # Limita bit-rate
+                    elif action == 7:
+                            output(out_lck, "Please insert number:")
+                            n_limit = input()
                             try:
-                                conn = str(connections)
+                                num = str(n_limit)
+                            except ValueError:
+                                output(out_lck, "A number is required")
+                            output(out_lck, "Please select Wlan or Eth")
+                            output(out_lck, "\n1: Wlan\n2: Eth")
+                            dev = input()
+                            try:
+                                device = int(dev)
+                            except ValueError:
+                                output(out_lck, "A number is required")
+                            output(out_lck, "Please select Kbits or Mbits")
+                            output(out_lck, "\nK: Kbit\nM: Mbits")
+                            bit = input()
+                            try:
+                                bit1 = str(bit)
                             except ValueError:
                                 output(out_lck, "A number is required")
                             else:
-                                output(out_lck, "Please select a protocol")
-                                output(out_lck, "1: TCP\n2: UDP\n3: ICMP")
-                                proto = input()
-                                try:
-                                    protocol = int(proto)
-                                except ValueError:
-                                    output(out_lck, "A number is required")
+                                if device == 1:
+                                    rules.limit_bitrate(out_lck, "wlp2s0", num,bit1)
+                                elif device == 2:
+                                    rules.limit_bitrate(out_lck, "lo", num,bit1)
                                 else:
-                                    if protocol == 1:
-                                        rules.rest_conn_Ip(out_lck, "tcp", port, conn)
+                                    output(out_lck, "Option not available")
 
-                                    elif protocol == 2:
-                                        rules.rest_conn_Ip(out_lck, "udp", port, conn)
-
-                                    elif protocol == 3:
-                                        rules.rest_conn_Ip(out_lck, "icmp", port, conn)
-
-                                    else:
-                                        output(out_lck, "Option not available")
             elif main_menu == 4:
                 rules.flush_tc(out_lck)
             elif main_menu == 5:
