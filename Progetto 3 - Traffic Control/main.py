@@ -179,9 +179,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlan0",num)
+                                rules.delay(out_lck, "wlp2s0",num)
                             elif device == 2:
-                                rules.delay(out_lck, "eth0",num)
+                                rules.delay(out_lck, "lo",num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
@@ -204,9 +204,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlan0",num,num2)
+                                rules.delay(out_lck, "wlp2s0",num,num2)
                             elif device == 2:
-                                rules.delay(out_lck, "eth0",num,num2)
+                                rules.delay(out_lck, "lo",num,num2)
                             else:
                                 output(out_lck, "Option not available")
                     # Lost Packets
@@ -226,9 +226,9 @@ if __name__ == "__main__":
                                 output(out_lck, "A number is required")
                             else:
                                 if device == 1:
-                                     rules.lost_pck(out_lck, "wlan0", n)
+                                     rules.lost_pck(out_lck, "wlp2s0", n)
                                 elif device == 2:
-                                     rules.lost_pck(out_lck, "eth0", n)
+                                     rules.lost_pck(out_lck, "lo", n)
                                 else:
                                      output(out_lck, "Option not available")
                     # Duplicate
@@ -248,9 +248,9 @@ if __name__ == "__main__":
                                 output(out_lck, "A number is required")
                              else:
                                 if device == 1:
-                                     rules.duplicate(out_lck, "wlan0", n)
+                                     rules.duplicate(out_lck, "wlp2s0", n)
                                 elif device == 2:
-                                     rules.duplicate(out_lck, "eth0", n)
+                                     rules.duplicate(out_lck, "lo", n)
                                 else:
                                      output(out_lck, "Option not available")
                     # Port Forwarding

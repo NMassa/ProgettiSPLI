@@ -11,11 +11,11 @@ def show_tc(out_lck):
 
 # Flush di tutte le tavole
 def flush_tc(out_lck):
-    cmd = "tc qdisc del dev eth0 root"
-    cmd1 = "tc qdisc del dev wlan0 root"
+    cmd = "tc qdisc del dev lo root"
+    cmd1 = "tc qdisc del dev wlp2s0 root"
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
-    if not (failed and failed1 and failed2):
+    if not (failed and failed1):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
