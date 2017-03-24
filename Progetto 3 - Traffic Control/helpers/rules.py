@@ -60,7 +60,7 @@ def lost_pck(out_lck, dev, n):
 
 
 # Duplicate
-def lost_pck(out_lck, dev, n):
+def duplicate(out_lck, dev, n):
     cmd = "tc qdisc change dev " + dev + " root netem duplicate " + n + "%"
     failed = os.system(cmd)
     if not (failed):

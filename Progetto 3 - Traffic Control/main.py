@@ -154,7 +154,7 @@ if __name__ == "__main__":
                 action = loop_menu(out_lck, "action", [ "Delay",
                                                         "Delay Random",
                                                         "Lost Packets",
-                                                        "Port Forwarding",
+                                                        "Duplicate",
                                                         "Block inbound or outbound traffic",
                                                         "Redirection (destination)",
                                                         "Packet alteration (ttl)",
@@ -226,12 +226,12 @@ if __name__ == "__main__":
                                 output(out_lck, "A number is required")
                             else:
                                 if device == 1:
-                                     rules.delay(out_lck, "wlan0", n)
+                                     rules.lost_pck(out_lck, "wlan0", n)
                                 elif device == 2:
-                                     rules.delay(out_lck, "eth0", n)
+                                     rules.lost_pck(out_lck, "eth0", n)
                                 else:
                                      output(out_lck, "Option not available")
-                    # Lost Packets
+                    # Duplicate
                     elif action == 4:
                          output(out_lck, "Please insert the number %: ")
                          option = input()
@@ -248,9 +248,9 @@ if __name__ == "__main__":
                                 output(out_lck, "A number is required")
                              else:
                                 if device == 1:
-                                     rules.delay(out_lck, "wlan0", n)
+                                     rules.duplicate(out_lck, "wlan0", n)
                                 elif device == 2:
-                                     rules.delay(out_lck, "eth0", n)
+                                     rules.duplicate(out_lck, "eth0", n)
                                 else:
                                      output(out_lck, "Option not available")
                     # Port Forwarding
