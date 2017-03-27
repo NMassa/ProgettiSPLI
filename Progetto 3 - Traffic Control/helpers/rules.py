@@ -97,16 +97,25 @@ def corrupt(out_lck, dev,num):
     output(out_lck, "\n")
 
 #Bit-rate limitata       DA CONTROLLARE--- lanciando questi comandi da terminale funzionano, qua mi danno errore
-def limit_bitrate(out_lck, dev,num,bit):
-    cmd = "tc qdisc add dev " + dev + " handle 1: root htb default 11"
-    #cmd1 = "tc class add dev eth0 parent 1: classid 1:1 htb rate 1kbps"
-    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:11 htb rate " + num + "  " + bit + "bps"
+def limit_bitrate(out_lck, dev, dest):
+    cmd = "tc qdisc add dev " + dev + " handle 1: root htb"
+    cmd1 = "tc class add dev " + dev + " parent 1: classid 1:1 htb rate 100Mbps"
+    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:20 htb rate 10kbps ceil 10kbps prio 1"
+    cmd3 = "tc filter add dev "+ dev + " parent 1:0 prio 1 protocol ip handle 20 fw flowid 1:20"
+    cmd4 = "iptables -A POSTROUTING -t mangle -d " + dest + " -p tcp -j MARK --set-mark 20"
+
     failed = os.system(cmd)
+    failed1 = os.system(cmd1)
     failed2 = os.system(cmd2)
-    if not (failed and failed2):
+    failed3 = os.system(cmd3)
+    failed4 = os.system(cmd4)
+    if not (failed and failed1 and failed2 and failed3 and failed4):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
-        output(out_lck,cmd2)
+        output(out_lck, cmd1)
+        output(out_lck, cmd2)
+        output(out_lck, cmd3)
+        output(out_lck, cmd4)
     else:
         output(out_lck, "Rules not applied")
     output(out_lck, "\n")
