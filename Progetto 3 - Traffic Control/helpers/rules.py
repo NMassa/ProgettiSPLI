@@ -11,14 +11,18 @@ def show_tc(out_lck):
 
 # Flush di tutte le tavole
 def flush_tc(out_lck):
-    cmd = "tc qdisc del dev lo root"
+    cmd = "tc qdisc del dev enp5s8 root"
     cmd1 = "tc qdisc del dev wlp2s0 root"
+    cmd2 = "iptables -t mangle -F"
+
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
-    if not (failed and failed1):
+    failed2 = os.system(cmd2)
+    if not (failed and failed1 and failed2):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
         output(out_lck, cmd1)
+        output(out_lck, cmd2)
     else:
         output(out_lck, "Rules not applied")
     output(out_lck, "\n")
@@ -100,9 +104,9 @@ def corrupt(out_lck, dev,num):
 def limit_bitrate(out_lck, dev, dest):
     cmd = "tc qdisc add dev " + dev + " handle 1: root htb"
     cmd1 = "tc class add dev " + dev + " parent 1: classid 1:1 htb rate 100Mbps"
-    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:20 htb rate 10kbps ceil 10kbps prio 1"
-    cmd3 = "tc filter add dev "+ dev + " parent 1:0 prio 1 protocol ip handle 20 fw flowid 1:20"
-    cmd4 = "iptables -A POSTROUTING -t mangle -d " + dest + " -p tcp -j MARK --set-mark 20"
+    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:10 htb rate 10kbps ceil 10kbps prio 1"
+    cmd3 = "tc filter add dev "+ dev + " parent 1:0 prio 1 protocol ip handle 10 fw flowid 1:10"
+    cmd4 = "iptables -A POSTROUTING -t mangle -d " + dest + " -p tcp -j MARK --set-mark 10"
 
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
