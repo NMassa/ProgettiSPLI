@@ -101,7 +101,7 @@ def corrupt(out_lck, dev,num):
     output(out_lck, "\n")
 
 #Bit-rate limitata       DA CONTROLLARE--- lanciando questi comandi da terminale funzionano, qua mi danno errore
-def limit_bitrate(out_lck, dev, dest, newrate):
+def limit_bitrate(out_lck, dev, dest):
     cmd = "tc qdisc add dev " + dev + " handle 1: root htb"
     cmd1 = "tc class add dev " + dev + " parent 1: classid 1:1 htb rate 100Mbps"
     cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:10 htb rate 10kbps ceil 10kbps prio 1"
