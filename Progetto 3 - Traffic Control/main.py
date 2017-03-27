@@ -27,7 +27,7 @@ if __name__ == "__main__":
                                         "Duplicate",
                                         "Corrupt",
                                         "Packet alteration (Mark)",
-                                        "Limit bit-rate"])
+                                        "Limit bit-rate for destination host"])
 
                 if action is not None:
                     # Delay
@@ -158,12 +158,9 @@ if __name__ == "__main__":
                             rules.set_MARK(out_lck, str_mark)
                     # Limita bit-rate
                     elif action == 7:
-                            output(out_lck, "Please insert number:")
-                            n_limit = input()
-                            try:
-                                num = str(n_limit)
-                            except ValueError:
-                                output(out_lck, "A number is required")
+                            output(out_lck, "Please insert destination:")
+                            dest = input()
+
                             output(out_lck, "Please select Wlan or Eth")
                             output(out_lck, "\n1: Wlan\n2: Eth")
                             dev = input()
@@ -180,9 +177,9 @@ if __name__ == "__main__":
                                 output(out_lck, "A number is required")
                             else:
                                 if device == 1:
-                                    rules.limit_bitrate(out_lck, "wlp2s0", num,bit1)
+                                    rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
                                 elif device == 2:
-                                    rules.limit_bitrate(out_lck, "lo", num,bit1)
+                                    rules.limit_bitrate(out_lck, "enp5s8", config._base + dest)
                                 else:
                                     output(out_lck, "Option not available")
 
