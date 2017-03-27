@@ -27,7 +27,7 @@ if __name__ == "__main__":
                                         "Duplicate",
                                         "Corrupt",
                                         "Packet alteration (Mark)",
-                                        "Limit bit-rate"])
+                                        "Limit bit-rate for destination host"])
 
                 if action is not None:
                     # Delay
