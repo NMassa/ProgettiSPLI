@@ -49,7 +49,7 @@ if __name__ == "__main__":
                             if device == 1:
                                 rules.delay(out_lck, "wlp2s0",num)
                             elif device == 2:
-                                rules.delay(out_lck, "lo",num)
+                                rules.delay(out_lck, "enp5s8",num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                             if device == 1:
                                 rules.delay(out_lck, "wlp2s0",num,num2)
                             elif device == 2:
-                                rules.delay(out_lck, "lo",num,num2)
+                                rules.delay(out_lck, "enp5s8",num,num2)
                             else:
                                 output(out_lck, "Option not available")
                     # Lost Packets
@@ -96,7 +96,7 @@ if __name__ == "__main__":
                                 if device == 1:
                                      rules.lost_pck(out_lck, "wlp2s0", n)
                                 elif device == 2:
-                                     rules.lost_pck(out_lck, "lo", n)
+                                     rules.lost_pck(out_lck, "enp5s8", n)
                                 else:
                                      output(out_lck, "Option not available")
                     # Duplicate
@@ -118,7 +118,7 @@ if __name__ == "__main__":
                                 if device == 1:
                                      rules.duplicate(out_lck, "wlp2s0", n)
                                 elif device == 2:
-                                     rules.duplicate(out_lck, "lo", n)
+                                     rules.duplicate(out_lck, "enp5s8", n)
                                 else:
                                      output(out_lck, "Option not available")
                     # Corrupt Packets
@@ -140,7 +140,7 @@ if __name__ == "__main__":
                             if device == 1:
                                 rules.corrupt(out_lck, "wlp2s0", num)
                             elif device == 2:
-                                rules.corrupt(out_lck, "lo", num)
+                                rules.corrupt(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
                     # Alterazione pacchetto (mangle MARK)
@@ -168,20 +168,13 @@ if __name__ == "__main__":
                                 device = int(dev)
                             except ValueError:
                                 output(out_lck, "A number is required")
-                            output(out_lck, "Please select Kbpss or Mbpss")
-                            output(out_lck, "\nk: Kbit\nm: Mbits")
-                            bit = input()
-                            try:
-                                bit1 = str(bit)
-                            except ValueError:
-                                output(out_lck, "A number is required")
+
+                            if device == 1:
+                                rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
+                            elif device == 2:
+                                rules.limit_bitrate(out_lck, "enp5s8", config._base + dest)
                             else:
-                                if device == 1:
-                                    rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
-                                elif device == 2:
-                                    rules.limit_bitrate(out_lck, "enp5s8", config._base + dest)
-                                else:
-                                    output(out_lck, "Option not available")
+                                output(out_lck, "Option not available")
 
             elif main_menu == 2:
                 rules.flush_tc(out_lck)
