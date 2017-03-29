@@ -264,7 +264,8 @@ if __name__ == "__main__":
                     elif action == 7:
                         output(out_lck, "Please insert destination:")
                         dest = input()
-
+                        output(out_lck, "Insert Max Bandwidth:")
+                        band = input()
                         output(out_lck, "Please select Wlan or Eth")
                         output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
@@ -274,9 +275,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
+                                rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest, band)
                             elif device == 2:
-                                rules.limit_bitrate(out_lck, "enp5s8", config._base + dest)
+                                rules.limit_bitrate(out_lck, "enp5s8", config._base + dest, band)
                             else:
                                 output(out_lck, "Option not available")
 
