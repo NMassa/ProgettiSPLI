@@ -26,16 +26,16 @@ class Connection:
         def connect(self):
             #Socket TCP
             if str(self.protocol) == "TCP":
-                for i in range(0, 1):
+                for i in range(0, 10):
                     _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     try:
                         _socket.connect((self.host, self.port))
-                        #qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, number " + str(i), encoding="utf8")
                         _socket.sendall(message)
 
-                    except socket.error as msg:
+                    except _socket.error as msg:
                         helpers.output(self.out_lck, str(msg))
 
                     _socket.close()
@@ -45,23 +45,22 @@ class Connection:
             #Socket Datagram
             elif str(self.protocol) == "UDP":
                 for i in range(0, 10):
-                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                    #self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    try:
-                        self.socket.connect((self.host, self.port))
-                        # qui devo fare un ciclo o un timer per mandare le richieste
-                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, numebre " + str(i), encoding="utf8")
+                    _socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-                        self.socket.sendall(message)
-                        self.socket.send('0'+ SIGEND)
+                    try:
+                        _socket.connect((self.host, self.port))
+
+                        message = bytes(self.my_ip + ": Sicurezza, Progettazione e Laboratorio Internet, number " + str(i), encoding="utf8")
+
+                        _socket.sendall(message)
 
                         helpers.output(self.out_lck, "%d" % i)
-                        self.socket.close()
 
-                    except socket.error as msg:
+                    except _socket.error as msg:
                         helpers.output(self.out_lck, str(msg))
 
-                    #time.sleep(0.5)
+                    _socket.close()
             else:
                 #errori
                 exit()
