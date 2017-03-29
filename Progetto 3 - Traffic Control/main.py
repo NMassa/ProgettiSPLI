@@ -72,9 +72,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlp2s0",num,num2)
+                                rules.delay2(out_lck, "wlp2s0",num,num2)
                             elif device == 2:
-                                rules.delay(out_lck, "enp5s8",num,num2)
+                                rules.delay2(out_lck, "enp5s8",num,num2)
                             else:
                                 output(out_lck, "Option not available")
                     # Lost Packets
