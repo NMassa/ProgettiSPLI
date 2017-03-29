@@ -124,8 +124,7 @@ if __name__ == "__main__":
                 action = loop_menu(out_lck, "action", [ "Delay",
                                         "Delay Random",
                                         "Lost Packets",
-                                        "Duplicate",
-                                        "Corrupt",
+                                        "Duplicate & Corrupt",
                                         "Re-ordering",
                                         "Limit bit-rate for destination host"])
 
@@ -149,7 +148,7 @@ if __name__ == "__main__":
                             if device == 1:
                                 rules.delay(out_lck, "wlp2s0", num)
                             elif device == 2:
-                                rules.delay(out_lck, "enp5s8", num)
+                                rules.delay(out_lck, "enp0s3", num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
@@ -196,30 +195,22 @@ if __name__ == "__main__":
                             else:
                                 output(out_lck, "Option not available")
                     # Duplicate
+
+
+
+
+                    # Corrupt and Duplicate Packets
                     elif action == 4:
-                         output(out_lck, "Please insert the number %: ")
-                         option = input()
-                         output(out_lck, "A number is required")
-                         output(out_lck, "Please select Wlan or Eth")
-                         output(out_lck, "1: Wlan\n2: Eth")
-                         dev = input()
-                         try:
-                            device = int(dev)
-                         except ValueError:
-                            output(out_lck, "A number is required")
-                         else:
-                            if device == 1:
-                                 rules.duplicate(out_lck, "wlp2s0", option)
-                            elif device == 2:
-                                 rules.duplicate(out_lck, "enp5s8", option)
-                            else:
-                                 output(out_lck, "Option not available")
-                    # Corrupt Packets
-                    elif action == 5:
                         output(out_lck, "Please insert % of corruption:")
                         n = input()
                         try:
                             num = str(n)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        output(out_lck, "Please insert % of duplicate:")
+                        n = input()
+                        try:
+                            num2 = str(n)
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
@@ -231,13 +222,13 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.corrupt(out_lck, "wlp2s0", num)
+                                rules.corrupt(out_lck, "wlp2s0", num, num2)
                             elif device == 2:
-                                rules.corrupt(out_lck, "enp5s8", num)
+                                rules.corrupt(out_lck, "enp5s8", num, num2)
                             else:
                                 output(out_lck, "Option not available")
 
-                    elif action == 6:
+                    elif action == 5:
                         output(out_lck, "Please select Wlan or Eth")
                         output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
@@ -261,7 +252,7 @@ if __name__ == "__main__":
                                 rules.reordering(out_lck, "enp5s8", probability, gap, delay)
 
                     # Limita bit-rate
-                    elif action == 7:
+                    elif action == 6:
                         output(out_lck, "Please insert destination:")
                         dest = input()
                         output(out_lck, "Insert Max Bandwidth:")

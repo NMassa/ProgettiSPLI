@@ -90,8 +90,8 @@ def set_MARK(out_lck, mark):
     output(out_lck, "\n")
 
 # Corrompe pacchetti
-def corrupt(out_lck, dev,num):
-    cmd = "tc qdisc add dev " + dev + " root netem corrupt " + num + "%"
+def corrupt(out_lck, dev, num, num2):
+    cmd = "tc qdisc add dev " + dev + " root netem corrupt " + num + "% duplicate " + num2 + "%"
     failed = os.system(cmd)
     if not (failed):
         output(out_lck, "\nApplied rules:")
