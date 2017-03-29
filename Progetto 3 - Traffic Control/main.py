@@ -7,6 +7,7 @@ from helpers.helpers import loop_menu
 #import iptc     #Daniele: potrebbe servire in un secondo momento...
 from helpers import rules
 
+
 if __name__ == "__main__":
 
     out_lck = threading.Lock()
@@ -145,39 +146,34 @@ if __name__ == "__main__":
                         output(out_lck, "Please insert gap number")
                         gap = input()
 
-                        output(out_lck, "Please insert delay time")
+                        output(out_lck, "Please insert delay time (ms)")
                         delay = input()
 
-                        if dev == 1:
-                            rules.reordering(out_lck, "wlp2s0", gap, delay)
-                        elif dev == 2:
-                            rules.reordering(out_lck, "enp5s8", gap, delay)
-                    # # Alterazione pacchetto (mangle MARK)
-                    # elif action == 6:
-                    #     # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
-                    #     # interface = input()  # manca gestione errore
-                    #
-                    #     output(out_lck, "Please insert the number of MARK")
-                    #     mark = input()
-                    #     try:
-                    #         str_mark = str(mark)
-                    #     except ValueError:
-                    #         output(out_lck, "A number is required")
-                    #     else:
-                    #         rules.set_MARK(out_lck, str_mark)
+                        output(out_lck, "Please probability of reordering (%)")
+                        probability = input()
+                        try:
+                            device = int(dev)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
+                            if device == 1:
+                                rules.reordering(out_lck, "wlp2s0", probability, gap, delay)
+                            elif device == 2:
+                                rules.reordering(out_lck, "enp5s8", probability, gap, delay)
+
                     # Limita bit-rate
                     elif action == 7:
-                            output(out_lck, "Please insert destination:")
-                            dest = input()
+                        output(out_lck, "Please insert destination:")
+                        dest = input()
 
-                            output(out_lck, "Please select Wlan or Eth")
-                            output(out_lck, "1: Wlan\n2: Eth")
-                            dev = input()
-                            try:
-                                device = int(dev)
-                            except ValueError:
-                                output(out_lck, "A number is required")
-
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
+                        dev = input()
+                        try:
+                            device = int(dev)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
                             if device == 1:
                                 rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
                             elif device == 2:

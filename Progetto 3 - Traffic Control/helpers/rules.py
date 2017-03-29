@@ -125,8 +125,8 @@ def limit_bitrate(out_lck, dev, dest):
     output(out_lck, "\n")
 
 
-def reordering(out_lck, dev, gap, delay):
-    cmd = "tc qdisc change dev " + dev + " root netem gap " + gap + " delay " + delay + "ms"
+def reordering(out_lck, dev, probability, gap, delay):
+    cmd = "tc qdisc change dev " + dev + " root netem delay " + delay + "ms reorder " + probability + " gap " + gap
     failed = os.system(cmd)
 
     if not (failed):
