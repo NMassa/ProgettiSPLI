@@ -26,7 +26,7 @@ if __name__ == "__main__":
                                         "Lost Packets",
                                         "Duplicate",
                                         "Corrupt",
-                                        "Packet alteration (Mark)",
+                                        "Re-ordering",
                                         "Limit bit-rate for destination host"])
 
                 if action is not None:
@@ -39,7 +39,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -47,9 +47,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlp2s0",num)
+                                rules.delay(out_lck, "wlp2s0", num)
                             elif device == 2:
-                                rules.delay(out_lck, "enp5s8",num)
+                                rules.delay(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
@@ -64,7 +64,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                         output(out_lck, "Please insert the number %: ")
                         option = input()
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                          option = input()
                          output(out_lck, "A number is required")
                          output(out_lck, "Please select Wlan or Eth")
-                         output(out_lck, "\n1: Wlan\n2: Eth")
+                         output(out_lck, "1: Wlan\n2: Eth")
                          dev = input()
                          try:
                             device = int(dev)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -136,26 +136,42 @@ if __name__ == "__main__":
                                 rules.corrupt(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
-                    # Alterazione pacchetto (mangle MARK)
-                    elif action == 6:
-                        # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
-                        # interface = input()  # manca gestione errore
 
-                        output(out_lck, "Please insert the number of MARK")
-                        mark = input()
-                        try:
-                            str_mark = str(mark)
-                        except ValueError:
-                            output(out_lck, "A number is required")
-                        else:
-                            rules.set_MARK(out_lck, str_mark)
+                    elif action == 6:
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
+                        dev = input()
+
+                        output(out_lck, "Please insert gap number")
+                        gap = input()
+
+                        output(out_lck, "Please insert delay time")
+                        delay = input()
+
+                        if dev == 1:
+                            rules.reordering(out_lck, "wlp2s0", gap, delay)
+                        elif dev == 2:
+                            rules.reordering(out_lck, "enp5s8", gap, delay)
+                    # # Alterazione pacchetto (mangle MARK)
+                    # elif action == 6:
+                    #     # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
+                    #     # interface = input()  # manca gestione errore
+                    #
+                    #     output(out_lck, "Please insert the number of MARK")
+                    #     mark = input()
+                    #     try:
+                    #         str_mark = str(mark)
+                    #     except ValueError:
+                    #         output(out_lck, "A number is required")
+                    #     else:
+                    #         rules.set_MARK(out_lck, str_mark)
                     # Limita bit-rate
                     elif action == 7:
                             output(out_lck, "Please insert destination:")
                             dest = input()
 
                             output(out_lck, "Please select Wlan or Eth")
-                            output(out_lck, "\n1: Wlan\n2: Eth")
+                            output(out_lck, "1: Wlan\n2: Eth")
                             dev = input()
                             try:
                                 device = int(dev)
