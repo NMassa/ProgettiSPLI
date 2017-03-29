@@ -41,7 +41,7 @@ def delay(out_lck, dev, num):
 
 # Delay Random
 def delay2(out_lck, dev, num, num2):
-    cmd = "tc qdisc add dev " + dev + " root netem delay " + num + "ms " + num2 + "ms"
+    cmd = "tc qdisc add dev " + dev + " root netem delay " + num + "ms " + num2 + "ms 25%"
     failed = os.system(cmd)
     if not (failed):
         output(out_lck, "\nApplied rules:")
