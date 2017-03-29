@@ -266,6 +266,10 @@ if __name__ == "__main__":
                         dest = input()
                         output(out_lck, "Insert Max Bandwidth:")
                         band = input()
+                        output(out_lck, "Insert Number of the subclass:")
+                        subclass = input()
+                        output(out_lck, "Insert Mark Number:")
+                        mark = input()
                         output(out_lck, "Please select Wlan or Eth")
                         output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
@@ -275,9 +279,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest, band)
+                                rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest, band, mark, subclass)
                             elif device == 2:
-                                rules.limit_bitrate(out_lck, "enp5s8", config._base + dest, band)
+                                rules.limit_bitrate(out_lck, "enp5s8", config._base + dest, band, mark, subclass)
                             else:
                                 output(out_lck, "Option not available")
 
