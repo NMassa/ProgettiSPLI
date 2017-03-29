@@ -7,6 +7,7 @@ from helpers.helpers import loop_menu
 #import iptc     #Daniele: potrebbe servire in un secondo momento...
 from helpers import rules
 
+
 if __name__ == "__main__":
 
     out_lck = threading.Lock()
@@ -26,7 +27,7 @@ if __name__ == "__main__":
                                         "Lost Packets",
                                         "Duplicate",
                                         "Corrupt",
-                                        "Packet alteration (Mark)",
+                                        "Re-ordering",
                                         "Limit bit-rate for destination host"])
 
                 if action is not None:
@@ -39,7 +40,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -47,9 +48,9 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlp2s0",num)
+                                rules.delay(out_lck, "wlp2s0", num)
                             elif device == 2:
-                                rules.delay(out_lck, "enp5s8",num)
+                                rules.delay(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
@@ -64,7 +65,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -72,55 +73,48 @@ if __name__ == "__main__":
                             output(out_lck, "A number is required")
                         else:
                             if device == 1:
-                                rules.delay(out_lck, "wlp2s0",num,num2)
+                                rules.delay2(out_lck, "wlp2s0",num,num2)
                             elif device == 2:
-                                rules.delay(out_lck, "enp5s8",num,num2)
+                                rules.delay2(out_lck, "enp5s8",num,num2)
                             else:
                                 output(out_lck, "Option not available")
                     # Lost Packets
                     elif action == 3:
                         output(out_lck, "Please insert the number %: ")
                         option = input()
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
+                        dev = input()
                         try:
-                            n=str(option)
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
-                            output(out_lck, "Please select Wlan or Eth")
-                            output(out_lck, "\n1: Wlan\n2: Eth")
-                            dev = input()
-                            try:
-                                device = int(dev)
-                            except ValueError:
-                                output(out_lck, "A number is required")
+                        else:
+                            if device == 1:
+                                rules.lost_pck(out_lck, "wlp2s0", option)
+                            elif device == 2:
+                                rules.lost_pck(out_lck, "enp5s8", option)
                             else:
-                                if device == 1:
-                                     rules.lost_pck(out_lck, "wlp2s0", n)
-                                elif device == 2:
-                                     rules.lost_pck(out_lck, "enp5s8", n)
-                                else:
-                                     output(out_lck, "Option not available")
+                                output(out_lck, "Option not available")
                     # Duplicate
                     elif action == 4:
                          output(out_lck, "Please insert the number %: ")
                          option = input()
+                         output(out_lck, "A number is required")
+                         output(out_lck, "Please select Wlan or Eth")
+                         output(out_lck, "1: Wlan\n2: Eth")
+                         dev = input()
                          try:
-                             n = str(option)
+                            device = int(dev)
                          except ValueError:
-                             output(out_lck, "A number is required")
-                             output(out_lck, "Please select Wlan or Eth")
-                             output(out_lck, "\n1: Wlan\n2: Eth")
-                             dev = input()
-                             try:
-                                device = int(dev)
-                             except ValueError:
-                                output(out_lck, "A number is required")
-                             else:
-                                if device == 1:
-                                     rules.duplicate(out_lck, "wlp2s0", n)
-                                elif device == 2:
-                                     rules.duplicate(out_lck, "enp5s8", n)
-                                else:
-                                     output(out_lck, "Option not available")
+                            output(out_lck, "A number is required")
+                         else:
+                            if device == 1:
+                                 rules.duplicate(out_lck, "wlp2s0", option)
+                            elif device == 2:
+                                 rules.duplicate(out_lck, "enp5s8", option)
+                            else:
+                                 output(out_lck, "Option not available")
                     # Corrupt Packets
                     elif action == 5:
                         output(out_lck, "Please insert % of corruption:")
@@ -130,7 +124,7 @@ if __name__ == "__main__":
                         except ValueError:
                             output(out_lck, "A number is required")
                         output(out_lck, "Please select Wlan or Eth")
-                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
                         dev = input()
                         try:
                             device = int(dev)
@@ -143,32 +137,43 @@ if __name__ == "__main__":
                                 rules.corrupt(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
-                    # Alterazione pacchetto (mangle MARK)
-                    elif action == 6:
-                        # output(out_lck, "Please insert Network Interface") nella funzione set_ttl non richiede interfaccia
-                        # interface = input()  # manca gestione errore
 
-                        output(out_lck, "Please insert the number of MARK")
-                        mark = input()
+                    elif action == 6:
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
+                        dev = input()
+
+                        output(out_lck, "Please insert gap number")
+                        gap = input()
+
+                        output(out_lck, "Please insert delay time (ms)")
+                        delay = input()
+
+                        output(out_lck, "Please probability of reordering (%)")
+                        probability = input()
                         try:
-                            str_mark = str(mark)
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
                         else:
-                            rules.set_MARK(out_lck, str_mark)
+                            if device == 1:
+                                rules.reordering(out_lck, "wlp2s0", probability, gap, delay)
+                            elif device == 2:
+                                rules.reordering(out_lck, "enp5s8", probability, gap, delay)
+
                     # Limita bit-rate
                     elif action == 7:
-                            output(out_lck, "Please insert destination:")
-                            dest = input()
+                        output(out_lck, "Please insert destination:")
+                        dest = input()
 
-                            output(out_lck, "Please select Wlan or Eth")
-                            output(out_lck, "\n1: Wlan\n2: Eth")
-                            dev = input()
-                            try:
-                                device = int(dev)
-                            except ValueError:
-                                output(out_lck, "A number is required")
-
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "1: Wlan\n2: Eth")
+                        dev = input()
+                        try:
+                            device = int(dev)
+                        except ValueError:
+                            output(out_lck, "A number is required")
+                        else:
                             if device == 1:
                                 rules.limit_bitrate(out_lck, "wlp2s0", config._base + dest)
                             elif device == 2:
