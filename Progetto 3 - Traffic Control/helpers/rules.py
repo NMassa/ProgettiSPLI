@@ -100,13 +100,13 @@ def corrupt(out_lck, dev,num):
         output(out_lck, "Rules not applied")
     output(out_lck, "\n")
 
-#Bit-rate limitata       DA CONTROLLARE--- lanciando questi comandi da terminale funzionano, qua mi danno errore
-def limit_bitrate(out_lck, dev, dest, band):
+
+def limit_bitrate(out_lck, dev, dest, band, mark, classid):
     cmd = "tc qdisc add dev " + dev + " handle 1: root htb"
-    cmd1 = "tc class add dev " + dev + " parent 1: classid 1:1 htb rate 100Mbps"
-    cmd2 = "tc class add dev " + dev + " parent 1:1 classid 1:10 htb rate " + band + "kbps ceil 10kbps prio 1"
-    cmd3 = "tc filter add dev "+ dev + " parent 1:0 prio 1 protocol ip handle 10 fw flowid 1:10"
-    cmd4 = "iptables -A POSTROUTING -t mangle -d " + dest + " -p tcp -j MARK --set-mark 10"
+    cmd1 = "tc class add dev " + dev + " parent 1: classid 1:" + classid + " htb rate 100Mbps"
+    cmd2 = "tc class add dev " + dev + " parent 1:" + classid + " classid 1:" + mark + " htb rate " + band + "kbps ceil " + band + "kbps prio 1"
+    cmd3 = "tc filter add dev " + dev + " parent 1:0 prio 1 protocol ip handle " + mark +" fw flowid 1:" + mark
+    cmd4 = "iptables -A POSTROUTING -t mangle -d " + dest + " -p tcp -j MARK --set-mark " + mark
 
     failed = os.system(cmd)
     failed1 = os.system(cmd1)
@@ -129,7 +129,7 @@ def reordering(out_lck, dev, probability, gap, delay):
     cmd = "tc qdisc add dev " + dev + " root netem delay " + delay + "ms reorder " + probability + " gap " + gap
     failed = os.system(cmd)
 
-    if not (failed):
+    if not(failed):
         output(out_lck, "\nApplied rules:")
         output(out_lck, cmd)
     else:
