@@ -148,7 +148,7 @@ if __name__ == "__main__":
                             if device == 1:
                                 rules.delay(out_lck, "wlp2s0", num)
                             elif device == 2:
-                                rules.delay(out_lck, "enp0s3", num)
+                                rules.delay(out_lck, "enp5s8", num)
                             else:
                                 output(out_lck, "Option not available")
                     #Delay Random
