@@ -81,46 +81,39 @@ if __name__ == "__main__":
                     elif action == 3:
                         output(out_lck, "Please insert the number %: ")
                         option = input()
+                        output(out_lck, "Please select Wlan or Eth")
+                        output(out_lck, "\n1: Wlan\n2: Eth")
+                        dev = input()
                         try:
-                            n=str(option)
+                            device = int(dev)
                         except ValueError:
                             output(out_lck, "A number is required")
-                            output(out_lck, "Please select Wlan or Eth")
-                            output(out_lck, "\n1: Wlan\n2: Eth")
-                            dev = input()
-                            try:
-                                device = int(dev)
-                            except ValueError:
-                                output(out_lck, "A number is required")
+                        else:
+                            if device == 1:
+                                rules.lost_pck(out_lck, "wlp2s0", option)
+                            elif device == 2:
+                                rules.lost_pck(out_lck, "enp5s8", option)
                             else:
-                                if device == 1:
-                                     rules.lost_pck(out_lck, "wlp2s0", n)
-                                elif device == 2:
-                                     rules.lost_pck(out_lck, "enp5s8", n)
-                                else:
-                                     output(out_lck, "Option not available")
+                                output(out_lck, "Option not available")
                     # Duplicate
                     elif action == 4:
                          output(out_lck, "Please insert the number %: ")
                          option = input()
+                         output(out_lck, "A number is required")
+                         output(out_lck, "Please select Wlan or Eth")
+                         output(out_lck, "\n1: Wlan\n2: Eth")
+                         dev = input()
                          try:
-                             n = str(option)
+                            device = int(dev)
                          except ValueError:
-                             output(out_lck, "A number is required")
-                             output(out_lck, "Please select Wlan or Eth")
-                             output(out_lck, "\n1: Wlan\n2: Eth")
-                             dev = input()
-                             try:
-                                device = int(dev)
-                             except ValueError:
-                                output(out_lck, "A number is required")
-                             else:
-                                if device == 1:
-                                     rules.duplicate(out_lck, "wlp2s0", n)
-                                elif device == 2:
-                                     rules.duplicate(out_lck, "enp5s8", n)
-                                else:
-                                     output(out_lck, "Option not available")
+                            output(out_lck, "A number is required")
+                         else:
+                            if device == 1:
+                                 rules.duplicate(out_lck, "wlp2s0", option)
+                            elif device == 2:
+                                 rules.duplicate(out_lck, "enp5s8", option)
+                            else:
+                                 output(out_lck, "Option not available")
                     # Corrupt Packets
                     elif action == 5:
                         output(out_lck, "Please insert % of corruption:")
