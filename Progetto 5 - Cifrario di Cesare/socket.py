@@ -43,7 +43,7 @@ def server():
         print('Done sending')
         #conn.send('Thank you for connecting')
         conn.close()
-        main()
+        
 
 def client():
     s = socket.socket()             # Create a socket object
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         server()
     if( scelta == '2'):
         client()
-    if( scelta == '0'):
-        Exit
+    #if( scelta == '0'):
+     
 
 
