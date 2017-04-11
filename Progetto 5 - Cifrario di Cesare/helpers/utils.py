@@ -18,8 +18,9 @@ def loop_menu(lock, header, options):
         except SyntaxError:
             action = None
 
-        if action is None:
+        if not action:
             output(lock, "Please select an option")
+            action = None
         elif action == 'e':
             return None
         else:
@@ -44,11 +45,12 @@ def loop_input(lock, header):
 
         try:
             var = input()
-        except SyntaxError:
+        except ValueError:
             var = None
 
-        if var is None:
+        if not var:
             output(lock, "Type something!")
+            var = None
         elif var == 'e':
             return None
         else:
@@ -61,11 +63,12 @@ def loop_int_input(lock, header):
 
         try:
             var = input()
-        except SyntaxError:
+        except ValueError:
             var = None
 
-        if var is None:
+        if not var:
             output(lock, "Type something!")
+            var = None
         elif var == 'e':
             return None
         else:
@@ -76,3 +79,10 @@ def loop_int_input(lock, header):
                 continue
             else:
                 return selected
+
+
+def logo():
+    f = open('helpers/logo.txt', 'r')
+
+    for l in f.readlines():
+        print(l, end='', flush=True)

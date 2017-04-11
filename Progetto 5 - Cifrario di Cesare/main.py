@@ -16,7 +16,7 @@ if __name__ == "__main__":
     output(out_lck, "Your IP: " + my_ip)
     while True:
         # Main Menu
-
+        logo()
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", [  "Send file",
                                                                                                  "Receive file",
                                                                                                  "Execute Order 66" ])

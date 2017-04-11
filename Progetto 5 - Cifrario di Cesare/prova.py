@@ -8,6 +8,5 @@ def parse(pkt):
 #filename = "received"
 #fout = open('received/' + filename, "wb")
 
-a=sniff(filter="tcp and (port 3000)",
- prn=parse)
+a = sniff(filter="tcp and (port 3000)",  prn=parse)
 
