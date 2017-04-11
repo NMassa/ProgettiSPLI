@@ -1,6 +1,8 @@
 import threading
 import sys
 from helpers.utils import *
+from helpers.netutils import arpoisoner
+from helpers.netutils import analyzer
 
 _base = "192.168."
 
@@ -30,3 +32,10 @@ if __name__ == "__main__":
                 print("pwned")
             elif decipher == 3:
                 print("chissà")
+        elif main_menu == 3:
+            option = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Arp Poisoner",
+                                                                                        "Analyzer"])
+            if option == 1:
+                arpoisoner(out_lck)
+            elif option == 2:
+                analyzer(out_lck)
