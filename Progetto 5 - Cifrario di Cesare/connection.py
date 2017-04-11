@@ -1,4 +1,6 @@
-import socket                   # Import socket module
+import socket
+import os
+import copy
 
 def caesar(plainText, shift): 
   cipherText = ""
@@ -11,54 +13,62 @@ def caesar(plainText, shift):
       cipherText += finalLetter
   #print "Your ciphertext is: ", cipherText
   return cipherText
+
 def server():
-    port = 60000                    # Reserve a port for your service.
-    s = socket.socket()             # Create a socket object
-    host = socket.gethostname()     # Get local machine name
-    s.bind((host, port))            # Bind to the port
-    s.listen(1)                     # Now wait for client connection.
+  #ip local
+  host = socket.gethostname()     # Get local machine name
+  port = 60000                    # Reserve a port for your service.
+  s = socket.socket()           # Create a socket object
+  s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+  s.bind((host, port))            # Bind to the port
+  s.listen(1)                     # Now wait for client connection.
 
-    print ('Server listening....')
+  print ('Server listening....')      
+  ListLib=[]
 
-    while True:
-        conn, addr = s.accept()     # Establish connection with client.
-        #print ('Got connection from', addr)
-        #data = conn.recv(1024)
-        #print('Server received', str(data))
-        print ("Insert Shift")
-        shift=input()
-        filename='Spli2.txt'
-        f = open(filename,'rb')
-        l=f.read(1024)
-        cs = caesar(str(l),int(shift))
-        tr=cs.encode()
-        while (l):
-           conn.send(tr)
-           print('Sent ',repr(tr))
-           l = f.read(1024)
-           cs = caesar(str(l),int(shift))
-           tr=cs.encode()
-        f.close()
+  
+  conn, addr = s.accept()     
+  print ("Insert Shift")
+  shift=input()
 
-        print('Done sending')
-        #conn.send('Thank you for connecting')
-        conn.close()
-        
+  i=1
+  for file in os.listdir("/Users/Giacomo/Documents"): #da modificare path
+    if file.endswith(".txt"):
+      print(i,file)
+      ListLib.append(str(file))
+      i+=1
+  print("Choose file ")
+  nfile=input()
+  nf=int(nfile)-1
+  filename = copy.copy(ListLib[nf]) 
+  f = open(filename,'rb')
+  l=f.read(1024)
+  cs = caesar(str(l),int(shift))
+  tr=cs.encode()
+  while (l):
+    conn.send(tr)
+    print('Sent ',repr(tr))
+    l = f.read(1024)
+    cs = caesar(str(l),int(shift))
+    tr=cs.encode()
+  f.close()
+  print ("Done Sending")
+  conn.close()
+
 
 def client():
-    s = socket.socket()             # Create a socket object
+    c_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)           # Create a socket object
     host = socket.gethostname()     # Get local machine name
     port = 60000                    # Reserve a port for your service.
 
-    s.connect((host, port))
-    #s.send(str("Hello server!"))
+    c_s.connect((host, port))
 
     with open('received_file.txt', 'wb') as f:
         print ('file opened')
         while True:
             print('receiving data...')
-            data = s.recv(1024)
-            print('data=%s', (data))
+            data = c_s.recv(1024)
+            print('data ', (data))
             if not data:
                 break
             # write data to a file
@@ -66,12 +76,13 @@ def client():
 
     f.close()
     print('Successfully get the file')
-    s.close()
+    c_s.close()
     print('connection closed')
 
 def menu():
     print('---1--- Send message    --')
     print('---2--- Receive message --')
+    print('---3--- List of file    --')
     print('---0--- Exit            --')
 
 if __name__ == '__main__':
@@ -82,7 +93,7 @@ if __name__ == '__main__':
         server()
     if( scelta == '2'):
         client()
-    #if( scelta == '0'):
-     
-
-
+    if(scelta == '3'):
+        for file in os.listdir("/Users/Giacomo/Documents"):
+            if file.endswith(".txt"):
+               print(os.path.join("/Users/Giacomo/Documents", file))
