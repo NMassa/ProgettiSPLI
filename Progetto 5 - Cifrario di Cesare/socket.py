@@ -18,7 +18,7 @@ def server():
     s.bind((host, port))            # Bind to the port
     s.listen(1)                     # Now wait for client connection.
 
-    print ('Server listening....')      
+    print ('Server listening....')
 
     while True:
         conn, addr = s.accept()     # Establish connection with client.
