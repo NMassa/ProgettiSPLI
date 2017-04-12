@@ -1,6 +1,7 @@
 import threading
 import sys
 from helpers.utils import *
+from helpers.connection import *
 from helpers.netutils import arpoisoner
 from helpers.netutils import analyzer
 
@@ -20,8 +21,11 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", [  "Send file",
                                                                                                  "Receive file",
                                                                                                  "Execute Order 66" ])
+
         if main_menu == 1:
             print("invio file cifrato")
+            connect(my_ip,60000)
+
         elif main_menu == 2:
             decipher = loop_menu(out_lck, "Select deciphering method ('e' to exit): ", [ "Decipher with key",
                                                                                          "Brute Force",
@@ -33,12 +37,12 @@ if __name__ == "__main__":
                 # file dict.txt nella cartella helpers
                 dict = open("helpers/dict.txt","r")
 
-                for l in dict.readlines():
+
 
 
                 print("pwned")
             elif decipher == 3:
-                print("chissà")
+                print("chiss")
         elif main_menu == 3:
             option = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Arp Poisoner",
                                                                                         "Analyzer"])
