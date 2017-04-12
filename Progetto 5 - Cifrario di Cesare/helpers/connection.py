@@ -4,8 +4,6 @@ import copy
 import sys
 
 
-
-
 def caesar(message, shift):
     key = shift
     translated = ''
@@ -29,6 +27,21 @@ def caesar(message, shift):
             translated += chr(num)
         else:
            translated += symbol
+    return translated
+
+
+def full_caesar(message, shift):
+    key = shift
+    translated = ''
+
+    for symbol in message:
+        if type(symbol) != int:
+            num = ord(symbol)
+        else:
+            num = symbol
+        num += key
+        translated += chr(num)
+
     return translated
 
 
@@ -58,6 +71,20 @@ def decaesar(message,shift):
     return translated
 
 
+def full_decaesar(message,shift):
+    key = -shift
+    translated = ''
+
+    for symbol in message:
+        if type(symbol) != int:
+            num = ord(symbol)
+        else:
+            num = symbol
+        num += key
+        translated += chr(num)
+
+    return translated
+
 def connect(Host, Port):
     # Socket TCP
     host = Host
@@ -67,7 +94,7 @@ def connect(Host, Port):
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ListLib = []
     try:
-        _socket.connect((host, port))
+        _socket.connect(("127.0.0.1", port))
 
         print("Insert Shift")
         shift = input()
@@ -85,13 +112,13 @@ def connect(Host, Port):
         filename = copy.copy(ListLib[nf])
         f = open("books/"+filename, 'r')
         l = f.read(1024)
-        cs = caesar(str(l), int(shift))
+        cs = full_caesar(str(l), int(shift))
         tr = cs.encode()
         while (l):
             _socket.send(tr)
-            print('Sent ', repr(tr))
+            #print('Sent ', repr(tr))
             l = f.read(1024)
-            cs = caesar(str(l), int(shift))
+            cs = full_caesar(str(l), int(shift))
             tr = cs.encode()
         f.close()
 
@@ -109,30 +136,32 @@ def listen(Port):
         s.bind(('', port))  # inizializzazione della connessione
         s.listen(100)
         conn, addr = s.accept()
-        f = open('received_file.txt', 'wb')
+        f = open('received/cifrato.txt', 'wb')
         size = 1024
         data = conn.recv(size)
         while len(data) > 0:
-            print ("Received: %s" % data)
+            #print ("Received: %s" % data)
             f.write(data)
             data = conn.recv(size)
         f.close()
         print("Decifro file sapendo shift\n Inserisci shift \n")
         shift = input()
-        f = open("received_file.txt", 'rb')
+        f = open("received/cifrato.txt", 'rb')
+        fout = open("received/decifrato.txt", 'w')
         l = f.read(1024)
         l = l.decode('utf8')
         # print("leggo %s" %l)
-        dc = decaesar(str(l), int(shift))
-        tr = dc  # .encode()
+        dc = full_decaesar(str(l), int(shift))
+        fout.write(dc)
         while (l):
-            print('decipherText ', repr(tr))
+            #print('decipherText ', repr(tr))
             l = f.read(1024)
             l = l.decode('utf8')
-            dc = decaesar(str(l), int(shift))
-            tr = dc  # .encode()
-
+            dc = full_decaesar(str(l), int(shift))
+            fout.write(dc)
         f.close()
+
+
     except socket.error as msg:
         sys.exit(1)
         # helpers.output(self.out_lck, str(msg))

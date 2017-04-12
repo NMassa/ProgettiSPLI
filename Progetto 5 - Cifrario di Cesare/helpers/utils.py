@@ -1,5 +1,3 @@
-from aetypes import end
-
 
 def output(lock, message):
     lock.acquire()
