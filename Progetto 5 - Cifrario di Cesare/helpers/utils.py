@@ -1,3 +1,6 @@
+from aetypes import end
+
+
 def output(lock, message):
     lock.acquire()
     print(message)
@@ -85,4 +88,4 @@ def logo():
     f = open('helpers/logo.txt', 'r')
 
     for l in f.readlines():
-        print(l, end='', flush=True)
+        print(l,end='', flush=True )
