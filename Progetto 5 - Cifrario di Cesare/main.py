@@ -59,7 +59,7 @@ if __name__ == "__main__":
                 # TODO: creo dizionario dai file (tutti tranne quello appena ricevuto!)
                 # file dict.txt nella cartella helpers
 
-                file = open("helpers/words.txt", "r")
+                file = open("helpers/words.txt", "rb")
                 dict = set()
 
                 for l in file.readlines():
@@ -72,7 +72,7 @@ if __name__ == "__main__":
                 cyphered = received.read()
 
                 for i in range(1, 26):
-                    text = caesar(cyphered, i)
+                    text = full_decaesar(cyphered, i)
 
                     fout = open("bruteforce/file" + str(i) + ".txt", "wt")
                     fout.write(text)

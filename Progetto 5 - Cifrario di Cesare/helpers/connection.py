@@ -39,7 +39,13 @@ def full_caesar(message, shift):
             num = ord(symbol)
         else:
             num = symbol
+
         num += key
+        if num < 32 and num != 20:
+            num += 95
+        elif num > 126:
+            num -= 95
+
         translated += chr(num)
 
     return translated
@@ -81,9 +87,16 @@ def full_decaesar(message,shift):
         else:
             num = symbol
         num += key
+
+        if num < 32 and num != 10:
+            num += 95
+        elif num > 126:
+            num -= 95
+
         translated += chr(num)
 
     return translated
+
 
 def connect(Host, Port):
     # Socket TCP
@@ -148,17 +161,21 @@ def listen(Port):
         shift = input()
         f = open("received/cifrato.txt", 'rb')
         fout = open("received/decifrato.txt", 'w')
-        l = f.read(1024)
-        l = l.decode('utf8')
+        #l = f.read(1024)
+        #l = l.decode('utf8')
         # print("leggo %s" %l)
-        dc = full_decaesar(str(l), int(shift))
+        #dc = full_decaesar(str(l), int(shift))
+        #fout.write(dc)
+        l = f.read()
+        dc = full_decaesar(l, int(shift))
         fout.write(dc)
-        while (l):
+
+        #while (l):
             #print('decipherText ', repr(tr))
-            l = f.read(1024)
-            l = l.decode('utf8')
-            dc = full_decaesar(str(l), int(shift))
-            fout.write(dc)
+            #l = f.read(1024)
+            #l = l.decode('utf8')
+            #dc = full_decaesar(str(l), int(shift))
+            #fout.write(dc)
         f.close()
 
 
