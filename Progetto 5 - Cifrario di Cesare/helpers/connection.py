@@ -2,101 +2,7 @@ import socket
 import os
 import copy
 import sys
-
-
-def caesar(message, shift):
-    key = shift
-    translated = ''
-
-    for symbol in message:
-        if symbol.isalpha():
-            num = ord(symbol)
-            num += key
-
-            if symbol.isupper():
-                if num > ord('Z'):
-                    num -= 26
-                elif num < ord('A'):
-                    num += 26
-            elif symbol.islower():
-                if num > ord('z'):
-                    num -= 26
-                elif num < ord('a'):
-                    num += 26
-
-            translated += chr(num)
-        else:
-           translated += symbol
-    return translated
-
-
-def full_caesar(message, shift):
-    key = shift
-    translated = ''
-
-    for symbol in message:
-        if type(symbol) != int:
-            num = ord(symbol)
-        else:
-            num = symbol
-
-        num += key
-        if num < 32 and num != 20:
-            num += 95
-        elif num > 126:
-            num -= 95
-
-        translated += chr(num)
-
-    return translated
-
-
-def decaesar(message,shift):
-    key = -shift
-    translated = ''
-
-    for symbol in message:
-        if symbol.isalpha():
-            num = ord(symbol)
-            num += key
-
-            if symbol.isupper():
-                if num > ord('Z'):
-                    num -= 26
-                elif num < ord('A'):
-                    num += 26
-            elif symbol.islower():
-                if num > ord('z'):
-                    num -= 26
-                elif num < ord('a'):
-                    num += 26
-
-            translated += chr(num)
-        else:
-           translated += symbol
-    return translated
-
-
-def full_decaesar(message,shift):
-    key = -shift
-    translated = ''
-
-    for symbol in message:
-        if type(symbol) != int:
-            num = ord(symbol)
-        else:
-            num = symbol
-        num += key
-
-        if num < 32 and num != 10:
-            num += 95
-        elif num > 126:
-            num -= 95
-
-        translated += chr(num)
-
-    return translated
-
+from helpers import ccypher
 
 def connect(Host, Port):
     # Socket TCP
@@ -125,13 +31,13 @@ def connect(Host, Port):
         filename = copy.copy(ListLib[nf])
         f = open("books/"+filename, 'r')
         l = f.read(1024)
-        cs = full_caesar(str(l), int(shift))
+        cs = ccypher.full_caesar(str(l), int(shift))
         tr = cs.encode()
         while (l):
             _socket.send(tr)
             #print('Sent ', repr(tr))
             l = f.read(1024)
-            cs = full_caesar(str(l), int(shift))
+            cs = ccypher.full_caesar(str(l), int(shift))
             tr = cs.encode()
         f.close()
 
@@ -167,7 +73,7 @@ def listen(Port):
         #dc = full_decaesar(str(l), int(shift))
         #fout.write(dc)
         l = f.read()
-        dc = full_decaesar(l, int(shift))
+        dc = ccypher.full_decaesar(l, int(shift))
         fout.write(dc)
 
         #while (l):
