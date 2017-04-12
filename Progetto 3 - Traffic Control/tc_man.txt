@@ -37,7 +37,7 @@ tc qdisc del dev eth0 root netem
 tc qdisc del dev eth0 root
 
 #delay random da 100ms a 10ms
-tc qdisc change dev eth0 root netem delay 100ms 10ms
+tc qdisc change dev enp0s3 root netem delay 100ms 10ms
 
 #perdita pacchetti in percentuale
 tc qdisc change dev eth0 root netem loss 0.1%
