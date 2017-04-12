@@ -77,43 +77,49 @@ class Frequency(object):
         return SequenceMatcher(None, a, b).ratio()
 
     '''ho considerato il file delle occorrenze strutturato così:
-       abcdefghi.......
-       80,32
-       70,77
-       66,55
+
+       a 80,32
+       b 70,77
+       c 66,55
        ...
        ...
        ...
     '''
     def frequency_compare(self, file):
             self.file = file
-            self.freq_orig = []
-            self.freq_crypt = []
+            self.freq_orig_value = []
+            self.freq_crypt_value = []
+            self.freq_crypt_char = []
+            self.freq_orig_char = []
             percent = []
             #alfabeto = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+            i = 0
+            #f = open('..........txt', 'rb') #file con occorrenze da noi criptato
+            #o = open('..........txt', 'rb') #file con occorrenze della lingua
 
-            #chiamo regola che mi conta
-            # le occorrenze nel file criptato
-            f = open('..........txt', 'rb') #file con occorrenze da noi criptato
-            o = open('..........txt', 'rb') #file con occorrenze della lingua
+            with open('.......txt', 'rb') as f:
+                for line1 in f:
+                    self.freq_crypt_char[i].append(line1.split(None, 1)[0]) #stampo la i-esima lettera
+                    self.freq_crypt_value[i].append(line1.split(None, 1)[1])#stampo il i-esimo valore
+                    i += 1
+            with open('.......txt', 'rb') as o:
+                for line2 in o:
+                    self.freq_orig_char[i].append(line2.split(None, 1)[0])
+                    self.freq_orig_value[i].append(line2.split(None, 1)[1])
+                    i += 1
 
-            for i in range(1, 26):
-                self.freq_crypt = f.readlines(i)
-                self.freq_orig = o.readlines(i)
-                percent = [similar(self.freq_crypt, self.freq_orig)] #ritorna la percentuale di quanto sono simili
-                print('percentuale corrispondeza di %s ', percent[i])
+            for i in range(0,25):
+                percent = [similar(self.freq_crypt_value[i], self.freq_orig_value[i])] #ritorna la percentuale di quanto sono simili i due valori
+                print('% correspondence of %s -> %s is %s ',self.freq_crypt_char[i],self.freq_orig_char[i], percent[i])
 
-            print('Percentuale accettabile? digitare "ok" per conferma')
+            print(' Acceptable rate? Digit "ok" to confirm')
             ok = input()
             if ok =='ok':
-                #prende le prime lettere dei file, le converte in numero e ne calcola la distanza
-                #la distanza calcolata è la chiave di decifrazione
-                #non so se abbiamo già implementata la funzione che converte lettere in numeri, nel caso si può usare la seguente
-                n = bin(ord(self.freq_crypt[1]))
-                m = bin(ord(self.freq_orig[1]))
+                n = bin(ord(self.freq_crypt_value[1]))
+                m = bin(ord(self.freq_orig_value[1]))
                 int(n, 2)
                 int(m, 2)
                 key = math.fabs(n-m)
                 #ora abbiamo la chiave e possiamo decriptare
             else:
-                print('Option not available')
+                print('Unacceptable rate, try again \n')
