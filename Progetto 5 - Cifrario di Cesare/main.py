@@ -29,6 +29,13 @@ if __name__ == "__main__":
             if decipher == 1:
                 key = loop_int_input(out_lck, "Insert decription key:")
             elif decipher == 2:
+                # TODO: creo dizionario dai file (tutti tranne quello appena ricevuto!)
+                # file dict.txt nella cartella helpers
+                dict = open("helpers/dict.txt","r")
+
+                for l in dict.readlines():
+
+
                 print("pwned")
             elif decipher == 3:
                 print("chissà")
