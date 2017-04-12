@@ -4,6 +4,7 @@ from helpers.utils import *
 from helpers.connection import *
 from helpers.netutils import arpoisoner
 from helpers.netutils import analyzer
+import frequency
 
 _base = "192.168."
 
@@ -62,4 +63,10 @@ if __name__ == "__main__":
                 output(out_lck, "Starting brute force")
 
             elif decipher == 3:
-                print("chissà")
+                decipher = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Generate letter frequency",
+                                                                                    "Decipher"])
+                f = frequency.Frequency(file)
+                if decipher == 1:
+                    f.letter_frequency()
+                elif decipher == 2:
+                    f.frequency_compare()
