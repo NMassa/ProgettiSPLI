@@ -130,10 +130,7 @@ class Frequency(object):
             self.freq_crypt_char = []
             self.freq_orig_char = []
             percent = []
-            #alfabeto = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
             i = 0
-            #f = open('..........txt', 'rb') #file con occorrenze da noi criptato
-            #o = open('..........txt', 'rb') #file con occorrenze della lingua
 
             with open('helpers/frequency_cypher.txt', 'r') as f:
                 for line1 in f:
@@ -148,17 +145,19 @@ class Frequency(object):
 
             for i in range(0, 25):
                 print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
-                percent = [self.similar(self.freq_crypt_value[i], self.freq_orig_value[i])] #ritorna la percentuale di quanto sono simili i due valori
-                print('% correspondence of %s -> %s is %f ', self.freq_crypt_char[i], self.freq_orig_char[i], percent[i])
+                percent.append(similar(self.freq_crypt_value[i],self.freq_orig_value[i]))  # ritorna la percentuale di quanto sono simili i due valori
+                print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', percent[i])
 
             print(' Acceptable rate? Digit "ok" to confirm')
             ok = input()
             if ok == 'ok':
-                n = bin(ord(self.freq_crypt_value[1]))
-                m = bin(ord(self.freq_orig_value[1]))
-                int(n, 2)
-                int(m, 2)
-                key = math.fabs(n - m)
-                #ora abbiamo la chiave e possiamo decriptare
+                n = bin(ord(self.freq_crypt_char[1]))
+                m = bin(ord(self.freq_orig_char[1]))
+                n =int(n,2)
+                m =int(m,2)
+                #print(n)#valore associato primo carattere
+                #print(m)
+                key = int(math.fabs(n - m))
+                print('Search Key is :',key)
             else:
                 print('Unacceptable rate, try again \n')
