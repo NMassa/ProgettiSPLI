@@ -145,8 +145,13 @@ class Frequency(object):
 
             for i in range(0, 25):
                 print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
-                percent.append(similar(self.freq_crypt_value[i],self.freq_orig_value[i]))  # ritorna la percentuale di quanto sono simili i due valori
-                print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', percent[i])
+                value1 = str(self.freq_crypt_value[i])
+                value2 = str(self.freq_orig_value[i])
+                percent.append(similar(value1[:5], value2[:5])) #faccio compare solo sulle prime 4 cifre del numero, percentuale ottima ora!!!
+                                                                # ovviamente più aumento il numero di cifre più la percentuale cala
+                #percent.append(similar(self.freq_crypt_value[i],self.freq_orig_value[i]))  # ritorna la percentuale di quanto sono simili i due valori
+                str1 = str(percent[i]) #così poi stampo solo le prime 2 cifre
+                print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', str1[:3])
 
             print(' Acceptable rate? Digit "ok" to confirm')
             ok = input()
@@ -159,5 +164,7 @@ class Frequency(object):
                 #print(m)
                 key = int(math.fabs(n - m))
                 print('Search Key is :',key)
+                return key
             else:
-                print('Unacceptable rate, try again \n')
+                print('Low rate \n')
+                return None

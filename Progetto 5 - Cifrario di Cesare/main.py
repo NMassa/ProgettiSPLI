@@ -102,4 +102,11 @@ if __name__ == "__main__":
                 if decipher == 1:
                     f.letter_frequency()
                 elif decipher == 2:
-                    f.frequency_compare()
+                    key = f.frequency_compare(received)
+                    if key == None:
+                        print ('Sorry but unacceptable rate, try bruteforce to decode the file \n')
+                    else:
+                        deciphred_freq = ccypher.full_decaesar(received,key)
+                        fout = open("received/pwndecifrato_freq.txt", "w")
+                        fout.write(deciphred_freq)
+                        fout.close()
