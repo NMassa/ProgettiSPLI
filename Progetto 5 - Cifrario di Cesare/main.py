@@ -98,15 +98,18 @@ if __name__ == "__main__":
             elif decipher == 3:
                 decipher = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Generate letter frequency",
                                                                                     "Decipher"])
-                f = frequency.Frequency(file)
+                received = open("received/cifrato.txt","rb")
+                f = frequency.Frequency(received)
                 if decipher == 1:
                     f.letter_frequency()
+                    f.crypt_file_frequency(received)
                 elif decipher == 2:
-                    key = f.frequency_compare(received)
+                    key = f.frequency_compare()
                     if key == None:
                         print ('Sorry but unacceptable rate, try bruteforce to decode the file \n')
                     else:
-                        deciphred_freq = ccypher.full_decaesar(received,key)
+                        cyph = received.read()
+                        deciphred_freq = ccypher.full_decaesar(cyph,key)
                         fout = open("received/pwndecifrato_freq.txt", "w")
                         fout.write(deciphred_freq)
                         fout.close()
