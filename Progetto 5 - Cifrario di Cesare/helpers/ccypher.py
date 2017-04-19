@@ -34,11 +34,12 @@ def full_caesar(message, shift):
         else:
             num = symbol
 
-        num += key
-        if num < 32 and num != 20:
-            num += 95
-        elif num > 126:
-            num -= 95
+        if num > 16 or num < 10:
+            num += key
+            if num < 32:
+                num += 95
+            elif num > 126:
+                num -= 95
 
         translated += chr(num)
 
@@ -80,12 +81,13 @@ def full_decaesar(message,shift):
             num = ord(symbol)
         else:
             num = symbol
-        num += key
 
-        if num < 32 and num != 10:
-            num += 95
-        elif num > 126:
-            num -= 95
+        if num > 16 or num < 10:
+            num += key
+            if num < 32:
+                num += 95
+            elif num > 126:
+                num -= 95
 
         translated += chr(num)
 

@@ -39,7 +39,7 @@ if __name__ == "__main__":
             arpoisoner(out_lck)
         elif main_menu == 4:
             # Analizzo il traffico
-            analyzer(out_lck)
+            #analyzer(out_lck)
 
             # DEBUG
             received = open("received/pwndcifrato.txt", "rb")
