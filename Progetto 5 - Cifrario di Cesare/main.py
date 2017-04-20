@@ -1,6 +1,9 @@
 import os
 import re
 import threading
+import queue
+
+from helpers import bruteforce
 from helpers.utils import *
 from helpers.connection import *
 from helpers.netutils import arpoisoner
@@ -42,7 +45,7 @@ if __name__ == "__main__":
             #analyzer(out_lck)
 
             # DEBUG
-            received = open("received/pwndcifrato.txt", "rb")
+            received = open("received/cifrato.txt", "rb")
             # -DEBUG
 
             # Seleziono metodo di decifratura
@@ -61,26 +64,29 @@ if __name__ == "__main__":
 
             elif decipher == 2:
                 list = None
-                dictionary = open("helpers/dict.txt", "w")
 
-                for filename in os.listdir("books"):
+                # Ci mette una vita la facciamo prima e bona
+                # Creazione dizionario
+                # dictionary = open("helpers/dict.txt", "w")
+                #
+                # for filename in os.listdir("books"):
+                #
+                #     fop = open("books/%s" % filename, "r")
+                #     for line in fop.readlines():
+                #         lst = re.findall(r"[\w']+", line)
+                #         for sublst in lst:
+                #             if sublst:
+                #                 if len(sublst) > 1:             #qui ho eliminato le "parole" di un solo carattere che venivano splittati dalle regular
+                #                     dictionary.write("%s\n" % sublst)
+                #     fop.close()
+                #
+                # dictionary.close()
 
-                    fop = open("books/%s" % filename, "r")
-                    for line in fop.readlines():
-                        lst = re.findall(r"[\w']+", line)
-                        for sublst in lst:
-                            if sublst:
-                                if len(sublst) > 1:             #qui ho eliminato le "parole" di un solo carattere che venivano splittati dalle regular
-                                    dictionary.write("%s\n" % sublst)
-                    fop.close()
-
-                dictionary.close()
-
-                file = open("helpers/dict.txt", "rb")
+                file = open("helpers/dict.txt", "rt")
                 dict = set()
 
                 for l in file.readlines():
-                    dict.add(l.lower().strip())
+                    dict.add(l.strip())
 
                 output(out_lck, "Created dictionary of %s words" % len(dict))
 
@@ -88,12 +94,33 @@ if __name__ == "__main__":
 
                 cyphered = received.read()
 
-                for i in range(1, 26):
-                    text = ccypher.full_decaesar(cyphered, i)
+                threads = []
+                results = []
+                queue = queue.Queue()
+                max_res = None
 
-                    fout = open("bruteforce/file" + str(i) + ".txt", "wt")
-                    fout.write(text)
-                    fout.close()
+                for i in range(1, 27):
+                    t = threading.Thread(target=bruteforce.bruteforce, args=(out_lck, cyphered, dict, i, queue))
+                    t.start()
+                    threads.append(t)
+                    results.append(queue.get())
+                    # bf = bruteforce.Bruteforce(out_lck, cyphered, dict, i, results)
+                    # bf.start()
+                    # threads.append(bf)
+
+                for t in threads:  # Aspetta la terminazione dei thread in esecuzione
+                    t.join()
+
+                for r in results:
+                    output(out_lck, "Shift %s accuracy: %s" % (r['shift'], r['accuracy']))
+                    if max_res is None:
+                        max_res = r
+                    else:
+                        if max_res['accuracy'] < r['accuracy']:
+                            max_res = r
+
+                output(out_lck, "Maximum accuracy %s with shift %s" % (max_res['accuracy'], max_res['shift']))
+                output(out_lck, "%s is the most probable deciphering key" % max_res['shift'])
 
             elif decipher == 3:
                 decipher = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Generate letter frequency",
