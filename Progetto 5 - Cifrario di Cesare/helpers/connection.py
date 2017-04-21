@@ -31,13 +31,13 @@ def connect(Host, Port):
         filename = copy.copy(ListLib[nf])
         f = open("books/"+filename, 'r')
         l = f.read(1024)
-        cs = ccypher.full_caesar(str(l), int(shift))
+        cs = ccypher.caesar(str(l), int(shift))
         tr = cs.encode()
         while (l):
             _socket.send(tr)
             #print('Sent ', repr(tr))
             l = f.read(1024)
-            cs = ccypher.full_caesar(str(l), int(shift))
+            cs = ccypher.caesar(str(l), int(shift))
             tr = cs.encode()
         f.close()
 
@@ -73,7 +73,7 @@ def listen(Port):
         #dc = full_decaesar(str(l), int(shift))
         #fout.write(dc)
         l = f.read()
-        dc = ccypher.full_decaesar(l, int(shift))
+        dc = ccypher.decaesar(l, int(shift))
         fout.write(dc)
 
         #while (l):

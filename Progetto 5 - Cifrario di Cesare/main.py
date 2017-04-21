@@ -3,7 +3,7 @@ import re
 import threading
 import queue
 
-from helpers import bruteforce
+from helpers import bruteforce, ccypher
 from helpers.utils import *
 from helpers.connection import *
 from helpers.netutils import arpoisoner
@@ -136,7 +136,7 @@ if __name__ == "__main__":
                         print ('Sorry but unacceptable rate, try bruteforce to decode the file \n')
                     else:
                         cyph = received.read()
-                        deciphred_freq = ccypher.full_decaesar(cyph,key)
-                        fout = open("received/pwndecifrato_freq.txt", "w")
+                        deciphred_freq = ccypher.decaesar(cyph,key)
+                        fout = open("received/decifrato_freq.txt", "w")
                         fout.write(deciphred_freq)
                         fout.close()

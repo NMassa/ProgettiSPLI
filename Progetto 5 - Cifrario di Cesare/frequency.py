@@ -143,15 +143,15 @@ class Frequency(object):
                     self.freq_orig_value.append(line2.split(None, 1)[1])
                     i += 1
 
-            for i in range(0, 25):
+            for i in range(0, 26):
                 #se da errore commentare la riga sotto che non la si usa per trovare la chiave
-                print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
+                #print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
                 value1 = str(self.freq_crypt_value[i])
                 value2 = str(self.freq_orig_value[i])
                 percent.append(self.similar(value1[:5], value2[:5])) #faccio compare solo sulle prime 4 cifre del numero, percentuale ottima ora!!!
                                                                 # ovviamente più aumento il numero di cifre più la percentuale cala
                 str1 = str(percent[i]) #così poi stampo solo le prime 2 cifre
-                print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', str1[:3])
+                print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', str1[:4])
 
             print(' Acceptable rate? Digit "ok" to confirm')
             ok = input()
