@@ -35,12 +35,14 @@ class Frequency(object):
                 if letter2 == "":
                     break
                 else:
-                    self.index = self.index + 1
+
                     if 96 < ord(letter2) < 123:
                         self.dictionary_frequency[letter2] = self.dictionary_frequency[letter2] + 1
+                        self.index = self.index + 1
                     elif 64 < ord(letter2) < 91:
                         key = ord(letter2) + 32
                         self.dictionary_frequency[chr(key)] = self.dictionary_frequency[chr(key)] + 1
+                        self.index = self.index + 1
             read_file.close()
 
         while True:
@@ -60,7 +62,7 @@ class Frequency(object):
 
     #funzione che genera la frequenza delle lettere sul file ricevuto dalla socket
     def crypt_file_frequency(self, file_crypt):
-
+        self.index = 0
         self.file_input = open('helpers/frequency_input.txt', 'r')
         dictionary_crypt = {}
         while True:
@@ -80,12 +82,13 @@ class Frequency(object):
             if letter2 == "":
                 break
             else:
-                self.index = self.index + 1
                 if 96 < ord(letter2) < 123:
                     dictionary_crypt[letter2] = dictionary_crypt[letter2] + 1
+                    self.index = self.index + 1
                 elif 64 < ord(letter2) < 91:
                     key = ord(letter2) + 32
                     dictionary_crypt[chr(key)] = dictionary_crypt[chr(key)] + 1
+                    self.index = self.index + 1
         file.close()
 
         file_output = None
@@ -123,6 +126,30 @@ class Frequency(object):
        ...
        ...
     '''
+    def media(self):
+
+        tot = 0
+        indice = 0
+
+        for i in range(0,5):
+            m = int(bin(ord(self.freq_crypt_char[i])), 2)
+            n = int(bin(ord(self.freq_orig_char[i])), 2)
+
+            key = (m - n)
+            print("chiave :",key)
+            if key < 0:
+                key = (122 - n) + (m - 96)
+                print("chiave :", key)
+
+            tot += key*(26-i)*(26-i)
+            indice += (26-i)*(26-i)
+
+        print ("indice : ",indice)
+        print ("totale : ",tot)
+        print("media : ",tot/indice)
+        return tot/indice
+
+
     def frequency_compare(self):
             #self.file = file
             self.freq_orig_value = []
@@ -142,29 +169,54 @@ class Frequency(object):
                     self.freq_orig_char.append(line2.split(None, 1)[0])
                     self.freq_orig_value.append(line2.split(None, 1)[1])
                     i += 1
+            n = self.media()
+            print (n)
+            return n
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            '''
             for i in range(0, 26):
-                #se da errore commentare la riga sotto che non la si usa per trovare la chiave
                 #print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
                 value1 = str(self.freq_crypt_value[i])
                 value2 = str(self.freq_orig_value[i])
-                percent.append(self.similar(value1[:5], value2[:5])) #faccio compare solo sulle prime 4 cifre del numero, percentuale ottima ora!!!
-                                                                # ovviamente più aumento il numero di cifre più la percentuale cala
+                #percent.append(self.similar(value1[:5], value2[:5]))
                 str1 = str(percent[i]) #così poi stampo solo le prime 2 cifre
                 print('% correspondence of', self.freq_crypt_char[i], '--->', self.freq_orig_char[i], ' is', str1[:4])
 
             print(' Acceptable rate? Digit "ok" to confirm')
             ok = input()
             if ok == 'ok':
-                n = bin(ord(self.freq_crypt_char[1]))
-                m = bin(ord(self.freq_orig_char[1]))
-                n =int(n,2)
-                m =int(m,2)
-                #print(n)#valore associato primo carattere
-                #print(m)
-                key = int(math.fabs(n - m))
+                m =int(bin(ord(self.freq_crypt_char[2])), 2)
+                n =int(bin(ord(self.freq_orig_char[2])), 2)
+
+                key = (m - n)
+                if key < 0:
+                    key = (122-n)+(m-96)
                 print('Search Key is :',key)
                 return key
             else:
                 print('Low rate \n')
                 return None
+'''
+
