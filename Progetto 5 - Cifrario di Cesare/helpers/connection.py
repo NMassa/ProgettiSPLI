@@ -30,17 +30,30 @@ def connect(Host, Port):
         nf = int(nfile) - 1
         filename = copy.copy(ListLib[nf])
         f = open("books/"+filename, 'r')
-        l = f.read(1024)
-        cs = ccypher.caesar(str(l), int(shift))
-        tr = cs.encode()
-        while (l):
-            _socket.send(tr)
-            #print('Sent ', repr(tr))
+        print("Want to send for frequency decode? Type 'f' in this case.\n" )
+        let = input()
+        if(let == "f"):
             l = f.read(1024)
             cs = ccypher.caesar(str(l), int(shift))
             tr = cs.encode()
-        f.close()
-
+            while (l):
+                _socket.send(tr)
+                #print('Sent ', repr(tr))
+                l = f.read(1024)
+                cs = ccypher.caesar(str(l), int(shift))
+                tr = cs.encode()
+            f.close()
+        else:
+            l = f.read(1024)
+            cs = ccypher.full_caesar(str(l), int(shift))
+            tr = cs.encode()
+            while (l):
+                _socket.send(tr)
+                #print('Sent ', repr(tr))
+                l = f.read(1024)
+                cs = ccypher.full_caesar(str(l), int(shift))
+                tr = cs.encode()
+            f.close()
     except socket.error as msg:
         sys.exit(1)
     _socket.close()
@@ -72,10 +85,16 @@ def listen(Port):
         # print("leggo %s" %l)
         #dc = full_decaesar(str(l), int(shift))
         #fout.write(dc)
-        l = f.read()
-        dc = ccypher.decaesar(l, int(shift))
-        fout.write(dc)
 
+        l = f.read()
+        print("Want to decode for frequency decode? Type 'f' in this case.\n" )
+        let = input()
+        if(let == "f"):
+            dc = ccypher.decaesar(l, int(shift))
+            fout.write(dc)
+        else:
+            dc = ccypher.full_decaesar(l, int(shift))
+            fout.write(dc)
         #while (l):
             #print('decipherText ', repr(tr))
             #l = f.read(1024)

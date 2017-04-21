@@ -2,6 +2,7 @@ import math
 from difflib import SequenceMatcher
 import operator
 import os
+import numpy as np
 
 
 class Frequency(object):
@@ -130,23 +131,35 @@ class Frequency(object):
 
         tot = 0
         indice = 0
+        array = []
 
-        for i in range(0,5):
+        for i in range(0,4):
             m = int(bin(ord(self.freq_crypt_char[i])), 2)
             n = int(bin(ord(self.freq_orig_char[i])), 2)
 
             key = (m - n)
-            print("chiave :",key)
-            if key < 0:
+            if key <0:
+                key = (122 - n) + (m - 96)
+            #array.append(key)
+            '''
+            if key >0:
+                print("chiave :", key)
+
+            elif key < 0:
                 key = (122 - n) + (m - 96)
                 print("chiave :", key)
 
+            '''
             tot += key*(26-i)*(26-i)
             indice += (26-i)*(26-i)
 
+        '''
         print ("indice : ",indice)
         print ("totale : ",tot)
         print("media : ",tot/indice)
+        print(array)
+        a = np.average(array,axis=1, weights=(1./4, 3./4))
+        print(a)'''
         return tot/indice
 
 
@@ -169,31 +182,12 @@ class Frequency(object):
                     self.freq_orig_char.append(line2.split(None, 1)[0])
                     self.freq_orig_value.append(line2.split(None, 1)[1])
                     i += 1
+
+
             n = self.media()
-            print (n)
+            print ("Best found key: ",n)
+            print ("Decoding...\nCheck decifrato_freq.txt")
             return n
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             '''
             for i in range(0, 26):
