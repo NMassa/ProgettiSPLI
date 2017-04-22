@@ -3,7 +3,7 @@ from difflib import SequenceMatcher
 import operator
 import os
 import numpy as np
-
+import time
 
 class Frequency(object):
 
@@ -132,36 +132,38 @@ class Frequency(object):
         tot = 0
         indice = 0
         array = []
+        c = []
 
-        for i in range(0,4):
+        for i in range(0,4):#se si usa media pesata sotto ampliare il range fino a 26
             m = int(bin(ord(self.freq_crypt_char[i])), 2)
             n = int(bin(ord(self.freq_orig_char[i])), 2)
 
             key = (m - n)
             if key <0:
                 key = (122 - n) + (m - 96)
-            #array.append(key)
-            '''
-            if key >0:
-                print("chiave :", key)
 
-            elif key < 0:
-                key = (122 - n) + (m - 96)
-                print("chiave :", key)
+            tot += key*(26-i)#*(26-i)
+            indice += (26-i)#*(26-i)
 
-            '''
-            tot += key*(26-i)*(26-i)
-            indice += (26-i)*(26-i)
+        '''media pesata con approssimazione, funziona perfettamente con chiavi alte con basse alla c.d.c.
+        a = np.average(array, weights=[26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1])
+        print("media pesata : ",a)
+        b=str(a).split(".")
+        c=list(b[1])
+        #print(c)
+        for i in range(5):
+            if int(c[5-i]) >= 5:
+                c[5-i-1]=int(c[5-i-1])+1
+            else:
+                i+=1
 
-        '''
-        print ("indice : ",indice)
-        print ("totale : ",tot)
-        print("media : ",tot/indice)
-        print(array)
-        a = np.average(array,axis=1, weights=(1./4, 3./4))
-        print(a)'''
+        if int(c[0]) >= 5:
+            key = int(b[0])+1
+        print("media arrotondata : ",key)
+        time.sleep(1)
+        
+        return key'''
         return tot/indice
-
 
     def frequency_compare(self):
             #self.file = file
