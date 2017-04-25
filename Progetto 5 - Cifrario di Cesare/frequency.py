@@ -141,29 +141,23 @@ class Frequency(object):
             key = (m - n)
             if key <0:
                 key = (122 - n) + (m - 96)
-
+            array.append(key)#visualizzo tutte le chiavi cercate
             tot += key*(26-i)#*(26-i)
             indice += (26-i)#*(26-i)
+
+
+        a=tot/indice
+        #print("Array è : ",array)
+        print("media pesata : ",a)
+        print("media approssimata : ",round(a))
 
         '''media pesata con approssimazione, funziona perfettamente con chiavi alte con basse alla c.d.c.
         a = np.average(array, weights=[26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1])
         print("media pesata : ",a)
-        b=str(a).split(".")
-        c=list(b[1])
-        #print(c)
-        for i in range(5):
-            if int(c[5-i]) >= 5:
-                c[5-i-1]=int(c[5-i-1])+1
-            else:
-                i+=1
-
-        if int(c[0]) >= 5:
-            key = int(b[0])+1
-        print("media arrotondata : ",key)
+        print("media approssimata: ",round(a))
         time.sleep(1)
-        
-        return key'''
-        return tot/indice
+        '''
+        return round(a)
 
     def frequency_compare(self):
             #self.file = file
@@ -189,8 +183,6 @@ class Frequency(object):
             n = self.media()
             print ("Best found key: ",n)
             print ("Decoding...\nCheck decifrato_freq.txt")
-            return n
-
             '''
             for i in range(0, 26):
                 #print(math.fabs(float(self.freq_crypt_value[i]) - float(self.freq_orig_value[i])) / float(self.freq_crypt_value[i]))
@@ -212,7 +204,10 @@ class Frequency(object):
                 print('Search Key is :',key)
                 return key
             else:
-                print('Low rate \n')
+                print('Low rate ')
                 return None
-'''
+            '''
+            return n
+
+
 
