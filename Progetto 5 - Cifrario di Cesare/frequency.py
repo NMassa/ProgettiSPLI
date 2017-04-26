@@ -74,41 +74,46 @@ class Frequency(object):
         self.file_input.close()
 
         #file = open(file_crypt, 'r')
-        file = open('received/pwndcifrato.txt', 'r')
+        try:
+            file = open('received/pwndcifrato.txt', 'r')
+        except:
+            print("Error opening pwndcifrato.txt.")
+        else:
 
-        while True:
-            letter2 = file.read(1)
-            if letter2 == "":
-                break
-            else:
-                if 96 < ord(letter2) < 123:
-                    dictionary_crypt[letter2] = dictionary_crypt[letter2] + 1
-                    self.index = self.index + 1
-                elif 64 < ord(letter2) < 91:
-                    key = ord(letter2) + 32
-                    dictionary_crypt[chr(key)] = dictionary_crypt[chr(key)] + 1
-                    self.index = self.index + 1
-        file.close()
+            while True:
+                letter2 = file.read(1)
+                if letter2 == "":
+                    break
+                else:
+                    if 96 < ord(letter2) < 123:
+                        dictionary_crypt[letter2] = dictionary_crypt[letter2] + 1
+                        self.index = self.index + 1
+                    elif 64 < ord(letter2) < 91:
+                        key = ord(letter2) + 32
+                        dictionary_crypt[chr(key)] = dictionary_crypt[chr(key)] + 1
+                        self.index = self.index + 1
+            file.close()
 
-        file_output = None
-        file_output = open('helpers/frequency_cypher.txt', 'w')
-        while True:
-            #trasformo il contatore di ogni lettera in una percentuale
-            for key, value in dictionary_crypt.items():
+            file_output = None
+            file_output = open('helpers/frequency_cypher.txt', 'w')
+            while True:
                 try:
-                    dictionary_crypt[key] = dictionary_crypt[key]/self.index
+                #trasformo il contatore di ogni lettera in una percentuale
+                    for key, value in dictionary_crypt.items():
+                        dictionary_crypt[key] = dictionary_crypt[key]/self.index
                 except ZeroDivisionError as err:
                     print("Error zero division retry.")
-                    raise
-            #ordino il dizionario trasformandolo in una lista di coppie
-            dictionary_frequency_s = sorted(dictionary_crypt.items(), key=operator.itemgetter(1), reverse=True)
-            #file_output.writelines('{} {}\n'.format(k, float(v / self.index) * 100) for k, v in dictionary_frequency_s.items())
-            file_output.write('\n'.join('%s %s' % i for i in dictionary_frequency_s))
-            file_output.write('\n')
-            file_output.close()
-            break
+                    return
+                else:
+                    #ordino il dizionario trasformandolo in una lista di coppie
+                    dictionary_frequency_s = sorted(dictionary_crypt.items(), key=operator.itemgetter(1), reverse=True)
+                    #file_output.writelines('{} {}\n'.format(k, float(v / self.index) * 100) for k, v in dictionary_frequency_s.items())
+                    file_output.write('\n'.join('%s %s' % i for i in dictionary_frequency_s))
+                    file_output.write('\n')
+                    file_output.close()
+                    break
 
-        print("Create letters' frequency crypted file.")
+            print("Create letters' frequency crypted file.")
 
 
 

