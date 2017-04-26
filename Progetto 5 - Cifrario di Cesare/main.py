@@ -35,6 +35,7 @@ if __name__ == "__main__":
             connect(host, 60000)
 
         elif main_menu == 2:
+
             port = 60000
             output(out_lck, "Listening on port %s..." % port)
             received = listen(port)
