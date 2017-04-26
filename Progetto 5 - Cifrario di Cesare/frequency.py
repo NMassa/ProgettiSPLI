@@ -2,7 +2,6 @@ import math
 from difflib import SequenceMatcher
 import operator
 import os
-import numpy as np
 import time
 
 class Frequency(object):

