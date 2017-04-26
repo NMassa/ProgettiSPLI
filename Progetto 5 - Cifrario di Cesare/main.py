@@ -26,6 +26,7 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "Arp poisoninig",
+                                                                                               "Dictionary & Frequencies",
                                                                                                "Sniff & Decypher"])
         if main_menu == 1:
 
@@ -43,6 +44,30 @@ if __name__ == "__main__":
         elif main_menu == 3:
             arpoisoner(out_lck)
         elif main_menu == 4:
+            option = loop_menu(out_lck, "Select an option: ", [ "Dictionary",
+                                                                "Frequency"])
+
+            if option == 1:
+                # Ci mette una vita la facciamo prima e bona
+                # Creazione dizionario
+                dictionary = open("helpers/dict.txt", "w")
+
+                for filename in os.listdir("books"):
+
+                    fop = open("books/%s" % filename, "r")
+                    for line in fop.readlines():
+                        lst = re.findall(r"[\w']+", line)
+                        for sublst in lst:
+                            if sublst:
+                                if len(sublst) > 1:             #qui ho eliminato le "parole" di un solo carattere che venivano splittati dalle regular
+                                    dictionary.write("%s\n" % sublst)
+                    fop.close()
+
+                dictionary.close()
+            elif option == 2:
+                f.letter_frequency()
+
+        elif main_menu == 5:
             # Analizzo il traffico
             analyzer(out_lck)
 
@@ -66,23 +91,6 @@ if __name__ == "__main__":
 
             elif decipher == 2:
                 list = None
-
-                # Ci mette una vita la facciamo prima e bona
-                # Creazione dizionario
-                # dictionary = open("helpers/dict.txt", "w")
-                #
-                # for filename in os.listdir("books"):
-                #
-                #     fop = open("books/%s" % filename, "r")
-                #     for line in fop.readlines():
-                #         lst = re.findall(r"[\w']+", line)
-                #         for sublst in lst:
-                #             if sublst:
-                #                 if len(sublst) > 1:             #qui ho eliminato le "parole" di un solo carattere che venivano splittati dalle regular
-                #                     dictionary.write("%s\n" % sublst)
-                #     fop.close()
-                #
-                # dictionary.close()
 
                 file = open("helpers/dict.txt", "rt")
                 dict = set()
@@ -125,22 +133,16 @@ if __name__ == "__main__":
                 output(out_lck, "%s is the most probable deciphering key" % max_res['shift'])
 
             elif decipher == 3:
-                decipher = loop_menu(out_lck, "Select one option ('e' to exit): ", ["Generate letter frequency",
-                                                                                    "Decipher"])
-                received = open("received/cifrato.txt","rb")
-                f = frequency.Frequency(received)
-                if decipher == 1:
-                    f.letter_frequency()
-                    f.crypt_file_frequency(received)
 
-                elif decipher == 2:
-                    key = f.frequency_compare()
-                    #if key == None:
-                     #   print ('Sorry but unacceptable rate, try bruteforce to decode the file \n')
-                    #else:
-                    cyph = received.read()
-                    key1 = int(key)
-                    deciphred_freq = ccypher.decaesar(cyph,key1)
-                    fout = open("received/decifrato_freq.txt", "w")
-                    fout.write(deciphred_freq)
-                    fout.close()
+                received = open("received/cifrato.txt", "rb")
+                f = frequency.Frequency(received)
+                f.crypt_file_frequency(received)
+
+                key = f.frequency_compare()
+
+                cyph = received.read()
+                key1 = int(key)
+                deciphred_freq = ccypher.decaesar(cyph,key1)
+                fout = open("received/decifrato_freq.txt", "w")
+                fout.write(deciphred_freq)
+                fout.close()
