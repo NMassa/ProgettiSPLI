@@ -41,6 +41,10 @@ def bruteforce(out_lck, cyphered, dict, shift, queue):
     matches = 0
     unmatches = 0
     text = ccypher.full_decaesar(cyphered, shift)
+    fout = open("bruteforce/___%s___.txt" % shift, "wt")
+    fout.write(text)
+    fout.close()
+
     lst = re.findall(r"[\w']+", text)
     for word in lst:
         words.append(word)
@@ -54,6 +58,7 @@ def bruteforce(out_lck, cyphered, dict, shift, queue):
 
     output(out_lck, "Terminated bruteforce with shift %s..." % shift)
     accuracy = matches / (matches + unmatches)
+    #TODO: aggiungere al risultato matches e unmatches che fa figo
     res = {
         "shift": shift,
         "accuracy": accuracy

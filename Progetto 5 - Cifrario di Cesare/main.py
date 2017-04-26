@@ -28,24 +28,25 @@ if __name__ == "__main__":
                                                                                                "Arp poisoninig",
                                                                                                "Sniff & Decypher"])
         if main_menu == 1:
-            print("invio file cifrato")
-            connect(my_ip, 60000)
+
+            output(out_lck, "Insert destination ip:")
+            host = input()
+
+            connect(host, 60000)
 
         elif main_menu == 2:
-            print("ricevo file cifrato")
-            #TODO: ricevo file cifrato
-            received = listen(60000)
-
-            #TODO: decifro file con la chiave
+            port = 60000
+            output(out_lck, "Listening on port %s..." % port)
+            received = listen(port)
 
         elif main_menu == 3:
             arpoisoner(out_lck)
         elif main_menu == 4:
             # Analizzo il traffico
-            #analyzer(out_lck)
+            analyzer(out_lck)
 
             # DEBUG
-            received = open("received/cifrato.txt", "rb")
+            received = open("received/pwndcifrato.txt", "rb")
             # -DEBUG
 
             # Seleziono metodo di decifratura
@@ -88,7 +89,7 @@ if __name__ == "__main__":
                 for l in file.readlines():
                     dict.add(l.strip())
 
-                output(out_lck, "Created dictionary of %s words" % len(dict))
+                output(out_lck, "Loaded dictionary of %s words" % len(dict))
 
                 output(out_lck, "Starting brute force")
 

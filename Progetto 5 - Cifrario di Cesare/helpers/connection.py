@@ -13,7 +13,8 @@ def connect(Host, Port):
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ListLib = []
     try:
-        _socket.connect(("127.0.0.1", port))
+        #_socket.connect(("127.0.0.1", port))
+        _socket.connect((host, port))
 
         print("Insert Shift")
         shift = input()
