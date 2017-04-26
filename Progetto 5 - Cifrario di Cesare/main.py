@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
                 output(out_lck, "Loaded dictionary of %s words" % len(dict))
 
-                output(out_lck, "Starting brute force")
+                output(out_lck, "Starting brute force...")
 
                 cyphered = received.read()
 
@@ -133,6 +133,9 @@ if __name__ == "__main__":
                 output(out_lck, "Maximum accuracy %s with shift %s" % (max_res['accuracy'], max_res['shift']))
                 output(out_lck, "%s is the most probable deciphering key" % max_res['shift'])
 
+                output(out_lck, "Press enter to continue")
+                input()
+
             elif decipher == 3:
 
                 f = frequency.Frequency()
@@ -142,7 +145,10 @@ if __name__ == "__main__":
 
                 cyph = received.read()
                 key1 = int(key)
-                deciphred_freq = ccypher.decaesar(cyph,key1)
+                deciphred_freq = ccypher.decaesar(cyph, key1)
                 fout = open("received/decifrato_freq.txt", "w")
                 fout.write(deciphred_freq)
                 fout.close()
+
+                output(out_lck, "Press enter to continue")
+                input()

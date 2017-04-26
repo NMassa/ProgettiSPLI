@@ -30,6 +30,9 @@ def connect(out_lck, host, port):
 
         let = loop_menu(out_lck, "Select cyphering method: ", ["Full cypher", "Letter cypher"])
         if let == 2:
+
+            output(out_lck, "Sending file...")
+
             l = f.read(1024)
             cs = ccypher.caesar(str(l), int(shift))
             tr = cs.encode()
@@ -40,7 +43,12 @@ def connect(out_lck, host, port):
                 cs = ccypher.caesar(str(l), int(shift))
                 tr = cs.encode()
             f.close()
+
+            output(out_lck, "File sent.")
         elif let == 1:
+
+            output(out_lck, "Sending file...")
+
             l = f.read(1024)
             cs = ccypher.full_caesar(str(l), int(shift))
             tr = cs.encode()
@@ -51,6 +59,9 @@ def connect(out_lck, host, port):
                 cs = ccypher.full_caesar(str(l), int(shift))
                 tr = cs.encode()
             f.close()
+
+            output(out_lck, "File sent...")
+
     except socket.error as msg:
         output(out_lck, str(msg))
         sys.exit(1)
@@ -75,7 +86,7 @@ def listen(out_lck, port):
             data = conn.recv(size)
         f.close()
 
-        shift = loop_int_input(out_lck, "Inserisci shift to decypher")
+        shift = loop_int_input(out_lck, "Insert shift to decypher")
         f = open("received/cifrato.txt", 'rb')
         fout = open("received/decifrato.txt", 'w')
 
