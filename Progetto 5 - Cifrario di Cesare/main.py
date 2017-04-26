@@ -32,13 +32,13 @@ if __name__ == "__main__":
             output(out_lck, "Insert destination ip:")
             host = input()
 
-            connect(host, 60000)
+            connect(out_lck, _base + host, 60000)
 
         elif main_menu == 2:
 
             port = 60000
             output(out_lck, "Listening on port %s..." % port)
-            received = listen(port)
+            received = listen(out_lck, port)
 
         elif main_menu == 3:
             arpoisoner(out_lck)
