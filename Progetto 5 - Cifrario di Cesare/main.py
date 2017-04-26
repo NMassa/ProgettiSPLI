@@ -135,9 +135,8 @@ if __name__ == "__main__":
 
             elif decipher == 3:
 
-                received = open("received/pwndcifrato.txt", "rb")
-                f = frequency.Frequency(received)
-                f.crypt_file_frequency(received)
+                f = frequency.Frequency()
+                f.crypt_file_frequency()
 
                 key = f.frequency_compare()
 

@@ -60,7 +60,7 @@ class Frequency(object):
         print("finish 1")
 
     #funzione che genera la frequenza delle lettere sul file ricevuto dalla socket
-    def crypt_file_frequency(self, file_crypt):
+    def crypt_file_frequency(self):
         self.index = 0
         self.file_input = open('helpers/frequency_input.txt', 'r')
         dictionary_crypt = {}

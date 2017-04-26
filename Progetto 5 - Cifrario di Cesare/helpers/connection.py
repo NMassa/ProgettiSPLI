@@ -23,7 +23,7 @@ def connect(out_lck, host, port):
                 ListLib.append(str(file))
                 i += 1
 
-        nfile = loop_int_input(out_lck, "CHoose file")
+        nfile = loop_int_input(out_lck, "Choose file")
         nf = int(nfile) - 1
         filename = copy.copy(ListLib[nf])
         f = open("books/"+filename, 'r')
