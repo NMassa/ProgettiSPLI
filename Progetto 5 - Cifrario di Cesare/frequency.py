@@ -7,13 +7,11 @@ import time
 
 class Frequency(object):
 
-    def __init__(self, text):
-        self.file_decrypt = text
+    def __init__(self):
         self.dictionary_frequency = None
         self.dictionary_frequency = {}
         self.index = 0
         self.file_input = open('helpers/frequency_input.txt', 'r')
-        #self.list_file = ['books/(1) The Hunger Games.txt', 'books/(2) Catching Fire.txt', 'books/(3.1) Mockingjay.txt']
         self.list_file = [file for file in os.listdir('books/') if file.endswith('.txt')]
 
     def letter_frequency(self):
@@ -76,7 +74,7 @@ class Frequency(object):
         self.file_input.close()
 
         #file = open(file_crypt, 'r')
-        file = open('received/cifrato.txt', 'r')
+        file = open('received/pwndcifrato.txt', 'r')
 
         while True:
             letter2 = file.read(1)

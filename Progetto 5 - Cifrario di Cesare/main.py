@@ -65,6 +65,7 @@ if __name__ == "__main__":
 
                 dictionary.close()
             elif option == 2:
+                f = frequency.Frequency()
                 f.letter_frequency()
 
         elif main_menu == 5:
@@ -134,7 +135,7 @@ if __name__ == "__main__":
 
             elif decipher == 3:
 
-                received = open("received/cifrato.txt", "rb")
+                received = open("received/pwndcifrato.txt", "rb")
                 f = frequency.Frequency(received)
                 f.crypt_file_frequency(received)
 
