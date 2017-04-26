@@ -56,7 +56,8 @@ class Frequency(object):
             file_output.close()
             break
 
-        print("finish 1")
+        print("Create dictionary letters frequency.")
+
 
     #funzione che genera la frequenza delle lettere sul file ricevuto dalla socket
     def crypt_file_frequency(self):
@@ -94,7 +95,11 @@ class Frequency(object):
         while True:
             #trasformo il contatore di ogni lettera in una percentuale
             for key, value in dictionary_crypt.items():
-                dictionary_crypt[key] = dictionary_crypt[key]/self.index
+                try:
+                    dictionary_crypt[key] = dictionary_crypt[key]/self.index
+                except ZeroDivisionError as err:
+                    print("Error zero division retry.")
+                    raise
             #ordino il dizionario trasformandolo in una lista di coppie
             dictionary_frequency_s = sorted(dictionary_crypt.items(), key=operator.itemgetter(1), reverse=True)
             #file_output.writelines('{} {}\n'.format(k, float(v / self.index) * 100) for k, v in dictionary_frequency_s.items())
@@ -103,7 +108,7 @@ class Frequency(object):
             file_output.close()
             break
 
-        print("finish 2")
+        print("Create letters' frequency crypted file.")
 
 
 
@@ -145,8 +150,8 @@ class Frequency(object):
 
         a=tot/indice
         #print("Array è : ",array)
-        print("media pesata : ",a)
-        print("media approssimata : ",round(a))
+        print("Average weight : ",a)
+        print("Approximate average : ",round(a))
 
         '''media pesata con approssimazione, funziona perfettamente con chiavi alte con basse alla c.d.c.
         a = np.average(array, weights=[26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1])

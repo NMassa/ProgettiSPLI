@@ -67,10 +67,12 @@ if __name__ == "__main__":
             elif option == 2:
                 f = frequency.Frequency()
                 f.letter_frequency()
+                output(out_lck, "Press enter to continue")
+                input()
 
         elif main_menu == 5:
             # Analizzo il traffico
-            analyzer(out_lck)
+            #analyzer(out_lck)
 
             # DEBUG
             received = open("received/pwndcifrato.txt", "rb")
@@ -140,7 +142,6 @@ if __name__ == "__main__":
 
                 f = frequency.Frequency()
                 f.crypt_file_frequency()
-
                 key = f.frequency_compare()
 
                 cyph = received.read()
