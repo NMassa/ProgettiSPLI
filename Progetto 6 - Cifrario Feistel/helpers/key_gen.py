@@ -23,6 +23,7 @@ def gen_keys(keyb):
     #invert left and right
     Left2=Right
     Right2=Left
+    print("\t \t Invert left and right")
     for i in range(0,4):
         if(i<4):
             Left2=Left2[(1 % len(Left2)):] + Left2[:(1 % len(Left2))]
