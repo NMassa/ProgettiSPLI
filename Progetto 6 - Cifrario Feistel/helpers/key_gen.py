@@ -1,6 +1,8 @@
 import random
+
 def toBinary(n):
     return ''.join(str(1 & int(n) >> i) for i in range(8)[::-1])
+
 def gen_keys(keyb):
 	i=0
 	keys=[]
