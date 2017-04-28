@@ -6,9 +6,9 @@ import queue
 from helpers import bruteforce, ccypher
 from helpers.utils import *
 from helpers.connection import *
-from helpers.netutils import arpoisoner
-from helpers.netutils import analyzer
-import frequency
+#from helpers.netutils import arpoisoner
+#from helpers.netutils import analyzer
+#import frequency
 
 _base = "192.168."
 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
     out_lck = threading.Lock()
 
     ip = loop_input(out_lck, "Insert your IP: ")
-    my_ip = _base + ip
+    my_ip = _base + str(ip)
 
     output(out_lck, "Your IP: " + my_ip)
     while True:

@@ -85,5 +85,5 @@ def loop_int_input(lock, header):
 def logo():
     f = open('helpers/logo.txt', 'r')
 
-    for l in f.readlines():
-        print(l,end='', flush=True )
+    #for l in f.readlines():
+       # print(l,end='', flush=True )
