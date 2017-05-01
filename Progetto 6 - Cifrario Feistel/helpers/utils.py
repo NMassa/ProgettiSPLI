@@ -104,3 +104,8 @@ def get_chunks(file,len):
                 n = 0
         f.close()
         return chunks
+
+
+def xor_func(xs, ys):
+
+    return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))

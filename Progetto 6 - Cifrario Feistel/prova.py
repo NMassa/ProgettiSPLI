@@ -6,8 +6,8 @@ if __name__ == "__main__":
     try:
         #file = open('/files/Periodic-Table.png', 'r')
         # file = open('files/frequency_cypher.txt', 'r')
-        immagini = [file for file in os.listdir('/root/PycharmProjects/ProgettiSPLI/Progetto 6 - Cifrario Feistel/files/')]
-        file = open('/root/PycharmProjects/ProgettiSPLI/Progetto 6 - Cifrario Feistel/files/' + immagini[3], 'rb')
+        immagini = [file for file in os.listdir('files/')]
+        file = open('files/' + immagini[3], 'rb')
 
     except OSError as e:
         print("errore apertura file")
