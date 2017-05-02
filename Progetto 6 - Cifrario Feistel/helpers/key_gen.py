@@ -7,7 +7,7 @@ def toNum(b):
     dec =int(b,2)
     return dec
 
-def gen_keys(keyb):
+def gen_keys(out_lck, skeyb):
     print("\t\t KEY8 \t")
     i=0
     keys=[]
@@ -85,7 +85,7 @@ def gen_8key32(keyb):
         print("DEC:" + str(dec))
         # output(out_lck, "Subkey %s: %s" % (i + 4, key32))
 
-def gen_16key32(keyb):
+def gen_16key32(out_lck, keyb):
     #output(out_lck, "Key base: %s" % keyb)
     #output(out_lck, "Generating subkeys...")
     print("\t\t 16 KEY32 \t")

@@ -6,6 +6,7 @@ from bitarray import bitarray
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *
+from helpers.tea import teaCipher
 from helpers.utils import *
 from helpers.connection import *
 
@@ -135,19 +136,21 @@ if __name__ == "__main__":
             key = str(random.randrange(0, 256))
             keyb = toBinary(int(key))
 
-            chunks = get_chunks("files/" + "piedpiper.jpg", 64)
+            #chunks = get_chunks("piedpiper.jpg", 64)
 
-            c = Cipher(out_lck, chunks, keyb)
+            c = teaCipher(out_lck, "piedpiper.jpg", keyb)
+            c.teaencrypt()
+            c.teadecrypt()
+"""
+            #c.encrypt()
 
-            c.encrypt()
+            #print("encrypted")
 
-            print("encrypted")
+            #c.chunks = c.encrypted
 
-            c.chunks = c.encrypted
+            #c.decrypt()
 
-            c.decrypt()
-
-            print("decrypted")
+            #print("decrypted")
 
             fout = open("received/decrypted.jpg", "wb")
 
@@ -158,3 +161,4 @@ if __name__ == "__main__":
             fout.close()
 
             print("done")
+"""

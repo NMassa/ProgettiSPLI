@@ -1,4 +1,4 @@
-from helpers.key_gen import gen_key32
+from helpers.key_gen import gen_16key32
 from helpers.utils import get_chunks, xor_func
 
 
@@ -16,7 +16,7 @@ class Blowfish:
         chunk_len = 64
 
         # creo chiavi
-        self.keys = gen_key32(out_lck, key)
+        self.keys = gen_16key32(out_lck, key)
         self.p_boxes = self.keys
 
         # controllo lunghezza chunk, se è più corta metto "0"

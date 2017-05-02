@@ -109,3 +109,7 @@ def get_chunks(file,len):
 def xor_func(xs, ys):
 
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
+
+
+def toBinary32(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(32)[::-1])
