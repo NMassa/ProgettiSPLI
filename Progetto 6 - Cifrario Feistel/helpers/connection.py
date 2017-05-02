@@ -15,7 +15,6 @@ def UDPclient(out_lck, host, port, data):
         idx = 0
         l = data[0:1024]
         while l:
-            output(out_lck, "Sending.. " + str(l))
             _socket.sendall(l)
             l = data[idx:idx+1024]
             idx += 1024
@@ -31,16 +30,15 @@ def UDPclient(out_lck, host, port, data):
 def UDPserver(out_lck, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    f = open('received/UDPreceived', 'wb')
+    f = open('received/UDPReceived', 'wb')
     try:
         sock.bind(("", port))
 
-        output(out_lck, "Listening....\n")
+        output(out_lck, "Listening on port %s..." % port)
         data, address = sock.recvfrom(1024)
         while len(data) == 1024:
             data, address = sock.recvfrom(1024)
             f.write(data)
-            print("Received: " + str(data))
 
         f.close()
     except socket.error as msg:

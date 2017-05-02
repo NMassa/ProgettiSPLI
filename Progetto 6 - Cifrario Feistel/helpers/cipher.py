@@ -32,7 +32,7 @@ class Cipher:
             self.encrypted.append(chunk)
 
     def decrypt(self):
-        for chunk in self.encrypted:
+        for chunk in self.chunks:
             for k_i in reversed(self.keys):  # il numero di chiavi è anache il numero di rounds dell'algoritmo
                 chunk = self.round_decode(chunk, k_i)
             self.decrypted.append(chunk)

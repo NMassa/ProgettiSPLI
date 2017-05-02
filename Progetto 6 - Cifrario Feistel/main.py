@@ -50,13 +50,18 @@ if __name__ == "__main__":
                 # prendo chunks di lunghezza chunk_len
                 chunks = get_chunks("files/" + filename, 64)
                 c = Cipher(out_lck, chunks, keyb)
+
+                output(out_lck, "Encrypting file...")
                 c.encrypt()
+                output(out_lck, "File encrypted")
 
                 data = b''
                 for chunk in c.encrypted:
                     data += bitarray(chunk).tobytes()
 
+                output(out_lck, "Sending file...")
                 UDPclient(out_lck, _base + host, 60000, data)
+                output(out_lck, "File sent")
 
             elif method == 2:
 
@@ -69,24 +74,44 @@ if __name__ == "__main__":
         elif main_menu == 2:
 
             port = 60000
-            output(out_lck, "Listening on port %s..." % port)
+
             UDPserver(out_lck, port)
 
             chunks = get_chunks("received/" + "UDPReceived", 64)
 
+            key = loop_int_input(out_lck, "Insert key to decrypt:")
+            keyb = toBinary(int(key))
+
             c = Cipher(out_lck, chunks, keyb)
 
+            output(out_lck, "Decrypting file...")
+            c.decrypt()
+            output(out_lck, "File decrypted")
+
+            fout = open("received/decrypted.jpg", "wb")
+
+            for chunk in c.decrypted:
+                ba = bitarray(chunk)
+                fout.write(ba.tobytes())
+
+            fout.close()
+
+            output(out_lck, "File saved")
 
         elif main_menu == 3:
 
             key = str(random.randrange(0, 256))
             keyb = toBinary(int(key))
 
-            c = Cipher(out_lck, "piedpiper.jpg", keyb)
+            chunks = get_chunks("files/" + "piedpiper.jpg", 64)
+
+            c = Cipher(out_lck, chunks, keyb)
 
             c.encrypt()
 
             print("encrypted")
+
+            c.chunks = c.encrypted
 
             c.decrypt()
 
