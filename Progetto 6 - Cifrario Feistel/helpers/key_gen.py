@@ -36,8 +36,8 @@ def gen_keys(keyb):
             print("KEYRET:"+keyret)
     return keys
 #prendo chiave da 56 e restituisco tot chiavi da 48 tutte diverse (una per round-->8)
-def gen_key48(keyb):
-    print("\t\t KEY48 \t")
+def gen_key32(keyb):
+    print("\t\t KEY32 \t")
     i=0
     keys=[]
     Left = keyb[:len(keyb)//2]
@@ -50,11 +50,11 @@ def gen_key48(keyb):
             Left1 = Left1[(1 % len(Left1)):] + Left1[:(1 % len(Left1))]
             Right1 = Right1[(1 % len(Right1)):] + Right1[:(1 % len(Right1))]
             keyret = Left1 + Right1
-            key48 = keyret + keyret + keyret +keyret +keyret + keyret
-            keys.append(key48)
+            key32 = keyret + keyret + keyret +keyret
+            keys.append(key32)
             #print("Left: " + Left + "\tLeft1: " + Left1)
             #print("Right: " + Right + "\tRight1: " + Right1)
-            print("KEY48:" + key48)
+            print("KEY32:" + key32)
     # invert left and right
     Left2 = Right
     Right2 = Left
@@ -64,11 +64,11 @@ def gen_key48(keyb):
             Left2 = Left2[(1 % len(Left2)):] + Left2[:(1 % len(Left2))]
             Right2 = Right2[(1 % len(Right2)):] + Right2[:(1 % len(Right2))]
             keyret = Left2 + Right2
-            key48 = keyret + keyret + keyret + keyret + keyret + keyret
-            keys.append(key48)
+            key32 = keyret + keyret + keyret + keyret
+            keys.append(key32)
             #print("Left (Right): " + Right + "\tLeft1: " + Left2)
             #print("Right (Left): " + Left + "\tRight1: " + Right2)
-            print("KEY48:" + key48)
+            print("KEY32:" + key32)
     return keys
 
 if __name__ == "__main__":
@@ -78,4 +78,4 @@ if __name__ == "__main__":
     keyb= toBinary(int(key))
     print (keyb)
     gen_keys(str(keyb))
-    gen_key48(str(keyb))
+    gen_key32(str(keyb))
