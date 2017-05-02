@@ -3,34 +3,50 @@ import socket
 from helpers.utils import output, loop_int_input
 import os
 
-def UDPclient(out_lck, host, port):
-    fileList = []
+def UDPclient(out_lck, host, port, data):
+
     _socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     try:
-        #_socket.connect(("127.0.0.1", 3000))
-        _socket.connect((host, port))
+        _socket.connect(("127.0.0.1", 60000))
+        #_socket.connect((host, port))
 
-        i = 1
-        for file in os.listdir("examplefiles"):
-            output(out_lck, "%s %s" % (i, file))
-            fileList.append(str(file))
-            i += 1
-
-        nfile = loop_int_input(out_lck, "Choose file")
-        nf = int(nfile) - 1
-        filename = copy.copy(fileList[nf])
-        f = open("examplefiles/" + filename, 'rb')
-        l = f.read(1024)
+        idx = 0
+        l = data[0:1024]
         while l:
             output(out_lck, "Sending.. " + str(l))
             _socket.sendall(l)
-            l = f.read(1024)
+            l = data[idx:idx+1024]
+            idx += 1024
+
+        _socket.shutdown(1)
+
     except socket.error as msg:
         output(out_lck, msg)
         exit(1)
     _socket.close()
+
+
+def UDPserver(out_lck, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    f = open('received/UDPreceived', 'wb')
+    try:
+        sock.bind(("", port))
+
+        output(out_lck, "Listening....\n")
+        data, address = sock.recvfrom(1024)
+        while len(data) == 1024:
+            data, address = sock.recvfrom(1024)
+            f.write(data)
+            print("Received: " + str(data))
+
+        f.close()
+    except socket.error as msg:
+        output(out_lck, msg)
+        exit(3)
+    sock.close()
 
 
 def TCPclient(out_lck, host, port):
@@ -62,25 +78,6 @@ def TCPclient(out_lck, host, port):
         output(out_lck, msg)
         exit(2)
     _socket.close()
-
-
-def UDPserver(out_lck, port, extension):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    f = open('files/output/UDPreceived.' + extension, 'wb')
-    try:
-        sock.bind(("", port))
-
-        output(out_lck, "Listening....\n")
-        data, address = sock.recvfrom(1024)
-        while len(data) > 0:
-            data, address = sock.recvfrom(1024)
-            f.write(data)
-            print("Received: " + str(data))
-    except socket.error as msg:
-        output(out_lck, msg)
-        exit(3)
-    sock.close()
 
 
 def TCPserver(out_lck, host, port, extension):

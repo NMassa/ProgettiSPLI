@@ -30,13 +30,38 @@ if __name__ == "__main__":
 
             host = loop_input(out_lck, "Insert destination ip:")
 
-            UDPclient(out_lck, _base + host, 60000)
+            key = loop_int_input(out_lck, "Insert base key:")
+            keyb = toBinary(int(key))
+
+            i = 1
+            fileList = []
+            for file in os.listdir("files"):
+                output(out_lck, "%s %s" % (i, file))
+                fileList.append(str(file))
+                i += 1
+
+            nfile = loop_int_input(out_lck, "Choose file")
+            nf = int(nfile) - 1
+            filename = copy.copy(fileList[nf])
+
+            method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
+
+            if method == 1:
+
+                c = Cipher(out_lck, filename, keyb)
+                c.encrypt()
+
+                data = b''
+                for chunk in c.encrypted:
+                    data += bitarray(chunk).tobytes()
+
+                UDPclient(out_lck, _base + host, 60000, data)
 
         elif main_menu == 2:
 
             port = 60000
             output(out_lck, "Listening on port %s..." % port)
-            received = UDPserver(out_lck, port, "jpg")
+            received = UDPserver(out_lck, port)
 
         elif main_menu == 3:
 
