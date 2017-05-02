@@ -1,4 +1,4 @@
-from helpers.key_gen import gen_key32, toBinary, toBinary32
+#from helpers.key_gen import gen_key32, toBinary, toBinary32
 from helpers.utils import xor_func
 
 
@@ -68,11 +68,11 @@ class Blowfish:
         a = int(a1,2)
         b = int(b1, 2)
         ab1 = a + b
-        ab = toBinary32(ab1)
+        #ab = toBinary32(ab1)
         abc1 = xor_func(ab, c1)
         abc = int(abc1,2)
         d = int(d1,2)
         abcd = abc + d
-        num = toBinary32(abcd)
+        #num = toBinary32(abcd)
 
-        return num
+        #return num

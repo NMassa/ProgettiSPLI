@@ -4,12 +4,12 @@ import threading
 
 from bitarray import bitarray
 from helpers.blowfish import Blowfish
+from helpers.blowfish_2 import Blowfish2
 from helpers.cipher import Cipher
 from helpers.key_gen import *
 from helpers.tea import teaCipher
 from helpers.utils import *
 from helpers.connection import *
-
 
 _base = "192.168."
 
@@ -25,7 +25,8 @@ if __name__ == "__main__":
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
-                                                                                               "Feistel cipher"])
+                                                                                               "Feistel cipher",
+                                                                                               "Blowfish method"])
 
         if main_menu == 1:
 
@@ -67,25 +68,7 @@ if __name__ == "__main__":
             elif method == 2:
 
                 print("blowfish")
-                chunks = get_chunks("files/" + filename, 64)
-                b = Blowfish(out_lck, chunks, keyb)
 
-                output(out_lck, "Encrypting file...")
-                b.encrypt()
-                output(out_lck, "File encrypted")
-                #print("chunks : ",chunks[0])
-                #print("\nencript : ",b.encrypted[0])
-                #b.decrypt()
-                #print("\ndecrypt : ",b.decrypted[0])
-
-
-                data = b''
-                for chunk in b.encrypted:
-                    data += bitarray(chunk).tobytes()
-
-                output(out_lck, "Sending file...")
-                UDPclient(out_lck, _base + host, 60000, data)
-                output(out_lck, "File sent")
 
             elif method == 3:
 
@@ -126,7 +109,6 @@ if __name__ == "__main__":
 
                 print("blowfish")
 
-                fout = open("received/decrypted_blowfish.jpg", "wb")
 
 
             elif method == 3:
@@ -135,13 +117,77 @@ if __name__ == "__main__":
 
                 fout = open("received/decrypted_tea.jpg", "wb")
 
+        elif main_menu == 4:
+
+            key = loop_int_input(out_lck, "Insert base key:")
+            keyb = toBinary(int(key))
+
+            i = 1
+            fileList = []
+            for file in os.listdir("files"):
+                output(out_lck, "%s %s" % (i, file))
+                fileList.append(str(file))
+                i += 1
+
+            nfile = loop_int_input(out_lck, "Choose file")
+            nf = int(nfile) - 1
+            filename = copy.copy(fileList[nf])
+
+            with open('files/' + filename, 'rb') as content_file:
+                content = content_file.read()
+
+            a = Blowfish2.encrypt(keyb, content)
+            output(out_lck, "Encrypting file...")
+            out_file1 = open("received/blowfish_crypted.jpg", "wb")
+            out_file1.write(a)
+            out_file1.close()
+            output(out_lck, "\nFile encripted ...")
+
+            method = loop_menu(out_lck, "Select dencryption method:", ["Key", "Bruteforce"])
+
+            if method == 1:
+
+                key = loop_int_input(out_lck, "Insert base key:")
+                keyb = toBinary(int(key))
+                b = Blowfish2.decrypt(keyb, a)
+                output(out_lck, "\nStart decryptation...")
+                out_file2 = open("received/blowfish_decrypted.jpg", "wb")
+                out_file2.write(b)
+                out_file2.close()
+
+                output(out_lck, "\nFinish decryptation. Check files received.\n")
+                '''check
+                out_file2 = open("received/blowfish_decrypted.jpg", "rb")
+                ciao = out_file2.read(5)
+                print(ciao)'''
+                output(out_lck, "Press enter to continue")
+                input()
+
+            elif method == 2:
+                for i in range(1, 10000):
+                    keya = toBinary(int(i))
+                    b = Blowfish2.decrypt(keya, a)
+                    data = b[:3]
+                    print("Try key : ", i)
+                    if data == b'\xff\xd8\xff':
+                        print("Found key : ", i)
+                        keya = toBinary(int(i))
+                        b = Blowfish2.decrypt(keya, a)
+                        output(out_lck, "\nStart decryptation...")
+                        out_file2 = open("received/blowfish_decrypted.jpg", "wb")
+                        out_file2.write(b)
+                        out_file2.close()
+                        output(out_lck, "\nFinish decryptation. Check files received.\n")
+                    else:
+                        i += 1
+
 
         elif main_menu == 3:
 
             key = str(random.randrange(0, 256))
             keyb = toBinary(int(key))
 
-            #chunks = get_chunks("piedpiper.jpg", 64)
+            # chunks = get_chunks("piedpiper.jpg", 64)
 
             c = teaCipher(out_lck, "piedpiper.jpg", keyb)
             c.teaencrypt()
