@@ -95,6 +95,7 @@ def gen_16key32(keyb):
     Right = keyb[len(keyb)//2:]
     Left1=Left
     Right1=Right
+
     # shift 1 Left and Right
     for i in range(0, 4):
         Left1 = Left1[(1 % len(Left1)):] + Left1[:(1 % len(Left1))]
@@ -122,6 +123,7 @@ def gen_16key32(keyb):
         dec = toNum(key32)
         print("DEC:" + str(dec))
         #output(out_lck, "Subkey %s: %s" % (i + 4, key32))
+
     #only left
     Left2 = Left
     Right2 = Left
@@ -136,6 +138,7 @@ def gen_16key32(keyb):
         dec = toNum(key32)
         print("DEC:" + str(dec))
         # output(out_lck, "Subkey %s: %s" % (i + 4, key32))
+
     #only right
     Left2 = Right
     Right2 = Right
