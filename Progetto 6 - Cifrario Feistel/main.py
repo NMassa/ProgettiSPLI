@@ -5,7 +5,7 @@ import threading
 from bitarray import bitarray
 
 from helpers.cipher import Cipher
-from helpers.feistel import *
+from helpers.key_gen import *
 from helpers.utils import *
 from helpers.connection import *
 
@@ -82,21 +82,39 @@ if __name__ == "__main__":
             key = loop_int_input(out_lck, "Insert key to decrypt:")
             keyb = toBinary(int(key))
 
-            c = Cipher(out_lck, chunks, keyb)
+            method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
-            output(out_lck, "Decrypting file...")
-            c.decrypt()
-            output(out_lck, "File decrypted")
+            if method == 1:
 
-            fout = open("received/decrypted.jpg", "wb")
+                c = Cipher(out_lck, chunks, keyb)
 
-            for chunk in c.decrypted:
-                ba = bitarray(chunk)
-                fout.write(ba.tobytes())
+                output(out_lck, "Decrypting file...")
+                c.decrypt()
+                output(out_lck, "File decrypted")
 
-            fout.close()
+                fout = open("received/decrypted_des.jpg", "wb")
 
-            output(out_lck, "File saved")
+                for chunk in c.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+                fout.close()
+
+                output(out_lck, "File saved")
+
+            elif method == 2:
+
+                print("blowfish")
+
+                fout = open("received/decrypted_blowfish.jpg", "wb")
+
+
+            elif method == 3:
+
+                print("tea")
+
+                fout = open("received/decrypted_tea.jpg", "wb")
+
 
         elif main_menu == 3:
 
