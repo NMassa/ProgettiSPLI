@@ -141,7 +141,7 @@ class Frequency(object):
         array = []
         c = []
 
-        for i in range(0,4):#se si usa media pesata sotto ampliare il range fino a 26
+        for i in range(0,3):#se si usa media pesata sotto ampliare il range fino a 26
             m = int(bin(ord(self.freq_crypt_char[i])), 2)
             n = int(bin(ord(self.freq_orig_char[i])), 2)
 

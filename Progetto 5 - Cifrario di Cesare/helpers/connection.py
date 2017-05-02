@@ -12,9 +12,14 @@ def connect(out_lck, host, port):
     ListLib = []
 
     try:
-        #_socket.connect(("127.0.0.1", port))
-        _socket.connect((host, port))
+        _socket.connect(("127.0.0.1", port))
+        f = open("books/Topolino.jpg", 'r')
+        while(f):
+            _socket.sendall(f)
 
+        f.close()
+        #_socket.connect((host, port))
+        """
         shift = loop_int_input(out_lck, "Insert shift")
         i = 1
         for file in os.listdir("books"):
@@ -61,7 +66,7 @@ def connect(out_lck, host, port):
             f.close()
 
             output(out_lck, "File sent...")
-
+    """
     except socket.error as msg:
         output(out_lck, str(msg))
         sys.exit(1)
