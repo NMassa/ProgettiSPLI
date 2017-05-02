@@ -12,16 +12,13 @@ class Cipher:
     encrypted = []
     decrypted = []
 
-    def __init__(self, out_lck, file, key):
-        self.file = file
+    def __init__(self, out_lck, chunks, key):
         self.keys = []
+        self.chunks = chunks
         chunk_len = 64
 
         # creo chiavi
         self.keys = gen_key32(out_lck, key)
-        # prendo chunks di lunghezza chunk_len
-        self.chunks = get_chunks("files/" + file, chunk_len)
-        #print(self.chunks)
 
         # controllo lunghezza chunk, se è più corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:

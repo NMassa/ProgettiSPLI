@@ -47,8 +47,9 @@ if __name__ == "__main__":
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
             if method == 1:
-
-                c = Cipher(out_lck, filename, keyb)
+                # prendo chunks di lunghezza chunk_len
+                chunks = get_chunks("files/" + filename, 64)
+                c = Cipher(out_lck, chunks, keyb)
                 c.encrypt()
 
                 data = b''
@@ -57,11 +58,24 @@ if __name__ == "__main__":
 
                 UDPclient(out_lck, _base + host, 60000, data)
 
+            elif method == 2:
+
+                print("blowfish")
+
+            elif method == 3:
+
+                print("tea")
+
         elif main_menu == 2:
 
             port = 60000
             output(out_lck, "Listening on port %s..." % port)
-            received = UDPserver(out_lck, port)
+            UDPserver(out_lck, port)
+
+            chunks = get_chunks("received/" + "UDPReceived", 64)
+
+            c = Cipher(out_lck, chunks, keyb)
+
 
         elif main_menu == 3:
 
