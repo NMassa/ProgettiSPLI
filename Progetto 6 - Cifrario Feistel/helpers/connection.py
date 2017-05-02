@@ -64,12 +64,12 @@ def TCPclient(out_lck, host, port):
     _socket.close()
 
 
-def UDPserver(out_lck, host, port, extension):
+def UDPserver(out_lck, port, extension):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     f = open('files/output/UDPreceived.' + extension, 'wb')
     try:
-        sock.bind((host, port))
+        sock.bind(("", port))
 
         output(out_lck, "Listening....\n")
         data, address = sock.recvfrom(1024)

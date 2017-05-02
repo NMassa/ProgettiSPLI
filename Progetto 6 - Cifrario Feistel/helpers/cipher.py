@@ -1,50 +1,48 @@
 import hashlib
 
 from bitarray import bitarray
-
 from helpers.key_gen import *
 from helpers.utils import *
 
 
 class Cipher:
-    def __int__(self, file, key):
+    file = None
+    keys = None
+    chunks = None
+    encrypted = []
+    decrypted = []
 
+    def __init__(self, out_lck, file, key):
         self.file = file
-        self.key = key
-        kes = []
-        chunk_len = 8
+        self.keys = []
+        chunk_len = 64
 
         # creo chiavi
-        keys = gen_keys(key)
+        self.keys = gen_key32(out_lck, key)
         # prendo chunks di lunghezza chunk_len
-        self.chunks = get_chunks("../files/" + file, chunk_len)
-        print(self.chunks)
+        self.chunks = get_chunks("files/" + file, chunk_len)
+        #print(self.chunks)
 
         # controllo lunghezza chunk, se è più corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
 
-    def encode(self):
+    def encrypt(self):
 
-        chunks_encoded = []
         for chunk in self.chunks:
             for k_i in self.keys: # il numero di chiavi è anache il numero di rounds dell'algoritmo
-                # TODO: applico funzione al chunk con keys[i]
                 chunk = self.round_encode(chunk, k_i)
-            chunks_encoded.append(chunk)
+            self.encrypted.append(chunk)
 
-    def decode(self):
-
-        chunks_decoded = []
-        for chunk in self.chunks:
+    def decrypt(self):
+        for chunk in self.encrypted:
             for k_i in reversed(self.keys):  # il numero di chiavi è anache il numero di rounds dell'algoritmo
-                # TODO: applico funzione al chunk con keys[i]
-                chunk = self.round_encode(chunk, k_i)
-            chunks_decoded.append(chunk)
+                chunk = self.round_decode(chunk, k_i)
+            self.decrypted.append(chunk)
 
     def round_encode(self, chunk, key_i):
-        left = chunk[:len(chunk) / 2]
-        right = chunk[len(chunk) / 2:]
+        left = chunk[:int(len(chunk)/2)]
+        right = chunk[int(len(chunk)/2):]
 
         new_left = right
 
@@ -63,15 +61,15 @@ class Cipher:
                 d = '0' + d
             D += d
 
-        new_right = xor_func(D[:8], left)
+        new_right = xor_func(D[:32], left)
 
         new_chunk = new_left + new_right
 
         return new_chunk
 
     def round_decode(self, chunk, key_i):
-        left = chunk[:len(chunk) / 2]
-        right = chunk[len(chunk) / 2:]
+        left = chunk[:int(len(chunk)/2)]
+        right = chunk[int(len(chunk)/2):]
 
         new_right = left
 
@@ -90,7 +88,7 @@ class Cipher:
                 d = '0' + d
             D += d
 
-        new_left = xor_func(D[:8], right)
+        new_left = xor_func(D[:32], right)
 
         new_chunk = new_left + new_right
 
