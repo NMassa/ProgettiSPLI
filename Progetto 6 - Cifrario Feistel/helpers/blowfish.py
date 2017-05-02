@@ -1,12 +1,10 @@
-from helpers.key_gen import gen_16key32
-from helpers.utils import get_chunks, xor_func
+from helpers.key_gen import gen_key32, toBinary, toBinary32
+from helpers.utils import xor_func
 
 
 class Blowfish:
-
     encrypted = []
     decrypted = []
-
 
     def __init__(self, out_lck, chunks, key):
 
@@ -16,7 +14,7 @@ class Blowfish:
         chunk_len = 64
 
         # creo chiavi
-        self.keys = gen_16key32(out_lck, key)
+        self.keys = gen_key32(out_lck, key)
         self.p_boxes = self.keys
 
         # controllo lunghezza chunk, se è più corta metto "0"
@@ -44,7 +42,8 @@ class Blowfish:
         xl, xr = xr, xl
         xr = xor_func(xr, self.p_boxes[6])
         xl = xor_func(xl, self.p_boxes[7])
-        return xl, xr
+        chunk1 = xr + xl
+        return chunk1
 
     def decipher(self, chunk):
 
@@ -57,17 +56,23 @@ class Blowfish:
         xl, xr = xr, xl
         xr = xor_func(xr, self.p_boxes[1])
         xl = xor_func(xl, self.p_boxes[0])
-        return xl, xr
+        chunk1 = xr + xl
+        return chunk1
 
     def __round_func(self, xl):
 
-        a = xl[24:]  # ultime 8
-        b = xl[16:-8]  # penultime 8
-        c = xl[8:-16]
-        d = xl[:-24]  # prime 8
-
-        ab = a + b
-        abc = xor_func(ab, c)
+        a1 = xl[24:].zfill(32)  # ultime 8
+        b1 = xl[16:-8].zfill(32)  # penultime 8
+        c1 = xl[8:-16].zfill(32)
+        d1 = xl[:-24].zfill(32) # prime 8
+        a = int(a1,2)
+        b = int(b1, 2)
+        ab1 = a + b
+        ab = toBinary32(ab1)
+        abc1 = xor_func(ab, c1)
+        abc = int(abc1,2)
+        d = int(d1,2)
         abcd = abc + d
+        num = toBinary32(abcd)
 
-        return abcd
+        return num

@@ -73,11 +73,16 @@ if __name__ == "__main__":
                 output(out_lck, "Encrypting file...")
                 b.encrypt()
                 output(out_lck, "File encrypted")
+                #print("chunks : ",chunks[0])
+                #print("\nencript : ",b.encrypted[0])
+                #b.decrypt()
+                #print("\ndecrypt : ",b.decrypted[0])
+
+
                 data = b''
                 for chunk in b.encrypted:
                     data += bitarray(chunk).tobytes()
 
-                print(data)
                 output(out_lck, "Sending file...")
                 UDPclient(out_lck, _base + host, 60000, data)
                 output(out_lck, "File sent")
