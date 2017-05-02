@@ -3,7 +3,7 @@ import re
 import threading
 
 from bitarray import bitarray
-
+from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.feistel import *
 from helpers.utils import *
@@ -66,6 +66,20 @@ if __name__ == "__main__":
             elif method == 2:
 
                 print("blowfish")
+                chunks = get_chunks("files/" + filename, 64)
+                b = Blowfish(out_lck, chunks, keyb)
+
+                output(out_lck, "Encrypting file...")
+                b.encrypt()
+                output(out_lck, "File encrypted")
+                data = b''
+                for chunk in b.encrypted:
+                    data += bitarray(chunk).tobytes()
+
+                print(data)
+                output(out_lck, "Sending file...")
+                UDPclient(out_lck, _base + host, 60000, data)
+                output(out_lck, "File sent")
 
             elif method == 3:
 
