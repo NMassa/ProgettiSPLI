@@ -33,7 +33,7 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Generate keys",
                                                                                                "Send file",
                                                                                                "Receive file",
-                                                                                               "Brute Forse"])
+                                                                                               "Brute Force"])
         if main_menu == 1:
             key = loop_int_input(out_lck, "Insert base key:")
             keyb = toBinary(int(key))
@@ -196,8 +196,10 @@ if __name__ == "__main__":
                 chunks = get_chunks("received/" + filename, 64)
 
                 for i_key in range(0, 256, 1):
-                    #print('chiave provata: ', i_key)
-                    c = Cipher(out_lck, chunks, toBinary(int(i_key)))
+
+                    keys_d = gen_8key32(out_lck, toBinary(int(i_key)))
+
+                    c = Cipher(out_lck, chunks, keys_d)
                     n = c.decrypt_brute_force()
                     if n != 0:
                         # trovato il formato del file, smetto di provare nuove chiavi
@@ -246,7 +248,10 @@ if __name__ == "__main__":
 
                 for i_key in range(0, 256, 1):
                     #print('chiave provata: ', i_key)
-                    c = Blowfish(out_lck, chunks, toBinary(int(i_key)))
+
+                    keys_d = gen_8key32(out_lck, toBinary(int(i_key)))
+
+                    c = Blowfish(out_lck, chunks, keys_d)
                     n = c.decrypt_brute_force()
 
                     if n != 0:
@@ -300,7 +305,9 @@ if __name__ == "__main__":
                     filein = 'received/' + filename
                     fileout = 'received/brute_Force_TEA'
 
-                    n = brute_force_tea(filein, fileout, gen_16key32(out_lck, toBinary(int(i_key))))
+                    #keys_t = gen_md5_32(str(key).encode('utf-8'))
+
+                    n = brute_force_tea(filein, fileout, gen_md5_32(str(i_key).encode('utf-8')))
 
 
                     if n == 0:
