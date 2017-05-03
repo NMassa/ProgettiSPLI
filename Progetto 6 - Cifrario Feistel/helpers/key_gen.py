@@ -164,6 +164,7 @@ def gen_md5_32(pwd):
     #print(h_obj.hexdigest())
     return(h_obj.hexdigest())
 
+
 if __name__ == "__main__":
     print ("Generate Key")
     key = str(random.randrange(0,256))
