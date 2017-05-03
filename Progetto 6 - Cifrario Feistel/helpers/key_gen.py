@@ -1,4 +1,5 @@
 import random
+import hashlib
 #from helpers.utils import *
 
 def toBinary(n):
@@ -158,6 +159,11 @@ def gen_16key32(out_lck, keyb):
 
     return keys
 
+def gen_md5_32(pwd):
+    h_obj=hashlib.md5(str(pwd))
+    #print(h_obj.hexdigest())
+    return(h_obj.hexdigest())
+
 if __name__ == "__main__":
     print ("Generate Key")
     key = str(random.randrange(0,256))
@@ -167,3 +173,4 @@ if __name__ == "__main__":
     gen_keys(str(keyb))
     gen_8key32(str(keyb))
     gen_16key32(str(keyb))
+    gen_md5_32('abcdehehheeh')
