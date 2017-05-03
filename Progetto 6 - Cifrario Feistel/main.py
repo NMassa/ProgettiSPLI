@@ -3,10 +3,12 @@ import re
 import threading
 
 from bitarray import bitarray
+
+from helpers import tea
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *
-from helpers.tea import teaCipher
+from helpers.tea import *
 from helpers.utils import *
 from helpers.connection import *
 
@@ -137,10 +139,10 @@ if __name__ == "__main__":
             keyb = toBinary(int(key))
 
             #chunks = get_chunks("piedpiper.jpg", 64)
-
-            c = teaCipher(out_lck, "piedpiper.jpg", keyb)
+            #key = get_key('Random Text or Something')
+            c = teaCipher(out_lck, "piedpiper.jpg",keyb)
             c.teaencrypt()
-            c.teadecrypt()
+
 """
             #c.encrypt()
 
