@@ -28,9 +28,7 @@ if __name__ == "__main__":
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
-                                                                                               "Brute Forse",
-                                                                                               "Arp Poisoner",
-                                                                                               "Sniffer"])
+                                                                                               "Brute Forse"])
 
         if main_menu == 1:
 
@@ -133,7 +131,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_blowfish.jpg", "wb")
+                fout = open("received/decrypted_blowfish", "wb")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)
@@ -147,7 +145,7 @@ if __name__ == "__main__":
 
                 keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Starting to decrypt with TEA...")
-                tea_decryptfile('received/UDPReceived', 'received/tea_decrypted.jpg', keys)
+                tea_decryptfile('received/decrypted_tea', keys)
                 output(out_lck, "Decrypted!")
 
         #bruteforce

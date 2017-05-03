@@ -12,7 +12,7 @@ def fromHEx_tobin(h):
     h = (bin(int(h, 32))[2:]).zfill(h_size)
     return h
 
-#def gen_keys(out_lck, skeyb):
+#def gen_keys(out_lck, keyb):
 def gen_keys(keyb):
     print("\t\t KEY8 \t")
     i=0
@@ -51,8 +51,8 @@ def gen_keys(keyb):
     return keys
 
 #prendo chiave da 8 e restituisco tot chiavi da 32 tutte diverse (una per round-->8)
-#def gen_key32(out_lck, keyb):
-def gen_8key32(keyb):
+def gen_8key32(out_lck, keyb):
+#def gen_8key32(keyb):
 
     # output(out_lck, "Key base: %s" % keyb)
     # output(out_lck, "Generating subkeys...")

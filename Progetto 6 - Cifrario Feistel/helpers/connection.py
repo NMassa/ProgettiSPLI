@@ -9,8 +9,7 @@ def UDPclient(out_lck, host, port, data):
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     try:
-        _socket.connect(("127.0.0.1", 60000))
-        #_socket.connect((host, port))
+        _socket.connect((host, port))
 
         idx = 0
         l = data[0:1024]
@@ -19,7 +18,7 @@ def UDPclient(out_lck, host, port, data):
             l = data[idx:idx+1024]
             idx += 1024
 
-        _socket.shutdown(1)
+        #_socket.shutdown(1)
 
     except socket.error as msg:
         output(out_lck, msg)
