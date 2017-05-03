@@ -4,6 +4,8 @@ import threading
 import time
 
 from bitarray import bitarray
+
+from helpers import netutils
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *
@@ -26,7 +28,9 @@ if __name__ == "__main__":
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
-                                                                                               "Brute Forse"])
+                                                                                               "Brute Forse",
+                                                                                               "Arp Poisoner",
+                                                                                               "Sniffer"])
 
         if main_menu == 1:
 
@@ -139,14 +143,14 @@ if __name__ == "__main__":
 
                 output(out_lck, "File saved")
 
-
             elif method == 3:
 
                 keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Starting to decrypt with TEA...")
-                tea_decryptfile('received/UDPReceived', keys)
+                tea_decryptfile('received/UDPReceived', 'received/tea_decrypted.jpg', keys)
                 output(out_lck, "Decrypted!")
 
+        #bruteforce
         elif main_menu == 3:
 
             start = time.time()
@@ -194,3 +198,80 @@ if __name__ == "__main__":
             stop = time.time() - start
 
             print("done, decode timer: ", stop, " seconds")
+
+        #Arp Poisoner
+        elif main_menu == 4:
+            netutils.arpoisoner(out_lck, 'enx9cebe811a79a')
+
+        #Sniffer
+        elif main_menu == 5:
+
+            encr = loop_input(out_lck, "Insert name for file Ex. 'tea' will output 'sniff_tea'")
+
+            timeout = loop_input(out_lck, "Insert a timeout for the sniffer.")
+
+            netutils.sniffer(out_lck, timeout, '60000', 'enx9cebe811a79a ', encr)
+
+            i = 1
+            fileList = []
+            for file in os.listdir("sniffed"):
+                output(out_lck, "%s %s" % (i, file))
+                fileList.append(str(file))
+                i += 1
+
+            nfile = loop_int_input(out_lck, "Choose file")
+            nf = int(nfile) - 1
+            filename = "sniffed/" + copy.copy(fileList[nf])
+
+            chunks = get_chunks(filename, 64)
+
+            key = loop_int_input(out_lck, "Insert key to decrypt:")
+            keyb = toBinary(int(key))
+
+            method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
+
+            #des
+            if method == 1:
+
+                c = Cipher(out_lck, chunks, keyb)
+
+                output(out_lck, "Decrypting file...")
+                c.decrypt()
+                output(out_lck, "File decrypted")
+
+                fout = open("sniffed/decrypted/decrypted_des.jpg", "wb")
+
+                for chunk in c.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+                fout.close()
+
+                output(out_lck, "File saved")
+
+            #blowfish
+            elif method == 2:
+
+                b = Blowfish(out_lck, chunks, keyb)
+
+                output(out_lck, "Decrypting file...")
+                b.decrypt()
+                output(out_lck, "File decrypted")
+
+                fout = open("sniffed/decrypted/decrypted_blowfish.jpg", "wb")
+
+                for chunk in b.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+                fout.close()
+
+                output(out_lck, "File saved")
+
+            #TEA
+            elif method == 3:
+
+                keys = gen_16key32(out_lck, keyb)
+                output(out_lck, "Starting to decrypt with TEA...")
+                tea_decryptfile(filename, "sniffed/decrypted/decrypted_TEA.jpg", keys)
+                output(out_lck, "Decrypted!")

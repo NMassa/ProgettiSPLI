@@ -62,12 +62,12 @@ def tea_encryptfile(file, key):
         #output_file.close()
     return result
 
-def tea_decryptfile(file, key):
+def tea_decryptfile(filein, fileout, key):
     message = None
-    tea_decrypted = open('received/tea_decrypted.jpg', 'wb')
+    tea_decrypted = open(fileout, 'wb')
 
     if not message:
-        input = open(file, 'rb')
+        input = open(filein, 'rb')
         message = input.read()
         input.close()
         result = decipher(message, key)

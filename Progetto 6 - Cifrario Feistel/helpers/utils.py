@@ -57,6 +57,7 @@ def loop_input(lock, header):
         else:
             return var
 
+
 def loop_int_input(lock, header):
     var = None
     while var is None:
@@ -80,8 +81,6 @@ def loop_int_input(lock, header):
                 continue
             else:
                 return selected
-
-
 
 
 def get_chunks(file,len):
