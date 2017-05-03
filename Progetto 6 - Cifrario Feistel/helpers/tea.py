@@ -35,6 +35,8 @@ def encrypt(v0, v1, key, rounds=32):
     return v0, v1
 
 
+
+
 def decrypt(v0, v1, key, rounds=32):
     assert len(key) == 4
     sum = ul(DELTA * rounds)
