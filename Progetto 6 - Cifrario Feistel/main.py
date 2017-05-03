@@ -117,9 +117,10 @@ if __name__ == "__main__":
             i = 1
             fileList = []
             for file in os.listdir("received"):
-                output(out_lck, "%s %s" % (i, file))
-                fileList.append(str(file))
-                i += 1
+                if "UDPReceived" in file:
+                    output(out_lck, "%s %s" % (i, file))
+                    fileList.append(str(file))
+                    i += 1
 
             nfile = loop_int_input(out_lck, "Choose file")
             nf = int(nfile) - 1
@@ -303,7 +304,7 @@ if __name__ == "__main__":
                 for i_key in range(0, 256, 1):
 
                     filein = 'received/' + filename
-                    fileout = 'received/brute_Force_TEA'
+                    fileout = 'received/brute_Force_TEA.jpg'
 
                     #keys_t = gen_md5_32(str(key).encode('utf-8'))
 
@@ -312,6 +313,7 @@ if __name__ == "__main__":
 
                     if n == 0:
                         # trovato il formato del file, smetto di provare nuove chiavi
+                        print("decrypted with key: ", i_key)
                         break
                     else:
                         print("not valid key ", i_key, "\n")
