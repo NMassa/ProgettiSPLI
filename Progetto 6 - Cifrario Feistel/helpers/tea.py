@@ -53,7 +53,7 @@ def encipher(s, key):
     s = s.ljust(8 * int((len(s) + 7) / 8), bytes('\x00'.encode('utf-8')))  # pad with 0's
     u = struct.unpack('%dI' % (len(s) / 4), s)
     e = [encrypt(u[i], u[i + 1], key) for i in range(len(u))[::2]]
-    return ''.join([struct.pack('2I', ee, ef) for ee, ef in e])
+    return b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
 
 
 def decipher_raw(s, key):
@@ -62,12 +62,12 @@ def decipher_raw(s, key):
     assert len(s) % 8 == 0, len(s)
     u = struct.unpack('%dI' % (len(s) / 4), s)
     e = [decrypt(u[i], u[i + 1], key) for i in range(len(u))[::2]]
-    return ''.join([struct.pack('2I', ee, ef) for ee, ef in e])
+    return b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
 
 
 def decipher(s, key):
     """TEA-decipher a readable string"""
-    return decipher_raw(s, key).rstrip('\x00')
+    return decipher_raw(s, key).rstrip(bytes('\x00'.encode('utf-8')))
 
 
 def main():
@@ -91,8 +91,8 @@ def main():
   If either FILE argument is omitted, stdin/stdout is used."""
 
     def usage(msg=None):
-        if msg: print >> sys.stderr, 'Error:', msg
-        print >> sys.stderr, main.__doc__
+        if msg: print(str(sys.stderr) + 'Error:' + msg)
+        print(str(sys.stderr) + main.__doc__)
         sys.exit(-1)
 
     cipher = encipher
@@ -136,12 +136,12 @@ def main():
 
     inputisatty = True
     if not message:
-        input = args and open("piedpiper.jpg", 'rb') or sys.stdin
+        input = args and open(args.pop(0), 'rb') or sys.stdin
         message = input.read()
         inputisatty = input.isatty()
         input.close()
 
-    output = args and open("asd.jpg", 'wb') or sys.stdout
+    output = args and open(args.pop(0), 'wb') or sys.stdout
 
     if (cipher == decipher) and ((hex == True) or
                                      ((hex == None) and inputisatty)):
