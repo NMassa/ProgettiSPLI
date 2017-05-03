@@ -211,7 +211,7 @@ if __name__ == "__main__":
                 if n == 0:
                     print("not found valid key")
                 elif n == 1:
-                    fout = open("received/Brute_Force_DES.png", "wb")
+                    fout = open("brute_force/Brute_Force_DES.png", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -220,7 +220,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 2:
-                    fout = open("received/Brute_Force_DES.jpg", "wb")
+                    fout = open("brute_force/Brute_Force_DES.jpg", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -229,7 +229,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 3:
-                    fout = open("received/Brute_Force_DES.bmp", "wb")
+                    fout = open("brute_force/Brute_Force_DES.bmp", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -265,7 +265,7 @@ if __name__ == "__main__":
                     print("not found valid key")
 
                 elif n == 1:
-                    fout = open("received/Brute_Force_Blowfish.png", "wb")
+                    fout = open("brute_force/Brute_Force_Blowfish.png", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -274,7 +274,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 2:
-                    fout = open("received/Brute_Force_Blowfish.jpg", "wb")
+                    fout = open("brute_force/Brute_Force_Blowfish.jpg", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -283,7 +283,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 3:
-                    fout = open("received/Brute_Force_Blowfish.bmp", "wb")
+                    fout = open("brute_force/Brute_Force_Blowfish.bmp", "wb")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -304,7 +304,7 @@ if __name__ == "__main__":
                 for i_key in range(0, 256, 1):
 
                     filein = 'received/' + filename
-                    fileout = 'received/brute_Force_TEA.jpg'
+                    fileout = 'brute_force/brute_Force_TEA.jpg'
 
                     #keys_t = gen_md5_32(str(key).encode('utf-8'))
 
