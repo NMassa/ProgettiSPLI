@@ -40,7 +40,7 @@ class Cipher:
             self.decrypted.append(chunk)
 
     def decrypt_brute_force(self):
-        stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181']
+        stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181', '474946']
         pippo = True
         stop = True # variabile che con vero non mi esamina tutto il file
         index = 0
@@ -54,7 +54,7 @@ class Cipher:
                 if index == 0:
                     for i in stringa:
                         check = bin(int(i, 16))[2:]
-                        if chunk == check:
+                        if chunk.find(check) != -1:
 
                             if i == '89504e470d0a1a0a':
                                 print('detect format file: PNG')
@@ -65,6 +65,9 @@ class Cipher:
                             elif i == '424df640000':
                                 print('detect format file: BMP')
                                 out = 3
+                            elif i == '474946':
+                                print('detect format file: GIF')
+                                out = 4
                             pippo = True
                             # indico che posso andare avanti con il file
                             stop = False

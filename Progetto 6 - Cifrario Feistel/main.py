@@ -238,6 +238,15 @@ if __name__ == "__main__":
                         fout.write(ba.tobytes())
                     fout.close()
 
+                elif n == 4:
+                    fout = open("received/brute_force/Brute_Force_DES.GIF", "wb+")
+                    print("decrypted with key: ", i_key)
+
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
+
                 stop = time.time() - start
 
                 print("done, decode timer: ", stop, " seconds")
@@ -285,6 +294,15 @@ if __name__ == "__main__":
 
                 elif n == 3:
                     fout = open("received/brute_force/Brute_Force_Blowfish.bmp", "wb+")
+                    print("decrypted with key: ", i_key)
+
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
+
+                elif n == 4:
+                    fout = open("received/brute_force/Brute_Force_Blowfish.GIF", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
