@@ -9,7 +9,7 @@ from helpers import netutils
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *
-from helpers.tea import tea_encryptfile, tea_decryptfile
+from helpers.tea import *
 from helpers.utils import *
 from helpers.connection import *
 
@@ -151,51 +151,130 @@ if __name__ == "__main__":
         #bruteforce
         elif main_menu == 3:
 
-            start = time.time()
+            method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
-            chunks = get_chunks("received/" + "UDPReceived", 64)
+            if method == 1:
 
-            #chunks = get_chunks("files/" + "800px-Periodic_table_simple_it_bw_(LCC_0).png", 64)
+                start = time.time()
 
-            for i_key in range(0, 256, 1):
-                #print('chiave provata: ', i_key)
-                c = Cipher(out_lck, chunks, toBinary(int(i_key)))
-                n = c.decrypt_brute_force()
-                if n != 0:
-                    # trovato il formato del file, smetto di provare nuove chiavi
-                    break
-                else:
-                    print("not valid key ", i_key, "\n")
+                chunks = get_chunks("received/" + "UDPReceived", 64)
 
-            if n == 0:
-                print("not found valid key")
-            elif n == 1:
-                fout = open("received/decrypted2.png", "wb")
-                print("decrypted with key: ", i_key)
+                for i_key in range(0, 256, 1):
+                    #print('chiave provata: ', i_key)
+                    c = Cipher(out_lck, chunks, toBinary(int(i_key)))
+                    n = c.decrypt_brute_force()
+                    if n != 0:
+                        # trovato il formato del file, smetto di provare nuove chiavi
+                        break
+                    else:
+                        print("not valid key ", i_key, "\n")
 
-                for chunk in c.decrypted:
-                    ba = bitarray(chunk)
-                    fout.write(ba.tobytes())
+                if n == 0:
+                    print("not found valid key")
+                elif n == 1:
+                    fout = open("received/Brute_Force_DES.png", "wb")
+                    print("decrypted with key: ", i_key)
 
-            elif n == 2:
-                fout = open("received/decrypted2.jpg", "wb")
-                print("decrypted with key: ", i_key)
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
 
-                for chunk in c.decrypted:
-                    ba = bitarray(chunk)
-                    fout.write(ba.tobytes())
+                elif n == 2:
+                    fout = open("received/Brute_Force_DES.jpg", "wb")
+                    print("decrypted with key: ", i_key)
 
-            elif n == 3:
-                fout = open("received/decrypted2.bmp", "wb")
-                print("decrypted with key: ", i_key)
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
 
-                for chunk in c.decrypted:
-                    ba = bitarray(chunk)
-                    fout.write(ba.tobytes())
+                elif n == 3:
+                    fout = open("received/Brute_Force_DES.bmp", "wb")
+                    print("decrypted with key: ", i_key)
 
-            stop = time.time() - start
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
 
-            print("done, decode timer: ", stop, " seconds")
+                stop = time.time() - start
+
+                print("done, decode timer: ", stop, " seconds")
+
+            if method == 2:
+
+                start = time.time()
+
+                chunks = get_chunks("received/" + "UDPReceived", 64)
+
+                for i_key in range(12, 256, 1):
+                    #print('chiave provata: ', i_key)
+                    c = Blowfish(out_lck, chunks, toBinary(int(i_key)))
+                    n = c.decrypt_brute_force()
+
+                    if n != 0:
+                        # trovato il formato del file, smetto di provare nuove chiavi
+                        break
+                    else:
+                        print("not valid key ", i_key, "\n")
+
+                if n == 0:
+                    print("not found valid key")
+
+                elif n == 1:
+                    fout = open("received/Brute_Force_Blowfish.png", "wb")
+                    print("decrypted with key: ", i_key)
+
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
+
+                elif n == 2:
+                    fout = open("received/Brute_Force_Blowfish.jpg", "wb")
+                    print("decrypted with key: ", i_key)
+
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
+
+                elif n == 3:
+                    fout = open("received/Brute_Force_Blowfish.bmp", "wb")
+                    print("decrypted with key: ", i_key)
+
+                    for chunk in c.decrypted:
+                        ba = bitarray(chunk)
+                        fout.write(ba.tobytes())
+                    fout.close()
+
+                stop = time.time() - start
+
+                print("done, decode timer: ", stop, " seconds")
+
+            if method == 3:
+
+                start = time.time()
+
+                #chunks = get_chunks("received/" + "UDPReceived", 64)
+
+                for i_key in range(0, 256, 1):
+
+                    filein = 'received/UDPReceived'
+                    fileout = 'received/brute_Force_TEA'
+
+                    brute_force_tea(filein, fileout, i_key)
+
+                    if n != 0:
+                        # trovato il formato del file, smetto di provare nuove chiavi
+                        break
+                    else:
+                        print("not valid key ", i_key, "\n")
+
+                stop = time.time() - start
+
+                print("done, decode timer: ", stop, " seconds")
 
         #Arp Poisoner
         elif main_menu == 4:

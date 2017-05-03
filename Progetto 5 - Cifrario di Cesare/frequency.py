@@ -75,9 +75,9 @@ class Frequency(object):
 
         #file = open(file_crypt, 'r')
         try:
-            file = open('received/pwndcifrato.txt', 'r')
+            file = open('received/cifrato.txt', 'r')
         except:
-            print("Error opening pwndcifrato.txt.")
+            print("Error opening cifrato.txt.")
         else:
 
             while True:

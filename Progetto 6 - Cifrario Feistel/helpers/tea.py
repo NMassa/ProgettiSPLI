@@ -44,9 +44,10 @@ def decipher_raw(s, key):
     return b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
 
 
-def decipher(s, key):
+def decipher(s, key): # s = message
     """TEA-decipher a readable string"""
     return decipher_raw(s, key).rstrip(bytes('\x00'.encode('utf-8')))
+
 
 def tea_encryptfile(file, key):
     message = None
@@ -62,6 +63,7 @@ def tea_encryptfile(file, key):
         #output_file.close()
     return result
 
+
 def tea_decryptfile(filein, fileout, key):
     message = None
     tea_decrypted = open(fileout, 'wb')
@@ -74,3 +76,39 @@ def tea_decryptfile(filein, fileout, key):
         tea_decrypted.write(result)
         tea_decrypted.close()
 
+
+def decrypt2(v0, v1, key, rounds=8):
+    assert len(key) == 16
+    sum = ul(DELTA * rounds)
+    for i in range(rounds):
+        v1 = ul(v1 - ((v0 << 4 ^ v0 >> 5) + v0 ^ sum + int(key[sum >> 11 & 3])))
+        sum = ul(sum - DELTA)
+        v0 = ul(v0 - ((v1 << 4 ^ v1 >> 5) + v1 ^ sum + int(key[sum & 3])))
+    return v0, v1
+
+
+def decipher_raw2(s, key):
+    """TEA-decipher a raw string"""
+    assert struct.calcsize('I') == 4
+    assert len(s) % 8 == 0, len(s)
+    u = struct.unpack('%dI' % (len(s) / 4), s)
+    e = [decrypt2(u[i], u[i + 1], key) for i in range(len(u))[::2]]
+    return b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
+
+
+def decipher2(s, key):  # s = message
+    """TEA-decipher a readable string"""
+    return decipher_raw2(s, key).rstrip(bytes('\x00'.encode('utf-8')))
+
+
+def brute_force_tea(filein, fileout, key):
+    message = None
+    tea_decrypted = open(fileout, 'wb')
+
+    if not message:
+        input = open(filein, 'rb')
+        message = input.read()
+        input.close()
+        result = decipher2(message, key)
+        tea_decrypted.write(result)
+        tea_decrypted.close()
