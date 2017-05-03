@@ -46,7 +46,7 @@ def gen_keys(out_lck, skeyb):
 
 #prendo chiave da 8 e restituisco tot chiavi da 32 tutte diverse (una per round-->8)
 #def gen_key32(out_lck, keyb):
-def gen_8key32(keyb):
+def gen_8key32(out_lck, keyb):
 
     # output(out_lck, "Key base: %s" % keyb)
     # output(out_lck, "Generating subkeys...")
@@ -84,6 +84,8 @@ def gen_8key32(keyb):
         dec = toNum(key32)
         print("DEC:" + str(dec))
         # output(out_lck, "Subkey %s: %s" % (i + 4, key32))
+
+    return keys
 
 def gen_16key32(out_lck, keyb):
     #output(out_lck, "Key base: %s" % keyb)

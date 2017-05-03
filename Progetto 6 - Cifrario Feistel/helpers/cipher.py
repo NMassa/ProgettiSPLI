@@ -18,7 +18,7 @@ class Cipher:
         chunk_len = 64
 
         # creo chiavi
-        self.keys = gen_key32(out_lck, key)
+        self.keys = gen_8key32(out_lck, key)
 
         # controllo lunghezza chunk, se è più corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:

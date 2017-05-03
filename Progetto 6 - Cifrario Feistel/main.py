@@ -5,10 +5,10 @@ import time
 
 from bitarray import bitarray
 from helpers.blowfish import Blowfish
-from helpers.blowfish_2 import Blowfish2
+#from helpers.blowfish_2 import Blowfish2
 from helpers.cipher import Cipher
 from helpers.key_gen import *
-from helpers.tea import teaCipher
+#from helpers.tea import teaCipher
 from helpers.utils import *
 from helpers.connection import *
 
@@ -70,7 +70,6 @@ if __name__ == "__main__":
 
             elif method == 2:
 
-                print("blowfish")
                 chunks = get_chunks("files/" + filename, 64)
                 b = Blowfish(out_lck, chunks, keyb)
 
@@ -81,7 +80,6 @@ if __name__ == "__main__":
                 for chunk in b.encrypted:
                     data += bitarray(chunk).tobytes()
 
-                print(data)
                 output(out_lck, "Sending file...")
                 UDPclient(out_lck, _base + host, 60000, data)
                 output(out_lck, "File sent")
@@ -123,9 +121,21 @@ if __name__ == "__main__":
 
             elif method == 2:
 
-                print("blowfish")
+                b = Blowfish(out_lck, chunks, keyb)
+
+                output(out_lck, "Decrypting file...")
+                b.decrypt()
+                output(out_lck, "File decrypted")
 
                 fout = open("received/decrypted_blowfish.jpg", "wb")
+
+                for chunk in b.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+                fout.close()
+
+                output(out_lck, "File saved")
 
 
             elif method == 3:
