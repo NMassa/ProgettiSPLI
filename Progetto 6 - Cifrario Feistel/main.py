@@ -114,7 +114,18 @@ if __name__ == "__main__":
 
             UDPserver(out_lck, port)
 
-            chunks = get_chunks("received/" + "UDPReceived", 64)
+            i = 1
+            fileList = []
+            for file in os.listdir("received"):
+                output(out_lck, "%s %s" % (i, file))
+                fileList.append(str(file))
+                i += 1
+
+            nfile = loop_int_input(out_lck, "Choose file")
+            nf = int(nfile) - 1
+            filename = copy.copy(fileList[nf])
+
+            chunks = get_chunks("received/" + filename, 64)
 
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
@@ -126,7 +137,7 @@ if __name__ == "__main__":
                 c.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_des.jpeg", "wb")
+                fout = open("received/decrypted_des.jpg", "wb")
 
                 for chunk in c.decrypted:
                     ba = bitarray(chunk)
@@ -158,7 +169,7 @@ if __name__ == "__main__":
 
                 keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Starting to decrypt with TEA...")
-                tea_decryptfile("received/" + "UDPReceived", 'received/decrypted_tea.jpg', keys_t)
+                tea_decryptfile("received/" + filename, 'received/decrypted_tea.jpg', keys_t)
                 output(out_lck, "Decrypted!")
 
         #bruteforce
@@ -231,7 +242,7 @@ if __name__ == "__main__":
 
                 start = time.time()
 
-                chunks = get_chunks("received/" + "UDPReceived", 64)
+                chunks = get_chunks("received/" + filename, 64)
 
                 for i_key in range(0, 256, 1):
                     #print('chiave provata: ', i_key)
@@ -286,7 +297,7 @@ if __name__ == "__main__":
 
                 for i_key in range(0, 256, 1):
 
-                    filein = 'received/UDPReceived'
+                    filein = 'received/' + filename
                     fileout = 'received/brute_Force_TEA'
 
                     n = brute_force_tea(filein, fileout, gen_16key32(out_lck, toBinary(int(i_key))))
