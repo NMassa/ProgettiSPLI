@@ -1,7 +1,7 @@
 from helpers.utils import output, loop_input
 import os
 import os
-from scapy.layers.inet import Raw, rdpcap
+#from scapy.layers.inet import Raw, rdpcap
 
 
 def sniffer(out_lck, timeout, port, interface):

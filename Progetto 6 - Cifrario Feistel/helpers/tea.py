@@ -1,4 +1,5 @@
 import struct
+import re
 
 DELTA = 0x9e3779b9  # key schedule constant
 
@@ -80,7 +81,7 @@ def tea_decryptfile(filein, fileout, key):
 def decrypt2(v0, v1, key, rounds=8):
     assert len(key) == 16
     sum = ul(DELTA * rounds)
-    for i in range(rounds):
+    for i in range(8):
         v1 = ul(v1 - ((v0 << 4 ^ v0 >> 5) + v0 ^ sum + int(key[sum >> 11 & 3])))
         sum = ul(sum - DELTA)
         v0 = ul(v0 - ((v1 << 4 ^ v1 >> 5) + v1 ^ sum + int(key[sum & 3])))
@@ -92,8 +93,21 @@ def decipher_raw2(s, key):
     assert struct.calcsize('I') == 4
     assert len(s) % 8 == 0, len(s)
     u = struct.unpack('%dI' % (len(s) / 4), s)
-    e = [decrypt2(u[i], u[i + 1], key) for i in range(len(u))[::2]]
-    return b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
+    stringa = str(b'\xff\xd8\xff\xe0').replace('\'', '')
+    for i in range(len(u))[::2]:
+        e = [decrypt2(u[i], u[i + 1], key)]
+        i = b''.join([struct.pack('2I', ee, ef) for ee, ef in e])
+
+        prova = str(i).replace('\'', '')
+
+        #lel = prova.find(stringa)
+
+        if prova.find(stringa) != -1:
+            print("detect format file: JPG")
+            return 0
+        else:
+            return 1
+
 
 
 def decipher2(s, key):  # s = message
@@ -109,6 +123,9 @@ def brute_force_tea(filein, fileout, key):
         input = open(filein, 'rb')
         message = input.read()
         input.close()
-        result = decipher2(message, key)
-        tea_decrypted.write(result)
-        tea_decrypted.close()
+        result = decipher_raw2(message, key)
+        if result == 0:
+            tea_decryptfile(filein, fileout, key)
+            return 0
+        else:
+            return 1
