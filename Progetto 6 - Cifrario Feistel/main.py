@@ -164,13 +164,25 @@ if __name__ == "__main__":
         #bruteforce
         elif main_menu == 4:
 
+            i = 1
+            fileList = []
+            for file in os.listdir("received"):
+                if "UDPReceived" in file:
+                    output(out_lck, "%s %s" % (i, file))
+                    fileList.append(str(file))
+                    i += 1
+
+            nfile = loop_int_input(out_lck, "Choose file")
+            nf = int(nfile) - 1
+            filename = copy.copy(fileList[nf])
+
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
             if method == 1:
 
                 start = time.time()
 
-                chunks = get_chunks("received/" + "UDPReceived", 64)
+                chunks = get_chunks("received/" + filename, 64)
 
                 for i_key in range(0, 256, 1):
                     #print('chiave provata: ', i_key)
@@ -288,7 +300,7 @@ if __name__ == "__main__":
                 stop = time.time() - start
 
                 print("done, decode timer: ", stop, " seconds")
-
+        '''
         #Arp Poisoner
         elif main_menu == 5:
             netutils.arpoisoner(out_lck, 'enx9cebe811a79a')
@@ -365,3 +377,4 @@ if __name__ == "__main__":
                 output(out_lck, "Starting to decrypt with TEA...")
                 tea_decryptfile(filename, "sniffed/decrypted/decrypted_TEA.jpg", keys)
                 output(out_lck, "Decrypted!")
+        '''

@@ -30,7 +30,13 @@ def UDPclient(out_lck, host, port, data):
 def UDPserver(out_lck, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    f = open('received/UDPReceived', 'wb')
+
+    count = 0
+    for file in os.listdir("received"):
+        if "UDPReceived" in file:
+            count += 1
+
+    f = open('received/UDPReceived%s' % count, 'wb')
     try:
         sock.bind(("", port))
 
