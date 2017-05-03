@@ -18,12 +18,13 @@ def UDPclient(out_lck, host, port, data):
             l = data[idx:idx+1024]
             idx += 1024
 
-        #_socket.shutdown(1)
+        _socket.close()
 
     except socket.error as msg:
         output(out_lck, msg)
         exit(1)
-    _socket.close()
+    else:
+        _socket.close()
 
 
 def UDPserver(out_lck, port):

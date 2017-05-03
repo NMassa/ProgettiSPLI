@@ -89,7 +89,7 @@ if __name__ == "__main__":
                 output(out_lck, "Encrypting file with TEA...")
                 c = tea_encryptfile("files/" + filename, keys)
                 output(out_lck, "Sending file...")
-                UDPclient(out_lck, '', '', c)
+                UDPclient(out_lck, _base + host, 60000, c)
                 output(out_lck, "TEA file sent.")
 
         elif main_menu == 2:
@@ -131,7 +131,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_blowfish", "wb")
+                fout = open("received/decrypted_blowfish.jpg", "wb")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
                 keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Starting to decrypt with TEA...")
-                tea_decryptfile('received/decrypted_tea', keys)
+                tea_decryptfile("received/" + "UDPReceived", 'received/decrypted_tea.jpg', keys)
                 output(out_lck, "Decrypted!")
 
         #bruteforce
@@ -256,7 +256,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("sniffed/decrypted/decrypted_blowfish.jpg", "wb")
+                fout = open("sniffed/decrypted/decrypted_blowfish.jpg.jpg", "wb")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)

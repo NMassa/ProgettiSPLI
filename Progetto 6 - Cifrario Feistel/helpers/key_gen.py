@@ -94,8 +94,8 @@ def gen_8key32(out_lck, keyb):
 
     return keys
 
-#def gen_16key32(out_lck, keyb):
-def gen_16key32(keyb):
+def gen_16key32(out_lck, keyb):
+#def gen_16key32(keyb):
 
     #output(out_lck, "Key base: %s" % keyb)
     #output(out_lck, "Generating subkeys...")
