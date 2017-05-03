@@ -113,7 +113,7 @@ def gen_16key32(out_lck, keyb):
         Right1 = Right1[(1 % len(Right1)):] + Right1[:(1 % len(Right1))]
 
         keyret = Left1 + Right1
-        key32 = keyret + keyret + keyret +keyret +keyret + keyret
+        key32 = keyret + keyret + keyret +keyret
         keys.append(key32)
         print("KEYRET:" + key32)
         dec = toNum(key32)
@@ -128,7 +128,7 @@ def gen_16key32(out_lck, keyb):
         Right2 = Right2[(1 % len(Right2)):] + Right2[:(1 % len(Right2))]
 
         keyret = Left2 + Right2
-        key32 = keyret + keyret + keyret + keyret + keyret + keyret
+        key32 = keyret + keyret + keyret + keyret
         keys.append(key32)
         print("KEYRET:" + key32)
         dec = toNum(key32)
@@ -143,7 +143,7 @@ def gen_16key32(out_lck, keyb):
         Right2 = Right2[(1 % len(Right2)):] + Right2[:(1 % len(Right2))]
 
         keyret = Left2 + Right2
-        key32 = keyret + keyret + keyret + keyret + keyret + keyret
+        key32 = keyret + keyret + keyret + keyret
         keys.append(key32)
         print("KEYRET:" + key32)
         dec = toNum(key32)
@@ -158,7 +158,7 @@ def gen_16key32(out_lck, keyb):
         Right2 = Right2[(1 % len(Right2)):] + Right2[:(1 % len(Right2))]
 
         keyret = Left2 + Right2
-        key32 = keyret + keyret + keyret + keyret + keyret + keyret
+        key32 = keyret + keyret + keyret + keyret
         keys.append(key32)
         print("KEYRET:" + key32)
         dec = toNum(key32)
