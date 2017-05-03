@@ -7,7 +7,7 @@ from bitarray import bitarray
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *
-from helpers.tea import teaCipher
+from helpers.tea import tea_encryptfile, tea_decryptfile
 from helpers.utils import *
 from helpers.connection import *
 
@@ -26,7 +26,6 @@ if __name__ == "__main__":
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
-                                                                                               "Feistel cipher",
                                                                                                "Brute Forse"])
 
         if main_menu == 1:
@@ -84,7 +83,12 @@ if __name__ == "__main__":
 
             elif method == 3:
 
-                print("tea")
+                keys = gen_16key32(out_lck, keyb)
+                output(out_lck, "Encrypting file with TEA...")
+                c = tea_encryptfile("files/" + filename, keys)
+                output(out_lck, "Sending file...")
+                UDPclient(out_lck, '', '', c)
+                output(out_lck, "TEA file sent.")
 
         elif main_menu == 2:
 
@@ -138,43 +142,12 @@ if __name__ == "__main__":
 
             elif method == 3:
 
-                print("tea")
-
-                fout = open("received/decrypted_tea.jpg", "wb")
-
+                keys = gen_16key32(out_lck, keyb)
+                output(out_lck, "Starting to decrypt with TEA...")
+                tea_decryptfile('received/UDPReceived', keys)
+                output(out_lck, "Decrypted!")
 
         elif main_menu == 3:
-
-            key = str(random.randrange(0, 256))
-            keyb = toBinary(int(key))
-
-            # chunks = get_chunks("piedpiper.jpg", 64)
-
-            c = teaCipher(out_lck, "piedpiper.jpg", keyb)
-            c.teaencrypt()
-            c.teadecrypt()
-            '''
-            #c.encrypt()
-
-            #print("encrypted")
-
-            #c.chunks = c.encrypted
-
-            #c.decrypt()
-
-            #print("decrypted")
-
-            fout = open("received/decrypted.jpg", "wb")
-
-            for chunk in c.decrypted:
-                ba = bitarray(chunk)
-                fout.write(ba.tobytes())
-
-            fout.close()
-
-            print("done")
-            '''
-        elif main_menu == 5:
 
             start = time.time()
 
