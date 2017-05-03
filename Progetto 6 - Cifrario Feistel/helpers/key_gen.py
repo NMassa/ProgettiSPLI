@@ -7,8 +7,13 @@ def toBinary(n):
 def toNum(b):
     dec =int(b,2)
     return dec
+def fromHEx_tobin(h):
+    h_size = len(h) *8
+    h = (bin(int(h, 32))[2:]).zfill(h_size)
+    return h
 
-def gen_keys(out_lck, skeyb):
+#def gen_keys(out_lck, skeyb):
+def gen_keys(keyb):
     print("\t\t KEY8 \t")
     i=0
     keys=[]
@@ -47,7 +52,7 @@ def gen_keys(out_lck, skeyb):
 
 #prendo chiave da 8 e restituisco tot chiavi da 32 tutte diverse (una per round-->8)
 #def gen_key32(out_lck, keyb):
-def gen_8key32(out_lck, keyb):
+def gen_8key32(keyb):
 
     # output(out_lck, "Key base: %s" % keyb)
     # output(out_lck, "Generating subkeys...")
@@ -86,9 +91,12 @@ def gen_8key32(out_lck, keyb):
         print("DEC:" + str(dec))
         # output(out_lck, "Subkey %s: %s" % (i + 4, key32))
 
+
     return keys
 
-def gen_16key32(out_lck, keyb):
+#def gen_16key32(out_lck, keyb):
+def gen_16key32(keyb):
+
     #output(out_lck, "Key base: %s" % keyb)
     #output(out_lck, "Generating subkeys...")
     print("\t\t 16 KEY32 \t")
@@ -161,9 +169,29 @@ def gen_16key32(out_lck, keyb):
 
 def gen_md5_32(pwd):
     h_obj=hashlib.md5(str(pwd))
-    #print(h_obj.hexdigest())
-    return(h_obj.hexdigest())
 
+    #print(h_obj.hexdigest())
+    #return(h_obj.hexdigest())
+    keys=[]
+    lkey=[]
+    lkey=str(h_obj.hexdigest())
+    print(len(lkey))
+    print(lkey)
+    keypwd=[]
+    i=0
+    while i < len(lkey):
+        #print(lkey[i])
+        l=lkey[i]
+        l=fromHEx_tobin(l)
+        r=lkey[i+1]
+        r=fromHEx_tobin(r)
+        keyret=l+r
+        keyret=keyret+keyret
+        #keyret=fromHEx_tobin(keyret)
+        keys.append(keyret)
+        i+=2
+        print("\t\t KEYMD5 "+keyret)
+    return keys
 
 if __name__ == "__main__":
     print ("Generate Key")
