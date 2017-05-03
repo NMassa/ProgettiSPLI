@@ -93,7 +93,7 @@ def decipher_raw2(s, key):
     assert struct.calcsize('I') == 4
     assert len(s) % 8 == 0, len(s)
     u = struct.unpack('%dI' % (len(s) / 4), s)
-    stringa = str(b'\xff\xd8\xff\xe0').replace('\'', '')
+    stringa = str(b'\xff\xd8\xff').replace('\'', '')
     for i in range(len(u))[::2]:
         e = [decrypt2(u[i], u[i + 1], key)]
         i = b''.join([struct.pack('2I', ee, ef) for ee, ef in e])

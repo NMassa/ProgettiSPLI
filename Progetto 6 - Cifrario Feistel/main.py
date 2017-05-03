@@ -126,11 +126,11 @@ if __name__ == "__main__":
             nf = int(nfile) - 1
             filename = copy.copy(fileList[nf])
 
-            chunks = get_chunks("received/" + filename, 64)
 
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
             if method == 1:
+                chunks = get_chunks("received/" + filename, 64)
 
                 c = Cipher(out_lck, chunks, keys_d_b)
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                 c.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_des.jpg", "wb")
+                fout = open("received/decrypted_des.jpg", "wb+")
 
                 for chunk in c.decrypted:
                     ba = bitarray(chunk)
@@ -149,6 +149,7 @@ if __name__ == "__main__":
                 output(out_lck, "File saved")
 
             elif method == 2:
+                chunks = get_chunks("received/" + filename, 64)
 
                 b = Blowfish(out_lck, chunks, keys_d_b)
 
@@ -156,7 +157,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_blowfish.jpg", "wb")
+                fout = open("received/decrypted_blowfish.jpg", "wb+")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)
@@ -211,7 +212,7 @@ if __name__ == "__main__":
                 if n == 0:
                     print("not found valid key")
                 elif n == 1:
-                    fout = open("received/brute_force/Brute_Force_DES.png", "wb")
+                    fout = open("received/brute_force/Brute_Force_DES.png", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -220,7 +221,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 2:
-                    fout = open("received/brute_force/Brute_Force_DES.jpg", "wb")
+                    fout = open("received/brute_force/Brute_Force_DES.jpg", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -229,7 +230,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 3:
-                    fout = open("received/brute_force/Brute_Force_DES.bmp", "wb")
+                    fout = open("received/brute_force/Brute_Force_DES.bmp", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -265,7 +266,7 @@ if __name__ == "__main__":
                     print("not found valid key")
 
                 elif n == 1:
-                    fout = open("received/brute_force/Brute_Force_Blowfish.png", "wb")
+                    fout = open("received/brute_force/Brute_Force_Blowfish.png", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -274,7 +275,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 2:
-                    fout = open("received/brute_force/Brute_Force_Blowfish.jpg", "wb")
+                    fout = open("received/brute_force/Brute_Force_Blowfish.jpg", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -283,7 +284,7 @@ if __name__ == "__main__":
                     fout.close()
 
                 elif n == 3:
-                    fout = open("received/brute_force/Brute_Force_Blowfish.bmp", "wb")
+                    fout = open("received/brute_force/Brute_Force_Blowfish.bmp", "wb+")
                     print("decrypted with key: ", i_key)
 
                     for chunk in c.decrypted:
@@ -301,7 +302,7 @@ if __name__ == "__main__":
 
                 #chunks = get_chunks("received/" + "UDPReceived", 64)
 
-                for i_key in range(0, 256, 1):
+                for i_key in range(100, 256, 1):
 
                     filein = 'received/' + filename
                     fileout = 'received/brute_force/brute_Force_TEA.jpg'
@@ -362,7 +363,7 @@ if __name__ == "__main__":
                 c.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("sniffed/decrypted/decrypted_des.jpeg", "wb")
+                fout = open("sniffed/decrypted/decrypted_des.jpeg", "wb+")
 
                 for chunk in c.decrypted:
                     ba = bitarray(chunk)
@@ -381,7 +382,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("sniffed/decrypted/decrypted_blowfish.jpg.jpg", "wb")
+                fout = open("sniffed/decrypted/decrypted_blowfish.jpg.jpg", "wb+")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)

@@ -37,7 +37,7 @@ def UDPserver(out_lck, port):
         if "UDPReceived" in file:
             count += 1
 
-    f = open('received/UDPReceived%s' % count, 'wb')
+    f = open('received/UDPReceived%s' % count, 'wb+')
     try:
         sock.bind(("", port))
 
@@ -47,11 +47,14 @@ def UDPserver(out_lck, port):
             data, address = sock.recvfrom(1024)
             f.write(data)
 
+        sock.close()
         f.close()
+
     except socket.error as msg:
         output(out_lck, msg)
         exit(3)
-    sock.close()
+    else:
+        sock.close()
 
 
 def TCPclient(out_lck, host, port):
