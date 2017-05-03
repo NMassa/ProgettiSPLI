@@ -9,6 +9,7 @@ def UDPclient(out_lck, host, port, data):
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     try:
+        #_socket.connect(("127.0.0.1", 60000))
         _socket.connect((host, port))
 
         idx = 0

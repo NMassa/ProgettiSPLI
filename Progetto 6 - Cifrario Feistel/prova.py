@@ -1,4 +1,5 @@
 import os
+from files import *
 
 if __name__ == "__main__":
     stringa = ['89504e47da1aa', 'ffd8ffe00104a46', '424df640000', ' ', '89504e47da1aa', '47496383961181']

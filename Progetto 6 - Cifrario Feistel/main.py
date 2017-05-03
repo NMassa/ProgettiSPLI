@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
                 chunks = get_chunks("received/" + "UDPReceived", 64)
 
-                for i_key in range(12, 256, 1):
+                for i_key in range(0, 256, 1):
                     #print('chiave provata: ', i_key)
                     c = Blowfish(out_lck, chunks, toBinary(int(i_key)))
                     n = c.decrypt_brute_force()
@@ -289,9 +289,10 @@ if __name__ == "__main__":
                     filein = 'received/UDPReceived'
                     fileout = 'received/brute_Force_TEA'
 
-                    brute_force_tea(filein, fileout, i_key)
+                    n = brute_force_tea(filein, fileout, gen_16key32(out_lck, toBinary(int(i_key))))
 
-                    if n != 0:
+
+                    if n == 0:
                         # trovato il formato del file, smetto di provare nuove chiavi
                         break
                     else:
