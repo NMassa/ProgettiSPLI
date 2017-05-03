@@ -32,10 +32,54 @@ class Cipher:
             self.encrypted.append(chunk)
 
     def decrypt(self):
+
         for chunk in self.chunks:
-            for k_i in reversed(self.keys):  # il numero di chiavi è anache il numero di rounds dell'algoritmo
+            for k_i in reversed(self.keys): # il numero di chiavi è anache il numero di rounds dell'algoritmo
                 chunk = self.round_decode(chunk, k_i)
             self.decrypted.append(chunk)
+
+    def decrypt_brute_force(self):
+        stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181']
+        pippo = True
+        stop = True # variabile che con vero non mi esamina tutto il file
+        index = 0
+        out = 0
+
+        for chunk in self.chunks:
+            if pippo:
+                for k_i in reversed(self.keys):  # il numero di chiavi è anache il numero di rounds dell'algoritmo
+                    chunk = self.round_decode(chunk, k_i)
+
+                if index == 0:
+                    for i in stringa:
+                        check = bin(int(i, 16))[2:]
+                        if chunk == check:
+
+                            if i == '89504e470d0a1a0a':
+                                print('detect format file: PNG')
+                                out = 1
+                            elif i == 'ffd8ffe000104a46':
+                                print('detect format file: JPG')
+                                out = 2
+                            elif i == '424df640000':
+                                print('detect format file: BMP')
+                                out = 3
+                            pippo = True
+                            # indico che posso andare avanti con il file
+                            stop = False
+                            break
+                        else:
+                            #print('non trovato')
+                            pippo = False
+                    index = 1
+
+            if not stop:
+                self.decrypted.append(chunk)
+            else:
+
+                break
+
+        return out
 
     def round_encode(self, chunk, key_i):
         left = chunk[:int(len(chunk)/2)]

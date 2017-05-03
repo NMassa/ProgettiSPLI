@@ -1,6 +1,7 @@
 import os
 import re
 import threading
+import time
 
 from bitarray import bitarray
 from helpers.blowfish import Blowfish
@@ -27,7 +28,8 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "Feistel cipher",
-                                                                                               "Blowfish method"])
+                                                                                               "Blowfish method",
+                                                                                               "Brute Forse"])
 
         if main_menu == 1:
 
@@ -207,7 +209,7 @@ if __name__ == "__main__":
             c = teaCipher(out_lck, "piedpiper.jpg", keyb)
             c.teaencrypt()
             c.teadecrypt()
-"""
+            '''
             #c.encrypt()
 
             #print("encrypted")
@@ -227,4 +229,51 @@ if __name__ == "__main__":
             fout.close()
 
             print("done")
-"""
+            '''
+        elif main_menu == 5:
+
+            start = time.time()
+
+            chunks = get_chunks("received/" + "UDPReceived", 64)
+
+            #chunks = get_chunks("files/" + "800px-Periodic_table_simple_it_bw_(LCC_0).png", 64)
+
+            for i_key in range(0, 256, 1):
+                #print('chiave provata: ', i_key)
+                c = Cipher(out_lck, chunks, toBinary(int(i_key)))
+                n = c.decrypt_brute_force()
+                if n != 0:
+                    # trovato il formato del file, smetto di provare nuove chiavi
+                    break
+                else:
+                    print("not valide key ", i_key, "\n")
+
+            if n == 0:
+                print("not found valide key")
+            elif n == 1:
+                fout = open("received/decrypted2.png", "wb")
+                print("decrypted with key: ", i_key)
+
+                for chunk in c.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+            elif n == 2:
+                fout = open("received/decrypted2.jpg", "wb")
+                print("decrypted with key: ", i_key)
+
+                for chunk in c.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+            elif n == 3:
+                fout = open("received/decrypted2.bmp", "wb")
+                print("decrypted with key: ", i_key)
+
+                for chunk in c.decrypted:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+
+            stop = time.time() - start
+
+            print("done, decode timer: ", stop, " seconds")
