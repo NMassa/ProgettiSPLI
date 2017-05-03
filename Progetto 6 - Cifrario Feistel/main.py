@@ -302,7 +302,7 @@ if __name__ == "__main__":
 
                 #chunks = get_chunks("received/" + "UDPReceived", 64)
 
-                for i_key in range(100, 256, 1):
+                for i_key in range(0, 256, 1):
 
                     filein = 'received/' + filename
                     fileout = 'received/brute_force/brute_Force_TEA.jpg'
