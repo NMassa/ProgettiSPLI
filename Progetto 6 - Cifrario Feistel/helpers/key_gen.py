@@ -71,9 +71,9 @@ def gen_8key32(out_lck, keyb):
         keyret = Left1 + Right1
         key32 = keyret + keyret + keyret + keyret + keyret + keyret
         keys.append(key32)
-        print("KEYRET:" + key32)
+        print("KEY %s:\t%s" % (i, key32))
         dec = toNum(key32)
-        print("DEC:" + str(dec))
+        print("DEC %s:\t%s" % (i, dec))
         # output(out_lck, "Subkey %s: %s" % (i, key32))
 
     # invert left and right
@@ -86,9 +86,9 @@ def gen_8key32(out_lck, keyb):
         keyret = Left2 + Right2
         key32 = keyret + keyret + keyret + keyret + keyret + keyret
         keys.append(key32)
-        print("KEYRET:" + key32)
+        print("KEY %s:\t%s" % (i+4, key32))
         dec = toNum(key32)
-        print("DEC:" + str(dec))
+        print("DEC %s:\t%s" % (i+4, dec))
         # output(out_lck, "Subkey %s: %s" % (i + 4, key32))
 
 
@@ -168,17 +168,18 @@ def gen_16key32(out_lck, keyb):
     return keys
 
 def gen_md5_32(pwd):
-    h_obj=hashlib.md5(str(pwd))
+    h_obj=hashlib.md5(str(pwd).encode('utf-8'))
 
     #print(h_obj.hexdigest())
     #return(h_obj.hexdigest())
     keys=[]
     lkey=[]
     lkey=str(h_obj.hexdigest())
-    print(len(lkey))
-    print(lkey)
+    print("Lenght:\t" + str(len(lkey)))
+    print("Hash:\t" + lkey)
     keypwd=[]
     i=0
+    j=1
     while i < len(lkey):
         #print(lkey[i])
         l=lkey[i]
@@ -189,8 +190,11 @@ def gen_md5_32(pwd):
         keyret=keyret+keyret
         #keyret=fromHEx_tobin(keyret)
         keys.append(keyret)
+        print("KEYMD5\t%s:\t%s" % (j, keyret))
+        dec = toNum(keyret)
+        print("DECMD5\t%s:\t%s" % (j, dec))
+        j+=1
         i+=2
-        print("\t\t KEYMD5 "+keyret)
     return keys
 
 if __name__ == "__main__":

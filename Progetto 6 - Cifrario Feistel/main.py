@@ -17,6 +17,10 @@ from helpers.connection import *
 _base = "192.168."
 
 if __name__ == "__main__":
+    key = None
+    keyb = None
+    keys_d_b = []
+    keys_t = []
 
     out_lck = threading.Lock()
 
@@ -26,16 +30,26 @@ if __name__ == "__main__":
     output(out_lck, "Your IP: " + my_ip)
     while True:
         # Main Menu
-        main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
+        main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Generate keys",
+                                                                                               "Send file",
                                                                                                "Receive file",
                                                                                                "Brute Forse"])
-
         if main_menu == 1:
-
-            host = loop_input(out_lck, "Insert destination ip:")
-
             key = loop_int_input(out_lck, "Insert base key:")
             keyb = toBinary(int(key))
+
+            output(out_lck, "\nGenerating keys for DES and Blowfish")
+            keys_d_b = gen_8key32(out_lck, keyb)
+
+            output(out_lck, "\nGenerating keys for Tiny Encryption Algorithm")
+            keys_t = gen_md5_32(str(key).encode('utf-8'))
+
+            output(out_lck, "Press enter to continue")
+            asd = input()
+
+        elif main_menu == 2:
+
+            host = loop_input(out_lck, "Insert destination ip:")
 
             i = 1
             fileList = []
@@ -51,9 +65,11 @@ if __name__ == "__main__":
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
             if method == 1:
+
                 # prendo chunks di lunghezza chunk_len
                 chunks = get_chunks("files/" + filename, 64)
-                c = Cipher(out_lck, chunks, keyb)
+                #c = Cipher(out_lck, chunks, keyb)
+                c = Cipher(out_lck, chunks, keys_d_b)
 
                 output(out_lck, "Encrypting file...")
                 c.encrypt()
@@ -70,7 +86,8 @@ if __name__ == "__main__":
             elif method == 2:
 
                 chunks = get_chunks("files/" + filename, 64)
-                b = Blowfish(out_lck, chunks, keyb)
+                #b = Blowfish(out_lck, chunks, keyb)
+                b = Blowfish(out_lck, chunks, keys_d_b)
 
                 output(out_lck, "Encrypting file...")
                 b.encrypt()
@@ -85,14 +102,13 @@ if __name__ == "__main__":
 
             elif method == 3:
 
-                keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Encrypting file with TEA...")
-                c = tea_encryptfile("files/" + filename, keys)
+                c = tea_encryptfile("files/" + filename, keys_t)
                 output(out_lck, "Sending file...")
                 UDPclient(out_lck, _base + host, 60000, c)
                 output(out_lck, "TEA file sent.")
 
-        elif main_menu == 2:
+        elif main_menu == 3:
 
             port = 60000
 
@@ -100,20 +116,17 @@ if __name__ == "__main__":
 
             chunks = get_chunks("received/" + "UDPReceived", 64)
 
-            key = loop_int_input(out_lck, "Insert key to decrypt:")
-            keyb = toBinary(int(key))
-
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
             if method == 1:
 
-                c = Cipher(out_lck, chunks, keyb)
+                c = Cipher(out_lck, chunks, keys_d_b)
 
                 output(out_lck, "Decrypting file...")
                 c.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_des.jpg", "wb")
+                fout = open("received/decrypted_des.jpeg", "wb")
 
                 for chunk in c.decrypted:
                     ba = bitarray(chunk)
@@ -125,7 +138,7 @@ if __name__ == "__main__":
 
             elif method == 2:
 
-                b = Blowfish(out_lck, chunks, keyb)
+                b = Blowfish(out_lck, chunks, keys_d_b)
 
                 output(out_lck, "Decrypting file...")
                 b.decrypt()
@@ -145,11 +158,11 @@ if __name__ == "__main__":
 
                 keys = gen_16key32(out_lck, keyb)
                 output(out_lck, "Starting to decrypt with TEA...")
-                tea_decryptfile("received/" + "UDPReceived", 'received/decrypted_tea.jpg', keys)
+                tea_decryptfile("received/" + "UDPReceived", 'received/decrypted_tea.jpg', keys_t)
                 output(out_lck, "Decrypted!")
 
         #bruteforce
-        elif main_menu == 3:
+        elif main_menu == 4:
 
             method = loop_menu(out_lck, "Select encryption method:", ["DES", "Blowfish", "TEA"])
 
@@ -277,11 +290,11 @@ if __name__ == "__main__":
                 print("done, decode timer: ", stop, " seconds")
 
         #Arp Poisoner
-        elif main_menu == 4:
+        elif main_menu == 5:
             netutils.arpoisoner(out_lck, 'enx9cebe811a79a')
 
         #Sniffer
-        elif main_menu == 5:
+        elif main_menu == 6:
 
             encr = loop_input(out_lck, "Insert name for file Ex. 'tea' will output 'sniff_tea'")
 
@@ -316,7 +329,7 @@ if __name__ == "__main__":
                 c.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("sniffed/decrypted/decrypted_des.jpg", "wb")
+                fout = open("sniffed/decrypted/decrypted_des.jpeg", "wb")
 
                 for chunk in c.decrypted:
                     ba = bitarray(chunk)

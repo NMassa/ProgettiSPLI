@@ -15,8 +15,9 @@ class Blowfish:
         chunk_len = 64
 
         # creo chiavi
-        self.keys = gen_8key32(out_lck, key)
-        self.p_boxes = self.keys
+        #self.keys = gen_8key32(out_lck, key)
+        #self.p_boxes = self.keys
+        self.p_boxes = key
         self.p_boxes_reversed = self.p_boxes[::-1]
 
         # controllo lunghezza chunk, se è più corta metto "0"
