@@ -1,6 +1,6 @@
 import copy
 import socket
-from helpers.utils import output, loop_int_input
+from helpers.utils import *
 import os
 
 
@@ -58,46 +58,31 @@ def UDPserver(out_lck, port):
         sock.close()
 
 
-def TCPclient(out_lck, host, port):
+def TCPclient(out_lck, host, port, data):
 
     _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    fileList = []
 
     try:
         _socket.connect((host, port))
         #_socket.connect(("127.0.0.1", 3000))
-
-        i = 1
-        for file in os.listdir("examplefiles"):
-            output(out_lck, "%s %s" % (i, file))
-            fileList.append(str(file))
-            i += 1
-
-        nfile = loop_int_input(out_lck, "Choose file")
-        nf = int(nfile) - 1
-        filename = copy.copy(fileList[nf])
-        f = open("examplefiles/" + filename, 'rb')
-        l = f.read(1024)
-        while l:
-            _socket.send(l)
-            l = f.read(1024)
-        f.close()
+        while data:
+            _socket.send(data)
     except socket.error as msg:
         output(out_lck, msg)
         exit(2)
     _socket.close()
 
 
-def TCPserver(out_lck, host, port, extension):
+def TCPserver(out_lck, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         output(out_lck, "Listening....\n")
-        s.bind((host, port))  # inizializzazione della connessione
+        s.bind(('', port))  # inizializzazione della connessione
         s.listen(100)
         conn, addr = s.accept()
-        f = open('files/output/TCPreceived.' + extension, 'wb')
+        f = open('files/output/TCPreceived', 'wb')
         size = 1024
         data = conn.recv(size)
 

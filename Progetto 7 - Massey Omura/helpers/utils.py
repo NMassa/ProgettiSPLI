@@ -1,5 +1,5 @@
-from helpers.cipher import Cipher
-from helpers.connection import UDPclient
+from helpers.cipher import *
+from helpers.connection import *
 from bitarray import bitarray
 
 
@@ -123,11 +123,11 @@ def send_file_crypt(out_lck, chunks, key, _base, host):
     output(out_lck, "File encrypted")
 
     data = b''
-    for chunk in c.encrypted:
+    for chunk in chunks:
         data += bitarray(chunk).tobytes()
 
     output(out_lck, "Sending file...")
-    UDPclient(out_lck, _base + host, 60000, data)
+    TCPclient(out_lck, _base + host, 60000, data)
     output(out_lck, "File Crypted sent")
 
 
@@ -143,5 +143,5 @@ def send_file_decrypt(out_lck, chunks, key, _base, host):
         data += bitarray(chunk).tobytes()
 
     output(out_lck, "Sending file...")
-    UDPclient(out_lck, _base + host, 60000, data)
+    TCPclient(out_lck, _base + host, 60000, data)
     output(out_lck, "File Decrypted sent")
