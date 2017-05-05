@@ -1,6 +1,6 @@
 import threading
 from bitarray import bitarray
-from helpers.key_gen import *
+from helpers.cipher import Cipher
 from helpers.connection import *
 from helpers.utils import *
 
@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
             host = loop_input(out_lck, "Insert destination ip:")
 
-            output(out_lck,"Insert Key : ")
-            keya = input() #key Alice
+            output(out_lck, "Insert Key : ")
+            keyA = input()  # key Alice
 
             i = 1
             fileList = []
@@ -35,46 +35,45 @@ if __name__ == "__main__":
             nfile = loop_int_input(out_lck, "Choose file")
             nf = int(nfile) - 1
             filename = copy.copy(fileList[nf])
-
             chunks = get_chunks("files/" + filename, 64)
 
-            output(out_lck, "Encrypting file...")
-            # TODO: encrypt function
+            # manda file cripatato con chiave keya e si rimette in ascolto
+            send_file_crypt(chunks, keyA, _base, host)
 
-            data = b''
-            for chunk in encrypted:
-                data += bitarray(chunk).tobytes()
+            # si rimette in ascolto per ricevere file criptato con seconda chiave e decriptarlo con la propria
+            port = 60000
+            UDPserver(out_lck, port)
+            chunks = get_chunks("received/UDPReceived", 64)
 
-            output(out_lck, "Sending file...")
-            UDPclient(out_lck, _base + host, 60000, data)
-            output(out_lck, "File sent")
-
-            # TODO: si rimette in ascolto per ricevere file criptato con seconda chiave e decriptarlo con la propria
-            # TODO: lo re-invia nuovamente
-
+            # lo re-invia nuovamente decriptato con la propria chiave
+            send_file_decrypt(chunks, keyA, _base, host)
 
         elif main_menu == 2:
 
+            host = loop_input(out_lck, "Insert destination ip:")
             output(out_lck, "Insert Key : ")
-            keyb = input() #key Bob
+            keyB = input()  # key Bob
 
             port = 60000
-
             UDPserver(out_lck, port)
-
             chunks = get_chunks("received/UDPReceived", 64)
 
-            # TODO: encrypt function
+            # manda il file nuovamente con la nuova chiave applicata
+            send_file_crypt(chunks, keyB, _base, host)
+
+            # ascolta, riceve file, decripta con propria chiave e taaaaakkkk
+            UDPserver(out_lck, port)
+            chunks = get_chunks("received/UDPReceived1", 64)
+
+            # decripta il file che dovrebbe avere applicata solamente la chiave di Bob
+            c = Cipher(out_lck, chunks, keyB)
             output(out_lck, "Decrypting file...")
+            c.decrypt()
+            output(out_lck, "File decrypted")
 
-            fout = open("...", "wb+")
-
-            for chunk in encrypted:
+            fout = open("received/decrypted.jpg", "wb+")
+            for chunk in c.decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
-
             fout.close()
             output(out_lck, "File saved")
-
-            # TODO: manda il file nuovamente con la nuova chiave applicata
-            # TODO: ascolta, riceve file, decripta con propria chiave e taaaaakkkk
