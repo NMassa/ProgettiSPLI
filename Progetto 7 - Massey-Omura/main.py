@@ -1,17 +1,12 @@
-import copy
-import os
-import threading
-from bitarray import bitarray
+import threading, os, re, copy
+
+from bitarray import *
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, send_file_crypt, send_file_decrypt
+from helpers.connection import UDPserver, UDPclient
 from helpers.cipher import Cipher
-from helpers.connection import TCPserver
-from helpers.utils import *
-from helpers.connection import *
 
 _base = "192.168."
 host = 0
-
-
-
 
 if __name__ == "__main__":
 
@@ -57,8 +52,7 @@ if __name__ == "__main__":
             # si rimette in ascolto per ricevere file criptato con seconda chiave e decriptarlo con la propria
             output(out_lck, "Waiting for Bob...")
             port = 60000
-            #UDPserver(out_lck, port)
-            TCPserver(out_lck, port)
+            UDPserver(out_lck, port)
 
             i = 1
             fileList = []
@@ -87,8 +81,7 @@ if __name__ == "__main__":
             port = 60000
             output(out_lck, "Waiting for Alice...")
 
-            # UDPserver(out_lck, port)
-            TCPserver(out_lck, port)
+            UDPserver(out_lck, port)
 
             i = 1
             fileList = []
@@ -101,14 +94,13 @@ if __name__ == "__main__":
             nfile = loop_int_input(out_lck, "Choose file")
             nf = int(nfile) - 1
             filename = copy.copy(fileList[nf])
-            chunks = get_chunks("received/"+ filename, 64)
+            chunks = get_chunks("received/" + filename, 64)
 
             # manda il file nuovamente con la nuova chiave applicata
-            send_file_crypt(out_lck,chunks, keyB, _base, host)
+            send_file_crypt(out_lck, chunks, keyB, _base, host)
 
             # ascolta, riceve file, decripta con propria chiave e taaaaakkkk
-            # UDPserver(out_lck, port)
-            TCPserver(out_lck, port)
+            UDPserver(out_lck, port)
 
             i = 1
             fileList = []

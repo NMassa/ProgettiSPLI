@@ -1,7 +1,23 @@
-import copy
 import socket
-from helpers.utils import *
+from helpers.utils import output
 import os
+
+
+def recvall(socket, chunk_size):
+    """
+    Legge dalla socket un certo numero di byte, evitando letture inferiori alla dimensione specificata
+    """
+
+    data = socket.recv(chunk_size)  # Lettura di chunk_size byte dalla socket
+    actual_length = len(data)
+
+    # Se sono stati letti meno byte di chunk_size continua la lettura finchè non si raggiunge la dimensione specificata
+    while actual_length < chunk_size:
+        new_data = socket.recv(chunk_size - actual_length)
+        actual_length += len(new_data)
+        data += new_data
+
+    return data
 
 
 def UDPclient(out_lck, host, port, data):
@@ -84,11 +100,12 @@ def TCPserver(out_lck, port):
         conn, addr = s.accept()
         f = open('files/output/TCPreceived', 'wb')
         size = 1024
-        data = conn.recv(size)
+        data = recvall(conn, size)
 
         while len(data) > 0:
             f.write(data)
-            data = conn.recv(size)
+            data = recvall(conn, size)
+
         f.close()
     except socket.error as msg:
         output(out_lck, msg)

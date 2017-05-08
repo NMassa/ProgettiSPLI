@@ -1,9 +1,6 @@
 from helpers.cipher import *
-
+from helpers.connection import UDPserver, UDPclient
 from bitarray import bitarray
-import os
-from helpers.connection import TCPclient, TCPserver
-
 
 def output(lock, message):
     lock.acquire()
@@ -128,8 +125,7 @@ def send_file_crypt(out_lck, chunks, key, _base, host):
         data += bitarray(chunk).tobytes()
 
     output(out_lck, "Sending file...")
-    #UDPclient(out_lck, _base + host, 60000, data)
-    TCPclient(out_lck, _base + host, 60000, data)
+    UDPclient(out_lck, _base + host, 60000, data)
     output(out_lck, "File Crypted sent")
 
 
@@ -144,61 +140,5 @@ def send_file_decrypt(out_lck, chunks, key, _base, host):
         data += bitarray(chunk).tobytes()
 
     output(out_lck, "Sending file...")
-    #UDPclient(out_lck, _base + host, 60000, data)
-    TCPclient(out_lck, _base + host, 60000, data)
+    UDPclient(out_lck, _base + host, 60000, data)
     output(out_lck, "File Decrypted sent")
-
-
-# mi da problemi l'import e definendole qua va tutto
-
-def UDPclient(out_lck, host, port, data):
-    _socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    try:
-        # _socket.connect(("127.0.0.1", 60000))
-        _socket.connect((host, port))
-
-        idx = 0
-        l = data[0:1024]
-        while l:
-            _socket.sendall(l)
-            l = data[idx:idx + 1024]
-            idx += 1024
-
-        _socket.close()
-
-    except socket.error as msg:
-        output(out_lck, msg)
-        exit(1)
-    else:
-        _socket.close()
-
-
-def UDPserver(out_lck, port):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    count = 0
-    for file in os.listdir("received"):
-        if "UDPReceived" in file:
-            count += 1
-
-    f = open('received/UDPReceived%s' % count, 'wb+')
-    try:
-        sock.bind(("", port))
-
-        output(out_lck, "Listening on port %s..." % port)
-        data, address = sock.recvfrom(1024)
-        while len(data) == 1024:
-            data, address = sock.recvfrom(1024)
-            f.write(data)
-
-        sock.close()
-        f.close()
-
-    except socket.error as msg:
-        output(out_lck, msg)
-        exit(3)
-    else:
-        sock.close()

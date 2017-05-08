@@ -157,7 +157,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("received/decrypted_blowfish.jpg", "wb+")
+                fout = open("received/decrypted_blowfish.png", "wb+")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)
@@ -400,7 +400,7 @@ if __name__ == "__main__":
                 b.decrypt()
                 output(out_lck, "File decrypted")
 
-                fout = open("sniffed/decrypted/decrypted_blowfish.jpg.jpg", "wb+")
+                fout = open("sniffed/decrypted/decrypted_blowfish.png.jpg", "wb+")
 
                 for chunk in b.decrypted:
                     ba = bitarray(chunk)
