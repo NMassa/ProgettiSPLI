@@ -118,7 +118,7 @@ if __name__ == "__main__":
             # decripta il file che dovrebbe avere applicata solamente la chiave di Bob
             c = Cipher(out_lck, chunks, keyB)
             output(out_lck, "Decrypting file...")
-            c.decrypt()
+            c.decryptXOR()
             output(out_lck, "File decrypted")
 
             fout = open("received/decrypted.jpg", "wb+")

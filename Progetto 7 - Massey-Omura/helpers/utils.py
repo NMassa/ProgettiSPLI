@@ -106,6 +106,16 @@ def get_chunks(file, len):
     return chunks
 
 
+def gen_keys(K, num_keys):
+    keys = []
+
+    for i in range(0, num_keys):
+        key = K[(i % len(K)):] + K[:(i % len(K))]
+        keys.append(key)
+
+    return keys
+
+
 def xor_func(xs, ys):
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
 
@@ -113,11 +123,13 @@ def xor_func(xs, ys):
 def toBinary32(n):
     return ''.join(str(1 & int(n) >> i) for i in range(32)[::-1])
 
+def toBinary64(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(64)[::-1])
 
 def send_file_crypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)
     output(out_lck, "Encrypting file...")
-    c.encrypt()
+    c.encryptXOR(key)
     output(out_lck, "File encrypted")
 
     data = b''
@@ -132,8 +144,13 @@ def send_file_crypt(out_lck, chunks, key, _base, host):
 def send_file_decrypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)
     output(out_lck, "Decrypting file...")
-    c.decrypt()
+    chunkstowrite = c.decryptXOR(key)
     output(out_lck, "File decrypted")
+    filetowrite = open("received/prova.jpg", "wb+")
+
+    for element in chunkstowrite:
+        filetowrite.write(bitarray(element).tobytes())
+    filetowrite.close()
 
     data = b''
     for chunk in c.encrypted:
