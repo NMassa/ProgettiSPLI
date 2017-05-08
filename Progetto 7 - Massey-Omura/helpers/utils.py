@@ -140,6 +140,19 @@ def toBinary32(n):
 def toBinary64(n):
     return ''.join(str(1 & int(n) >> i) for i in range(64)[::-1])
 
+def multiply(x,y):
+    return x * y
+
+def div(x,y):
+    div = x // y
+    return div
+
+def sum(x,y):
+    return x + y
+
+def diff(x,y):
+    return x - y
+
 def send_file_crypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)
     output(out_lck, "Encrypting file...")
