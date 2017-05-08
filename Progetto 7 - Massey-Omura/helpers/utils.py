@@ -2,6 +2,20 @@ from helpers.cipher import *
 from helpers.connection import UDPserver, UDPclient
 from bitarray import bitarray
 
+
+def recvall(socket, chunk_size):
+    data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
+    actual_length = len(data)
+
+    # Se sono stati letti meno byte di chunk_size continua la lettura finchè non si raggiunge la dimensione specificata
+    while actual_length < chunk_size:
+        new_data = socket.recvfrom(chunk_size - actual_length)
+        actual_length += len(new_data)
+        data += new_data
+
+    return data
+
+
 def output(lock, message):
     lock.acquire()
     print(message)

@@ -1,6 +1,7 @@
 import socket
 import os
 import helpers
+from helpers.utils import recvall
 
 def UDPclient(out_lck, host, port, data):
 
@@ -41,9 +42,10 @@ def UDPserver(out_lck, port):
         sock.bind(("", port))
 
         helpers.utils.output(out_lck, "Listening on port %s..." % port)
-        data, address = sock.recvfrom(1024)
+        data, address = recvall(sock, 1024)
+        f.write(data)
         while len(data) == 1024:
-            data, address = sock.recvfrom(1024)
+            data, address = sock.recvall(sock, 1024)
             f.write(data)
 
         sock.close()
