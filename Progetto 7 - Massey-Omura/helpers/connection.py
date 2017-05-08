@@ -42,10 +42,10 @@ def UDPserver(out_lck, port):
         sock.bind(("", port))
 
         helpers.utils.output(out_lck, "Listening on port %s..." % port)
-        data, address = utils.recvall(sock, 1024)
+        data = sock.recv(1024)
         f.write(data)
         while len(data) == 1024:
-            data, address = utils.recvall(sock, 1024)
+            data = sock.recv(1024)
             f.write(data)
 
         sock.close()

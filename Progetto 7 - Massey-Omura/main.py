@@ -119,9 +119,9 @@ if __name__ == "__main__":
             c = Cipher(out_lck, chunks, keyB)
             output(out_lck, "Decrypting file...")
             c.decryptXOR()
-            output(out_lck, "File decrypted")
+            output(out_lck, "File decrypted.jpg")
 
-            fout = open("received/decrypted.jpg", "wb+")
+            fout = open("received/decrypted.jpg.jpg", "wb+")
             for chunk in c.decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())

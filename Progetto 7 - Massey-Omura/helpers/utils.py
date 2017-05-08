@@ -159,7 +159,7 @@ def send_file_decrypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)
     output(out_lck, "Decrypting file...")
     chunkstowrite = c.decryptXOR(key)
-    output(out_lck, "File decrypted")
+    output(out_lck, "File decrypted.jpg")
     filetowrite = open("received/prova.jpg", "wb+")
 
     for element in chunkstowrite:

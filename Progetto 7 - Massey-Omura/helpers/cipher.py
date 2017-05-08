@@ -13,30 +13,31 @@ class Cipher:
         self.chunks = chunks
         chunk_len = 64
 
+        #self.keys = key
+        self.key = key
 
-        self.keys = key
-        lol = len(self.chunks[len(self.chunks) - 1])
         # controllo lunghezza chunk, se è più corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
 
-    def encryptXOR(self, key):
-        self.algorithmXOR(self.chunks, key)
-
-    def decryptXOR(self, key):
-        towrite = self.algorithmXOR(self.chunks, key)
+    def encryptXOR(self):
+        towrite = self.algorithmXOR()
         return towrite
 
-    def algorithmXOR(self, chunks, key):
+    def decryptXOR(self):
+        towrite = self.algorithmXOR()
+        return towrite
 
-        num_keys = len(chunks)  # una chiave per ogni chunk
+    def algorithmXOR(self):
 
-        keys = utils.gen_keys(key, num_keys)  # generate keys from K
+        num_keys = len(self.chunks)  # una chiave per ogni chunk
+
+        keys = utils.gen_keys(self.key, num_keys)  # generate keys from K
 
         new_chunks = []
 
         i = 0
-        for c in chunks:  # for each chunk
+        for c in self.chunks:  # for each chunk
             c = utils.xor_func(c, utils.toBinary64(keys[i]))  # primo chunk con prima chiave, secondo chunk con seconda chiave, ecc
             new_chunks.append(c)
             i = i + 1
