@@ -1,7 +1,7 @@
-import threading, os, re, copy
+import threading, os, copy
 
 from bitarray import *
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, send_file_crypt, send_file_decrypt
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys
 from helpers.connection import UDPserver, UDPclient
 from helpers.cipher import Cipher
 import socket
@@ -68,13 +68,14 @@ if __name__ == "__main__":
             filename = copy.copy(fileList[nf])
 
             chunks = get_chunks("files/" + filename, 64)
+            keysA = gen_keys(keyA, len(chunks))
 
-            print("cifro con keyA")
+            output(out_lck, "Cifro con key Alice %s..." % keyA)
 
             # cifro e salvo di nuovo
-            c = Cipher(out_lck, chunks, keyA)
+            c = Cipher(out_lck, chunks, keysA)
             encrypted = c.encryptXOR()
-            print("cifrato con keyA")
+            output(out_lck, "Cifrato con key Alice: %s" % keyA)
 
             fout = open("files/encrypted/encA", "wb+")
 
@@ -87,19 +88,19 @@ if __name__ == "__main__":
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((_base + host, port))
 
-            print("invio cifrato")
+            output(out_lck, "Invio file cifrato con key Alice...")
             send_file(sock, "files/encrypted/encA")
 
-            print("ricevo cifrato con keyA e keyB")
+            output(out_lck, "Aspetto Bob...")
             # ricevo file cifrato con keyB
             recv_file(sock, "received/encAB")
 
-            print("decifro con keyA")
+            output(out_lck, "Decifro con key Alice %s..." % keyA)
             # decifro con la keyA
             chunks = get_chunks("received/encAB", 64)
-            c = Cipher(out_lck, chunks, keyA)
+            c = Cipher(out_lck, chunks, keysA)
             decrypted = c.decryptXOR()
-            print("decifrato con keyA")
+            output(out_lck, "Decifrato con key Alice.")
 
             fout = open("received/encB", "wb+")
 
@@ -108,8 +109,9 @@ if __name__ == "__main__":
                 fout.write(ba.tobytes())
             fout.close()
 
-            print("invio cifrato con keyB")
+            output(out_lck, "Invio cifrato con key Bob...")
             send_file(sock, "received/encB")
+            sock.close()
 
         elif main_menu == 2:
             if network == 2:
@@ -121,21 +123,24 @@ if __name__ == "__main__":
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('', port))
             sock.listen(1)
-            print('sto ascoltando')
+            output(out_lck, 'Waiting for Alice...')
 
             (client_sock, address) = sock.accept()
 
-            print("ricevo cifrato con keyA")
+            output(out_lck, "Ricevo cifrato di Alice...")
 
             # ricevo file cifrato con keyA e cifro di nuovo con la keyB
             recv_file(client_sock, "received/encA")
 
             chunks = get_chunks("received/encA", 64)
 
-            print("cifro con keyB")
-            c = Cipher(out_lck, chunks, keyB)
+            output(out_lck, "Cifro con key Bob %s..." % keyB)
+
+            keysB = gen_keys(keyB, len(chunks))
+            c = Cipher(out_lck, chunks, keysB)
+
             encrypted = c.encryptXOR()
-            print("cifrato con keyB")
+            output(out_lck, "Cifrato con key Bob %s." % keyB)
 
             fout = open("received/encAB", "wb+")
 
@@ -144,19 +149,19 @@ if __name__ == "__main__":
                 fout.write(ba.tobytes())
             fout.close()
 
-            print("invio cifrato con keyA e keyB")
+            output(out_lck, "invio cifrato con keyA e keyB")
             send_file(client_sock, "received/encAB")
 
-            print("ricevo cifrato con keyB")
+            output(out_lck, "ricevo cifrato con keyB")
             # ricevo file cifrato con keyB
             recv_file(client_sock, "received/encB")
 
             chunks = get_chunks("received/encB", 64)
 
-            print("decifro con keyB")
-            c = Cipher(out_lck, chunks, keyB)
+            output(out_lck, "decifro con keyB")
+            c = Cipher(out_lck, chunks, keysB)
             decrypted = c.decryptXOR()
-            print("decifrato con keyB")
+            output(out_lck, "decifrato con keyB")
 
             fout = open("received/decrypted.jpg", "wb+")
 
@@ -164,7 +169,7 @@ if __name__ == "__main__":
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
             fout.close()
-
+        sock.close()
 
 
 

@@ -1,7 +1,7 @@
 from helpers.cipher import *
 from helpers.connection import UDPserver, UDPclient
 from bitarray import bitarray
-
+from random import randint
 
 def recvall(socket, chunk_size):
     data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
@@ -124,8 +124,9 @@ def gen_keys(K, num_keys):
     keys = []
 
     for i in range(0, num_keys):
-        key = K[(i % len(K)):] + K[:(i % len(K))]
-        keys.append(key)
+        key = int(K) + randint(0, 2048)
+        if key not in keys:
+            keys.append(str(key))
 
     return keys
 
