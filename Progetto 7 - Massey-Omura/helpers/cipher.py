@@ -79,16 +79,12 @@ class Cipher:
 
     def algorithmAdd(self):
 
-        num_keys = len(self.chunks)  # una chiave per ogni chunk
-
-        keys = utils.gen_keys(self.key, num_keys)  # generate keys from K
-
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.sum(int(utils.toBinary64(keys[i]), 2), int(m, 2))
+            m = utils.sum(int(utils.toBinary64(self.keys[i]), 2), int(m, 2))
             new_chunks.append(utils.toBinary64(m))
             i += 1
 
@@ -96,16 +92,12 @@ class Cipher:
 
     def algorithmDiff(self):
 
-        num_keys = len(self.chunks)  # una chiave per ogni chunk
-
-        keys = utils.gen_keys(self.key, num_keys)  # generate keys from K
-
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.diff(int(m, 2), int(utils.toBinary64(keys[i]), 2))
+            m = utils.diff(int(m, 2), int(utils.toBinary64(self.keys[i]), 2))
             new_chunks.append(utils.toBinary64(m))
             i += 1
 

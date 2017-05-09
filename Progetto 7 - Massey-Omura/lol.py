@@ -2,7 +2,6 @@ import threading, os, copy
 
 from bitarray import *
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys
-from helpers.connection import UDPserver, UDPclient
 from helpers.cipher import Cipher
 import socket
 
@@ -46,6 +45,8 @@ if __name__ == "__main__":
             output(out_lck, "Your IP: " + my_ip)
 
     while True:
+
+        algorithm = loop_menu(out_lck, "Select encryption algorithm ('e' to exit)", ["XOR", "Sum", "Shift", "Exponential"])
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file"])
@@ -74,10 +75,26 @@ if __name__ == "__main__":
 
             # cifro e salvo di nuovo
             c = Cipher(out_lck, chunks, keysA)
-            encrypted = c.encryptXOR()
-            output(out_lck, "Cifrato con key Alice: %s" % keyA)
 
-            fout = open("files/encrypted/encA", "wb+")
+            #algoritmo di cifratura
+            if algorithm == 1: #XOR
+                encrypted = c.encryptXOR()
+                encA = "files/encrypted/encA_XOR"
+                encAB = "files/encrypted/encAB_XOR"
+            elif algorithm == 2: #Somma
+                encrypted = c.algorithmAdd()
+                encA = "files/encrypted/encA_SUM"
+                encAB = "files/encrypted/encAB_SUM"
+            elif algorithm == 3: #Shift
+                output(out_lck, "Shift!")
+                encA = "files/encrypted/encA_SHIFT"
+                encAB = "files/encrypted/encAB_SHIFT"
+            elif algorithm == 4: #Exponential
+                output(out_lck, "Zomi Mona")
+
+            output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
+
+            fout = open(encA, "wb+")
 
             for chunk in encrypted:
                 ba = bitarray(chunk)
@@ -88,29 +105,44 @@ if __name__ == "__main__":
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((_base + host, port))
 
-            output(out_lck, "Invio file cifrato con key Alice...")
-            send_file(sock, "files/encrypted/encA")
+            output(out_lck, "Sending encrypted file with Alice's key...")
+            send_file(sock, encA)
 
-            output(out_lck, "Aspetto Bob...")
+            output(out_lck, "Waiting for Bob...")
             # ricevo file cifrato con keyB
-            recv_file(sock, "received/encAB")
+            recv_file(sock, encAB)
 
-            output(out_lck, "Decifro con key Alice %s..." % keyA)
+            output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
+
             # decifro con la keyA
-            chunks = get_chunks("received/encAB", 64)
+            chunks = get_chunks(encAB, 64)
             c = Cipher(out_lck, chunks, keysA)
-            decrypted = c.decryptXOR()
-            output(out_lck, "Decifrato con key Alice.")
 
-            fout = open("received/encB", "wb+")
+            #algoritmo di decifratura
+            if algorithm == 1: #XOR
+                decrypted = c.decryptXOR()
+                decA = "received/encB_XOR"
+            elif algorithm == 2: #Somma
+                decrypted = c.algorithmDiff()
+                decA = "received/encB_SUM"
+            elif algorithm == 3: #Shift
+                output(out_lck, "Shift!")
+            elif algorithm == 4: #Exponential
+                output(out_lck, "Zomi Mona")
+
+
+            output(out_lck, "Decrypted with Alice's key.")
+
+            fout = open(decA, "wb+")
 
             for chunk in decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
             fout.close()
 
-            output(out_lck, "Invio cifrato con key Bob...")
-            send_file(sock, "received/encB")
+            output(out_lck, "Sending encrypted file with Bob's key...")
+            send_file(sock, decA)
+            output(out_lck, "\n\nDone!\n\n")
             sock.close()
 
         elif main_menu == 2:
@@ -127,49 +159,74 @@ if __name__ == "__main__":
 
             (client_sock, address) = sock.accept()
 
-            output(out_lck, "Ricevo cifrato di Alice...")
-
             # ricevo file cifrato con keyA e cifro di nuovo con la keyB
             recv_file(client_sock, "received/encA")
 
             chunks = get_chunks("received/encA", 64)
 
-            output(out_lck, "Cifro con key Bob %s..." % keyB)
+            output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
 
             keysB = gen_keys(keyB, len(chunks))
             c = Cipher(out_lck, chunks, keysB)
 
-            encrypted = c.encryptXOR()
-            output(out_lck, "Cifrato con key Bob %s." % keyB)
+            #algoritmo di cifratura
+            if algorithm == 1: #XOR
+                encrypted = c.encryptXOR()
+                encAB = "received/encAB_XOR"
+                encB = "received/encB_XOR"
+            elif algorithm == 2: #Somma
+                encrypted = c.algorithmAdd()
+                encAB = "received/encAB_SUM"
+                encB = "received/encB_SUM"
+            elif algorithm == 3: #Shift
+                output(out_lck, "Shift!")
+            elif algorithm == 4: #Exponential
+                output(out_lck, "Zomi Mona")
 
-            fout = open("received/encAB", "wb+")
+            output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
+
+            fout = open(encAB, "wb+")
 
             for chunk in encrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
             fout.close()
 
-            output(out_lck, "invio cifrato con keyA e keyB")
-            send_file(client_sock, "received/encAB")
+            output(out_lck, "Sending encrypted file with Bob's key and Alice's")
+            send_file(client_sock, encAB)
 
-            output(out_lck, "ricevo cifrato con keyB")
+            output(out_lck, "Waiting for encrypted file with Bob's key...")
             # ricevo file cifrato con keyB
-            recv_file(client_sock, "received/encB")
+            recv_file(client_sock, encB)
 
-            chunks = get_chunks("received/encB", 64)
+            chunks = get_chunks(encB, 64)
 
-            output(out_lck, "decifro con keyB")
+            output(out_lck, "Decrypting with Bob's key...")
             c = Cipher(out_lck, chunks, keysB)
-            decrypted = c.decryptXOR()
-            output(out_lck, "decifrato con keyB")
 
-            fout = open("received/decrypted.jpg", "wb+")
+            #algoritmo di decifratura
+            if algorithm == 1: #XOR
+                decrypted = c.decryptXOR()
+                fname = "received/decrypted_XOR.jpg"
+            elif algorithm == 2: #Somma
+                decrypted = c.algorithmDiff()
+                fname = "received/decrypted_SUM.jpg"
+            elif algorithm == 3: #Shift
+                output(out_lck, "Shift!")
+            elif algorithm == 4: #Exponential
+                output(out_lck, "Zomi Mona")
+
+
+            output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+
+            fout = open(fname, "wb+")
 
             for chunk in decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
             fout.close()
-        sock.close()
+            sock.close()
+            output(out_lck, "\n\nDone!\n\n")
 
 
 
