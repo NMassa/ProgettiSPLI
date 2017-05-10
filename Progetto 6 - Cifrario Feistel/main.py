@@ -5,7 +5,7 @@ import time
 
 from bitarray import bitarray
 
-from helpers import netutils
+from helpers.netutils import *
 from helpers.blowfish import Blowfish
 from helpers.cipher import Cipher
 from helpers.key_gen import *

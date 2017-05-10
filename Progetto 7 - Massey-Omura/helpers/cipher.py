@@ -1,4 +1,4 @@
-from helpers import utils
+import utils
 
 
 class Cipher:
@@ -16,7 +16,7 @@ class Cipher:
         self.keys = key
         #self.key = key
 
-        # controllo lunghezza chunk, se è più corta metto "0"
+        # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
 
@@ -26,6 +26,12 @@ class Cipher:
 
     def decryptXOR(self):
         towrite = self.algorithmXOR()
+        return towrite
+    def encryptShift(self):
+        towrite = self.algorithmShiftL()
+        return towrite
+    def decryptShift(self):
+        towrite = self.algorithmShiftR()
         return towrite
 
     def algorithmXOR(self):
@@ -101,4 +107,41 @@ class Cipher:
             new_chunks.append(utils.toBinary64(m))
             i += 1
 
+        return new_chunks
+
+    def algorithmShiftL(self):
+
+        num_keys = len(self.keys)
+
+        #keys = utils.gen_keys(self.keys , num_keys)
+
+        new_chunks =[]
+
+        i=0
+        #print (self.chunks)
+        while i < num_keys:
+            #print (self.keys[i])
+            leftS = utils.sL(self.chunks[i],int(self.keys[i]))
+            print("lefts"+ str(int(leftS,2)))
+            new_chunks.append(leftS)
+
+            i +=1
+        print new_chunks
+        return new_chunks
+
+    def algorithmShiftR(self):
+        num_keys = len(self.keys)
+        #keys = utils.gen_keys(self.key,num_keys)
+
+        new_chunks =[]
+        i=0
+        print (self.chunks)
+        while i < num_keys:
+            #print (self.keys[i])
+            rightS = utils.sR(self.chunks[i],int(self.keys[i]))
+            print("rightS"+ str(int(rightS,2)))
+            new_chunks.append(rightS)
+
+            i +=1
+        print new_chunks
         return new_chunks

@@ -97,7 +97,7 @@ def get_chunks(file,len):
                 break
             chunk = chunk + format(ord(byte),'b').zfill(8)
             n = n + 1
-            if n == len // 8: #controllore se voglio chunk più lunghi
+            if n == len // 8: #controllore se voglio chunk piu lunghi
                 chunks.append(chunk)
                 chunk = ''
                 n = 0

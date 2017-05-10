@@ -7,7 +7,7 @@ def recvall(socket, chunk_size):
     data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
     actual_length = len(data)
 
-    # Se sono stati letti meno byte di chunk_size continua la lettura finchè non si raggiunge la dimensione specificata
+    # Se sono stati letti meno byte di chunk_size continua la lettura finche non si raggiunge la dimensione specificata
     while actual_length < chunk_size:
         new_data = socket.recvfrom(chunk_size - actual_length)
         actual_length += len(new_data)
@@ -112,7 +112,7 @@ def get_chunks(file, len):
             break
         chunk = chunk + format(ord(byte), 'b').zfill(8)
         n = n + 1
-        if n == len // 8:  # controllore se voglio chunk più lunghi
+        if n == len // 8:  # controllore se voglio chunk piu lunghi
             chunks.append(chunk)
             chunk = ''
             n = 0
@@ -153,6 +153,29 @@ def sum(x,y):
 
 def diff(x,y):
     return x - y
+
+def sL(ch,sh):
+    newC = []
+    i=0
+    while i < len(ch):
+        nl=i+int(sh)
+        while nl > 63 :
+            nl-=64
+        newC.append(ch[nl])
+        i+=1
+    chunk= ''.join(newC)
+    return chunk
+def sR(ch,sh):
+    newC = []
+    i=0
+    while i < len(ch):
+        nr=i-int(sh)
+        while nr < 0 :
+            nr+=64
+        newC.append(ch[nr])
+        i+=1
+    chunk= ''.join(newC)
+    return chunk
 
 def send_file_crypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)

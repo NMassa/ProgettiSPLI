@@ -51,8 +51,8 @@ def gen_keys(keyb):
     return keys
 
 #prendo chiave da 8 e restituisco tot chiavi da 32 tutte diverse (una per round-->8)
-def gen_8key32(out_lck, keyb):
-#def gen_8key32(keyb):
+#def gen_8key32(out_lck, keyb):
+def gen_8key32(keyb):
 
     # output(out_lck, "Key base: %s" % keyb)
     # output(out_lck, "Generating subkeys...")
@@ -69,7 +69,7 @@ def gen_8key32(out_lck, keyb):
         Right1 = Right1[(1 % len(Right1)):] + Right1[:(1 % len(Right1))]
 
         keyret = Left1 + Right1
-        key32 = keyret + keyret + keyret + keyret + keyret + keyret
+        key32 = keyret + keyret + keyret + keyret
         keys.append(key32)
         print("KEY %s:\t%s" % (i, key32))
         dec = toNum(key32)
@@ -84,7 +84,7 @@ def gen_8key32(out_lck, keyb):
         Right2 = Right2[(1 % len(Right2)):] + Right2[:(1 % len(Right2))]
 
         keyret = Left2 + Right2
-        key32 = keyret + keyret + keyret + keyret + keyret + keyret
+        key32 = keyret + keyret + keyret + keyret
         keys.append(key32)
         print("KEY %s:\t%s" % (i+4, key32))
         dec = toNum(key32)
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     print (key)
     keyb= toBinary(int(key))
     print (keyb)
-    gen_keys(str(keyb))
+   # gen_keys(str(keyb))
     gen_8key32(str(keyb))
-    gen_16key32(str(keyb))
-    gen_md5_32('abcdehehheeh')
+   # gen_16key32(str(keyb))
+    gen_md5_32(str(78049))

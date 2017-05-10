@@ -21,21 +21,21 @@ class Cipher:
         #self.keys = gen_8key32(out_lck, key)
         self.keys = key
 
-        # controllo lunghezza chunk, se è più corta metto "0"
+        # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
 
     def encrypt(self):
 
         for chunk in self.chunks:
-            for k_i in self.keys: # il numero di chiavi è anache il numero di rounds dell'algoritmo
+            for k_i in self.keys: # il numero di chiavi e anache il numero di rounds dell'algoritmo
                 chunk = self.round_encode(chunk, k_i)
             self.encrypted.append(chunk)
 
     def decrypt(self):
 
         for chunk in self.chunks:
-            for k_i in reversed(self.keys): # il numero di chiavi è anache il numero di rounds dell'algoritmo
+            for k_i in reversed(self.keys): # il numero di chiavi e anache il numero di rounds dell'algoritmo
                 chunk = self.round_decode(chunk, k_i)
             self.decrypted.append(chunk)
 
@@ -48,7 +48,7 @@ class Cipher:
 
         for chunk in self.chunks:
             if pippo:
-                for k_i in reversed(self.keys):  # il numero di chiavi è anache il numero di rounds dell'algoritmo
+                for k_i in reversed(self.keys):  # il numero di chiavi e anache il numero di rounds dell'algoritmo
                     chunk = self.round_decode(chunk, k_i)
 
                 if index == 0:

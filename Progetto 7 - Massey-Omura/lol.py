@@ -86,6 +86,7 @@ if __name__ == "__main__":
                 encA = "files/encrypted/encA_SUM"
                 encAB = "files/encrypted/encAB_SUM"
             elif algorithm == 3: #Shift
+                encrypted = c.encryptShift()
                 output(out_lck, "Shift!")
                 encA = "files/encrypted/encA_SHIFT"
                 encAB = "files/encrypted/encAB_SHIFT"
@@ -126,7 +127,9 @@ if __name__ == "__main__":
                 decrypted = c.algorithmDiff()
                 decA = "received/encB_SUM"
             elif algorithm == 3: #Shift
+                decrypted = c.decryptShift()
                 output(out_lck, "Shift!")
+                decA = "received/encB_Shift"
             elif algorithm == 4: #Exponential
                 output(out_lck, "Zomi Mona")
 
@@ -179,7 +182,10 @@ if __name__ == "__main__":
                 encAB = "received/encAB_SUM"
                 encB = "received/encB_SUM"
             elif algorithm == 3: #Shift
+                encrypted= c.encryptShift()
                 output(out_lck, "Shift!")
+                encAB = "received/encAB_Shift"
+                encB = "received/encB_Shift"
             elif algorithm == 4: #Exponential
                 output(out_lck, "Zomi Mona")
 
@@ -212,7 +218,9 @@ if __name__ == "__main__":
                 decrypted = c.algorithmDiff()
                 fname = "received/decrypted_SUM.jpg"
             elif algorithm == 3: #Shift
+                decrypted =c.decryptShift()
                 output(out_lck, "Shift!")
+                fname = "received/decrypted_Shift.jpg"
             elif algorithm == 4: #Exponential
                 output(out_lck, "Zomi Mona")
 

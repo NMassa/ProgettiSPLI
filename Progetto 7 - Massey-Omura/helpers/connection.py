@@ -1,7 +1,7 @@
-import socket
 import os
+import socket
+
 import helpers
-from helpers import utils
 
 
 def UDPclient(out_lck, host, port, data):

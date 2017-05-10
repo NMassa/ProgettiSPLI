@@ -20,7 +20,7 @@ class Blowfish:
         self.p_boxes = key
         self.p_boxes_reversed = self.p_boxes[::-1]
 
-        # controllo lunghezza chunk, se è più corta metto "0"
+        # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
 
