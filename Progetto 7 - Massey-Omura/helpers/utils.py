@@ -1,3 +1,4 @@
+
 from helpers.cipher import *
 from helpers.connection import UDPserver, UDPclient
 from bitarray import bitarray
@@ -140,6 +141,9 @@ def toBinary32(n):
 
 def toBinary64(n):
     return ''.join(str(1 & int(n) >> i) for i in range(64)[::-1])
+
+def toBinary2048(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(2048)[::-1])
 
 def multiply(x,y):
     return x * y

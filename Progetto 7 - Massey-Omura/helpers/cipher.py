@@ -1,4 +1,4 @@
-import utils
+from helpers import utils
 
 
 class Cipher:
@@ -36,7 +36,6 @@ class Cipher:
 
     def algorithmXOR(self):
 
-
         new_chunks = []
 
         i = 0
@@ -45,7 +44,6 @@ class Cipher:
             c = utils.xor_func(c, utils.toBinary64(self.keys[i]))  # primo chunk con prima chiave, secondo chunk con seconda chiave, ecc
             new_chunks.append(c)
             i = i + 1
-
         return new_chunks
 
     def algorithmMultiply(self):
@@ -91,7 +89,7 @@ class Cipher:
 
         for m in self.chunks:
             m = utils.sum(int(utils.toBinary64(self.keys[i]), 2), int(m, 2))
-            new_chunks.append(utils.toBinary64(m))
+            new_chunks.append(utils.toBinary2048(m))
             i += 1
 
         return new_chunks
@@ -126,7 +124,6 @@ class Cipher:
             new_chunks.append(leftS)
 
             i +=1
-        print new_chunks
         return new_chunks
 
     def algorithmShiftR(self):
@@ -135,7 +132,6 @@ class Cipher:
 
         new_chunks =[]
         i=0
-        print (self.chunks)
         while i < num_keys:
             #print (self.keys[i])
             rightS = utils.sR(self.chunks[i],int(self.keys[i]))
@@ -143,5 +139,4 @@ class Cipher:
             new_chunks.append(rightS)
 
             i +=1
-        print new_chunks
         return new_chunks

@@ -1,7 +1,7 @@
 import threading, os, copy
 
 from bitarray import *
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks
 from helpers.cipher import Cipher
 import socket
 
@@ -68,6 +68,7 @@ if __name__ == "__main__":
             nf = int(nfile) - 1
             filename = copy.copy(fileList[nf])
 
+            output(out_lck, "Doing some magic tricks..... :D")
             chunks = get_chunks("files/" + filename, 64)
             keysA = gen_keys(keyA, len(chunks))
 
@@ -165,6 +166,7 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyA e cifro di nuovo con la keyB
             recv_file(client_sock, "received/encA")
 
+            output(out_lck, "Doing some magic tricks...Getting chunks :D")
             chunks = get_chunks("received/encA", 64)
 
             output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
@@ -198,7 +200,7 @@ if __name__ == "__main__":
                 fout.write(ba.tobytes())
             fout.close()
 
-            output(out_lck, "Sending encrypted file with Bob's key and Alice's")
+            output(out_lck, "Sending encrypted file with Bob and Alice's key...")
             send_file(client_sock, encAB)
 
             output(out_lck, "Waiting for encrypted file with Bob's key...")
@@ -213,7 +215,7 @@ if __name__ == "__main__":
             #algoritmo di decifratura
             if algorithm == 1: #XOR
                 decrypted = c.decryptXOR()
-                fname = "received/decrypted_XOR.jpg"
+                fname = "received/decrypted_XOR.mp4"
             elif algorithm == 2: #Somma
                 decrypted = c.algorithmDiff()
                 fname = "received/decrypted_SUM.jpg"
