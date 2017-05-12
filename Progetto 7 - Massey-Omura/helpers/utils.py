@@ -3,6 +3,8 @@ from helpers.cipher import *
 from helpers.connection import UDPserver, UDPclient
 from bitarray import bitarray
 from random import randint
+import pyprimes
+import math
 
 def recvall(socket, chunk_size):
     data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
@@ -214,3 +216,47 @@ def send_file_decrypt(out_lck, chunks, key, _base, host):
     output(out_lck, "Sending file...")
     UDPclient(out_lck, _base + host, 60000, data)
     output(out_lck, "File Decrypted sent")
+
+
+def calculateP(n):
+    """
+    Prende in ingresso un numero 'n'
+    restituisce il numero primo successivo a 'n'
+    """
+    return pyprimes.next_prime(n)
+
+def calculateEncryptionKey(nthprime, p):
+    """
+    Prende in ingresso la posizione del numero primo che si vuole calcolare (se passo 10, prendo il decimo numero primo) e 'p'
+    restituisce 'e' ovvero un numero primo diverso da p-1 e che sia primo con quest'ultimo
+    """
+    e = pyprimes.nth_prime(nthprime)
+    fp = p-1
+    while e == fp or math.gcd(e, fp) != 1:
+        nthprime += 2
+        e = pyprimes.nth_prime(nthprime)
+    return e
+
+
+def egcd(a, b):
+    # https://en.wikibooks.org/wiki/Algorithm_Implementation/Mathematics/Extended_Euclidean_algorithm
+    x,y, u,v = 0,1, 1,0
+    while a != 0:
+        q, r = b//a, b % a
+        m, n = x-u*q, y-v*q
+        b,a, x,y, u,v = a,r, u,v, m,n
+    gcd = b
+    return gcd, x, y
+
+def mod(M, a, p):
+    msg = 0
+    msg = pow(M, a, p)
+    return msg
+
+def modinv(a, m):
+    # https://en.wikibooks.org/wiki/Algorithm_Implementation/Mathematics/Extended_Euclidean_algorithm
+    gcd, x, y = egcd(a, m)
+    if gcd != 1:
+        return None  # modular inverse does not exist
+    else:
+        return x % m

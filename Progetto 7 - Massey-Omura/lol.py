@@ -55,7 +55,11 @@ if __name__ == "__main__":
                 host = loop_input(out_lck, "Insert destination IP:")
 
             output(out_lck, "destination IP:" + _base + host)
-            keyA = loop_input(out_lck, "Insert Key: ")
+
+            if algorithm == 4:
+                prime_number = loop_input(out_lck, "Insert prime number: ")
+            else:
+                keyA = loop_input(out_lck, "Insert Key: ")
 
             i = 1
             fileList = []
@@ -70,31 +74,39 @@ if __name__ == "__main__":
 
             output(out_lck, "Doing some magic tricks..... :D")
             chunks = get_chunks("files/" + filename, 64)
-            keysA = gen_keys(keyA, len(chunks))
 
-            output(out_lck, "Cifro con key Alice %s..." % keyA)
+            if algorithm != 4:
+                keysA = gen_keys(keyA, len(chunks))
 
-            # cifro e salvo di nuovo
-            c = Cipher(out_lck, chunks, keysA)
+                output(out_lck, "Cifro con key Alice %s..." % keyA)
+
+                # cifro e salvo di nuovo
+                c = Cipher(out_lck, chunks, keysA)
 
             #algoritmo di cifratura
             if algorithm == 1: #XOR
                 encrypted = c.encryptXOR()
                 encA = "files/encrypted/encA_XOR"
                 encAB = "files/encrypted/encAB_XOR"
+                output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
             elif algorithm == 2: #Somma
                 encrypted = c.algorithmAdd()
                 encA = "files/encrypted/encA_SUM"
                 encAB = "files/encrypted/encAB_SUM"
+                output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
             elif algorithm == 3: #Shift
                 encrypted = c.encryptShift()
                 output(out_lck, "Shift!")
                 encA = "files/encrypted/encA_SHIFT"
                 encAB = "files/encrypted/encAB_SHIFT"
+                output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
             elif algorithm == 4: #Exponential
-                output(out_lck, "Zomi Mona")
+                c = Cipher(out_lck, chunks, 0)
+                encrypted = c.encryptMOD(int(prime_number))
+                encA = "files/encrypted/encA_MOD"
+                encAB = "files/encrypted/encAB_MOD"
 
-            output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
+                output(out_lck, "Encrypted with key Alice: '%s'" % prime_number)
 
             fout = open(encA, "wb+")
 
@@ -114,13 +126,15 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyB
             recv_file(sock, encAB)
 
-            output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
+            if algorithm != 4:
 
-            # decifro con la keyA
-            chunks = get_chunks(encAB, 64)
-            c = Cipher(out_lck, chunks, keysA)
+                output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
 
-            #algoritmo di decifratura
+                # decifro con la keyA
+                chunks = get_chunks(encAB, 64)
+                c = Cipher(out_lck, chunks, keysA)
+
+            # algoritmo di decifratura
             if algorithm == 1: #XOR
                 decrypted = c.decryptXOR()
                 decA = "received/encB_XOR"
@@ -132,8 +146,11 @@ if __name__ == "__main__":
                 output(out_lck, "Shift!")
                 decA = "received/encB_Shift"
             elif algorithm == 4: #Exponential
-                output(out_lck, "Zomi Mona")
-
+                #TODO richiamo algoritmo di decrifratura
+                chunks = get_chunks(encAB, 64)
+                c = Cipher(out_lck, chunks, 0)
+                decrypted = c.decryptMOD(int(prime_number))
+                decA = "received/encB_MOD"
 
             output(out_lck, "Decrypted with Alice's key.")
 
@@ -153,7 +170,10 @@ if __name__ == "__main__":
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
 
-            keyB = loop_input(out_lck, "Insert key: ")  # key Bob
+            if algorithm != 4:
+                keyB = loop_input(out_lck, "Insert key: ")  # key Bob
+            else:
+                prime_number = loop_input(out_lck, "Insert prime number: ")
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -169,10 +189,18 @@ if __name__ == "__main__":
             output(out_lck, "Doing some magic tricks...Getting chunks :D")
             chunks = get_chunks("received/encA", 64)
 
-            output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
+            if algorithm != 4:
+                output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
 
-            keysB = gen_keys(keyB, len(chunks))
-            c = Cipher(out_lck, chunks, keysB)
+                if algorithm != 4:
+                    keysB = gen_keys(keyB, len(chunks))
+                    c = Cipher(out_lck, chunks, keysB)
+            else:
+                output(out_lck, "Encrypting with Bob's key...")
+
+                if algorithm != 4:
+                    keysB = gen_keys(keyB, len(chunks))
+                    c = Cipher(out_lck, chunks, prime_number)
 
             #algoritmo di cifratura
             if algorithm == 1: #XOR
@@ -189,9 +217,15 @@ if __name__ == "__main__":
                 encAB = "received/encAB_Shift"
                 encB = "received/encB_Shift"
             elif algorithm == 4: #Exponential
-                output(out_lck, "Zomi Mona")
+                c = Cipher(out_lck, chunks, 0)
+                encrypted = c.encryptMOD(int(prime_number))
+                encAB = "received/encAB_MOD"
+                encB = "received/encB_MOD"
 
-            output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
+            if algorithm != 4:
+                output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
+            else:
+                output(out_lck, "Encrypted with Bob's key.")
 
             fout = open(encAB, "wb+")
 
@@ -210,24 +244,31 @@ if __name__ == "__main__":
             chunks = get_chunks(encB, 64)
 
             output(out_lck, "Decrypting with Bob's key...")
-            c = Cipher(out_lck, chunks, keysB)
 
             #algoritmo di decifratura
             if algorithm == 1: #XOR
+                c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.decryptXOR()
                 fname = "received/decrypted_XOR.mp4"
             elif algorithm == 2: #Somma
+                c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.algorithmDiff()
                 fname = "received/decrypted_SUM.jpg"
+
             elif algorithm == 3: #Shift
+                c = Cipher(out_lck, chunks, keysB)
                 decrypted =c.decryptShift()
                 output(out_lck, "Shift!")
                 fname = "received/decrypted_Shift.jpg"
             elif algorithm == 4: #Exponential
-                output(out_lck, "Zomi Mona")
+                c = Cipher(out_lck, chunks, 0)
+                decrypted = c.decryptMOD(int(prime_number))
+                fname = "received/decrypted_MOD.jpg"
 
-
-            output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+            if algorithm != 4:
+                output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+            else:
+                output(out_lck, "Decrypted with Bob's key.")
 
             fout = open(fname, "wb+")
 

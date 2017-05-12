@@ -16,6 +16,12 @@ class Cipher:
         self.keys = key
         #self.key = key
 
+        # chiavi MOD
+        self.encrypt_A = 0
+        self.decrypt_A = 0
+        self.p = 0
+        self.fp = self.p - 1
+
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(chunk_len)
@@ -75,7 +81,7 @@ class Cipher:
         i = 0
 
         for m in self.chunks:
-            m = utils.div(int(m, 2),int(utils.toBinary64(keys[i]), 2))
+            m = utils.div(int(m, 2), int(utils.toBinary64(keys[i]), 2))
             new_chunks.append(utils.toBinary64(m))
             i += 1
 
@@ -139,4 +145,38 @@ class Cipher:
             new_chunks.append(rightS)
 
             i +=1
+        return new_chunks
+
+    def encryptMOD(self, number):
+
+        self.p = 0
+
+        self.p = utils.calculateP(number)
+        self.encrypt_A = utils.calculateEncryptionKey(number, self.p)
+
+        towrite = self.algorithmMOD()
+
+        return towrite
+
+    def decryptMOD(self, number):
+
+        self.p = 0
+
+        self.p = utils.calculateP(number)
+        fp = self.p - 1
+        self.decrypt_A = utils.modinv(self.encrypt_A, fp)
+
+        towrite = self.algorithmMOD()
+
+        return towrite
+
+    def algorithmMOD(self):
+
+        new_chunks = []
+
+        for c in self.chunks:  # for each chunk
+
+            c = utils.mod(int(c, 2), self.encrypt_A, self.p)
+            new_chunks.append(utils.toBinary64(c))
+
         return new_chunks
