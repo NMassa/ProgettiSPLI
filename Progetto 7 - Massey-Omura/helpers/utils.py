@@ -5,6 +5,7 @@ from bitarray import bitarray
 from random import randint
 import pyprimes
 import math
+import random
 
 def recvall(socket, chunk_size):
     data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
@@ -127,9 +128,21 @@ def gen_keys(K, num_keys):
     keys = []
 
     for i in range(0, num_keys):
-        key = int(K) + randint(0, 2048)
+        key = int(K) + randint(0, 32768)
         if key not in keys:
             keys.append(str(key))
+
+    return keys
+
+
+def gen_keys2(K, num_keys):
+    keys = []
+    random.seed(int(K))
+    for i in range(0, num_keys):
+        key = int(K) + random.randint(0, 256)
+        if key > 255:
+            key = key % 255
+        keys.append(key)
 
     return keys
 
@@ -138,27 +151,48 @@ def xor_func(xs, ys):
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
 
 
+def toBinary8(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(8)[::-1])
+
+
+def toBinary16(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(16)[::-1])
+
+
 def toBinary32(n):
     return ''.join(str(1 & int(n) >> i) for i in range(32)[::-1])
+
 
 def toBinary64(n):
     return ''.join(str(1 & int(n) >> i) for i in range(64)[::-1])
 
+
 def toBinary2048(n):
     return ''.join(str(1 & int(n) >> i) for i in range(2048)[::-1])
 
-def multiply(x,y):
-    return x * y
 
-def div(x,y):
-    div = x // y
-    return div
+def mul(toMul, key):
+    m = int(toMul, 2) * int(toBinary64(key), 2)
+    return toBinary32(m)
+
+
+def div32_to_16(toDiv, key):
+    m = int(toDiv, 2) / int(toBinary64(key), 2)
+    return toBinary16(m)
+
+
+def div16_to_8(toDiv, key):
+    m = int(toDiv, 2) / int(toBinary64(key), 2)
+    return toBinary8(m)
+
 
 def sum(x,y):
     return x + y
 
+
 def diff(x,y):
     return x - y
+
 
 def sL(ch,sh):
     newC = []
@@ -171,6 +205,8 @@ def sL(ch,sh):
         i+=1
     chunk= ''.join(newC)
     return chunk
+
+
 def sR(ch,sh):
     newC = []
     i=0
@@ -182,6 +218,7 @@ def sR(ch,sh):
         i+=1
     chunk= ''.join(newC)
     return chunk
+
 
 def send_file_crypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)
@@ -224,6 +261,7 @@ def calculateP(n):
     restituisce il numero primo successivo a 'n'
     """
     return pyprimes.next_prime(n)
+
 
 def calculateEncryptionKey(nthprime, p):
     """

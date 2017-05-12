@@ -56,36 +56,53 @@ class Cipher:
 
         num_keys = len(self.chunks)  # una chiave per ogni chunk
 
-        keys = utils.gen_keys(self.key, num_keys)  # generate keys from K
+        keys = utils.gen_keys2(self.key, num_keys)  # generate keys from K
 
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-
-            m = utils.multiply(int(m, 2), int(utils.toBinary64(keys[i]), 2))
-            new_chunks.append(utils.toBinary64(m))
+            m = utils.mul(int(m, 2), int(utils.toBinary8(keys[i]), 2))
+            new_chunks.append(utils.toBinary32(m))
             i += 1
 
         return new_chunks
 
-    def algorithmDiv(self):
+    def algorithmDiv32_to_16(self):
 
         num_keys = len(self.chunks)  # una chiave per ogni chunk
 
-        keys = utils.gen_keys(self.key, num_keys)  # generate keys from K
+        keys = utils.gen_keys2(self.key, num_keys)  # generate keys from K
 
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.div(int(m, 2), int(utils.toBinary64(keys[i]), 2))
-            new_chunks.append(utils.toBinary64(m))
+            m = utils.div32_to_16(int(m, 2), int(utils.toBinary64(keys[i]), 2))
+            new_chunks.append(utils.toBinary32(m))
             i += 1
 
         return new_chunks
+
+    def algorithmDiv16_to_8(self):
+
+        num_keys = len(self.chunks)  # una chiave per ogni chunk
+
+        keys = utils.gen_keys2(self.key, num_keys)  # generate keys from K
+
+        new_chunks = []
+
+        i = 0
+
+        for m in self.chunks:
+            m = utils.div16_to_8(int(m, 2), int(utils.toBinary64(keys[i]), 2))
+            new_chunks.append(utils.toBinary32(m))
+            i += 1
+
+        return new_chunks
+
 
     def algorithmAdd(self):
 
@@ -130,6 +147,7 @@ class Cipher:
             new_chunks.append(leftS)
 
             i +=1
+
         return new_chunks
 
     def algorithmShiftR(self):

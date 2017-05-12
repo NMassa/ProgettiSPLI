@@ -121,7 +121,7 @@ if __name__ == "__main__":
             c.decryptXOR()
             output(out_lck, "File decrypted.jpg")
 
-            fout = open("received/decrypted.jpg.jpg", "wb+")
+            fout = open("received/decrypted.jpg", "wb+")
             for chunk in c.decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
