@@ -260,3 +260,9 @@ def modinv(a, m):
         return None  # modular inverse does not exist
     else:
         return x % m
+
+def toBinary8(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(8)[::-1])
+
+def toBinary4(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(4)[::-1])

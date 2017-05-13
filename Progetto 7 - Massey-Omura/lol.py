@@ -1,7 +1,7 @@
 import threading, os, copy
 
 from bitarray import *
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks, DIM_BLOCK
 from helpers.cipher import Cipher
 import socket
 
@@ -33,6 +33,7 @@ if __name__ == "__main__":
     out_lck = threading.Lock()
     network = 0
     port = 60000
+    #dim_blocco = 8
 
     while network == 0:
         network = loop_menu(out_lck, "Select network enviroment ('e' to exit): ", ["Local", "Network"])
@@ -73,13 +74,11 @@ if __name__ == "__main__":
             filename = copy.copy(fileList[nf])
 
             output(out_lck, "Doing some magic tricks..... :D")
-            chunks = get_chunks("files/" + filename, 64)
+            chunks = get_chunks("files/" + filename, DIM_BLOCK)
 
             if algorithm != 4:
                 keysA = gen_keys(keyA, len(chunks))
-
                 output(out_lck, "Cifro con key Alice %s..." % keyA)
-
                 # cifro e salvo di nuovo
                 c = Cipher(out_lck, chunks, keysA)
 
@@ -102,11 +101,10 @@ if __name__ == "__main__":
                 output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
             elif algorithm == 4: #Exponential
                 c = Cipher(out_lck, chunks, 0)
-                encrypted = c.encryptMOD(int(prime_number))
+                encrypted = c.encryptMOD(10, int(prime_number))
                 encA = "files/encrypted/encA_MOD"
                 encAB = "files/encrypted/encAB_MOD"
-
-                output(out_lck, "Encrypted with key Alice: '%s'" % prime_number)
+                output(out_lck, "Encrypted with key Alice: '%s'" % c.encrypt_A)
 
             fout = open(encA, "wb+")
 
@@ -127,11 +125,9 @@ if __name__ == "__main__":
             recv_file(sock, encAB)
 
             if algorithm != 4:
-
                 output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
-
                 # decifro con la keyA
-                chunks = get_chunks(encAB, 64)
+                chunks = get_chunks(encAB, DIM_BLOCK)
                 c = Cipher(out_lck, chunks, keysA)
 
             # algoritmo di decifratura
@@ -147,15 +143,17 @@ if __name__ == "__main__":
                 decA = "received/encB_Shift"
             elif algorithm == 4: #Exponential
                 #TODO richiamo algoritmo di decrifratura
-                chunks = get_chunks(encAB, 64)
-                c = Cipher(out_lck, chunks, 0)
-                decrypted = c.decryptMOD(int(prime_number))
+                #c.set_chunks(chunks)
+                chunks = get_chunks(encAB, DIM_BLOCK)
+                c.chunks = chunks
+                #c = Cipher(out_lck, chunks, 0)
+                decrypted = c.decryptMOD()
+                output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
                 decA = "received/encB_MOD"
 
             output(out_lck, "Decrypted with Alice's key.")
 
             fout = open(decA, "wb+")
-
             for chunk in decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
@@ -187,7 +185,7 @@ if __name__ == "__main__":
             recv_file(client_sock, "received/encA")
 
             output(out_lck, "Doing some magic tricks...Getting chunks :D")
-            chunks = get_chunks("received/encA", 64)
+            chunks = get_chunks("received/encA", DIM_BLOCK)
 
             if algorithm != 4:
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
@@ -218,14 +216,13 @@ if __name__ == "__main__":
                 encB = "received/encB_Shift"
             elif algorithm == 4: #Exponential
                 c = Cipher(out_lck, chunks, 0)
-                encrypted = c.encryptMOD(int(prime_number))
+                encrypted = c.encryptMOD(7, int(prime_number))
                 encAB = "received/encAB_MOD"
                 encB = "received/encB_MOD"
+                output(out_lck, "Encrypted with Bob's key '%s'." % c.encrypt_A)
 
             if algorithm != 4:
                 output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
-            else:
-                output(out_lck, "Encrypted with Bob's key.")
 
             fout = open(encAB, "wb+")
 
@@ -241,7 +238,7 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyB
             recv_file(client_sock, encB)
 
-            chunks = get_chunks(encB, 64)
+            chunks = get_chunks(encB, DIM_BLOCK)
 
             output(out_lck, "Decrypting with Bob's key...")
 
@@ -254,21 +251,19 @@ if __name__ == "__main__":
                 c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.algorithmDiff()
                 fname = "received/decrypted_SUM.jpg"
-
             elif algorithm == 3: #Shift
                 c = Cipher(out_lck, chunks, keysB)
                 decrypted =c.decryptShift()
                 output(out_lck, "Shift!")
                 fname = "received/decrypted_Shift.jpg"
             elif algorithm == 4: #Exponential
-                c = Cipher(out_lck, chunks, 0)
-                decrypted = c.decryptMOD(int(prime_number))
+                c.chunks = chunks
+                decrypted = c.decryptMOD()
                 fname = "received/decrypted_MOD.jpg"
+                output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
 
             if algorithm != 4:
                 output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
-            else:
-                output(out_lck, "Decrypted with Bob's key.")
 
             fout = open(fname, "wb+")
 
