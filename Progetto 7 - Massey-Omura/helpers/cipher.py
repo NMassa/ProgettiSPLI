@@ -90,12 +90,11 @@ class Cipher:
     def algorithmAdd(self):
 
         new_chunks = []
-
         i = 0
 
         for m in self.chunks:
             m = utils.sum(int(utils.toBinary64(self.keys[i]), 2), int(m, 2))
-            new_chunks.append(utils.toBinary2048(m))
+            new_chunks.append(utils.toBinary64(m))
             i += 1
 
         return new_chunks
@@ -103,7 +102,6 @@ class Cipher:
     def algorithmDiff(self):
 
         new_chunks = []
-
         i = 0
 
         for m in self.chunks:
