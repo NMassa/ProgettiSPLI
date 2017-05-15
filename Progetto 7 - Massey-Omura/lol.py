@@ -1,7 +1,8 @@
 import threading, os, copy
 
 from bitarray import *
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks, DIM_BLOCK
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks, DIM_BLOCK, \
+    gen_keys2
 from helpers.cipher import Cipher
 import socket
 
@@ -76,9 +77,9 @@ if __name__ == "__main__":
             output(out_lck, "Doing some magic tricks..... :D")
             chunks = get_chunks("files/" + filename, DIM_BLOCK)
 
-            if algorithm != 4:
+            if algorithm != 4 and algorithm != 5:
                 keysA = gen_keys(keyA, len(chunks))
-                output(out_lck, "Cifro con key Alice %s..." % keyA)
+                output(out_lck, "Encrypting with Alice's key %s..." % keyA)
                 # cifro e salvo di nuovo
                 c = Cipher(out_lck, chunks, keysA)
 
@@ -99,7 +100,16 @@ if __name__ == "__main__":
                 encA = "files/encrypted/encA_SHIFT"
                 encAB = "files/encrypted/encAB_SHIFT"
                 output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
-            elif algorithm == 4: #Exponential
+            elif algorithm == 4: #Mul
+                keysA = gen_keys(keyA, len(chunks))
+                output(out_lck, "Encrypting with Alice's key %s..." % keyA)
+                # cifro e salvo di nuovo
+                c = Cipher(out_lck, chunks, keysA)
+                encrypted = c.encryptMul()
+                encA = "files/encrypted/encA_MUL"
+                encAB = "files/encrypted/encAB_MUL"
+                output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
+            elif algorithm == 5: #Exponential
                 c = Cipher(out_lck, chunks, 0)
                 encrypted = c.encryptMOD(10, int(prime_number))
                 encA = "files/encrypted/encA_MOD"
@@ -124,7 +134,7 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyB
             recv_file(sock, encAB)
 
-            if algorithm != 4:
+            if algorithm != 5:
                 output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
                 # decifro con la keyA
                 chunks = get_chunks(encAB, DIM_BLOCK)
@@ -141,7 +151,10 @@ if __name__ == "__main__":
                 decrypted = c.decryptShift()
                 output(out_lck, "Shift!")
                 decA = "received/encB_Shift"
-            elif algorithm == 4: #Exponential
+            elif algorithm == 4:
+                c.decryptMul32()
+                decA = "received/encB_MUL"
+            elif algorithm == 5: #Exponential
                 #TODO richiamo algoritmo di decrifratura
                 #c.set_chunks(chunks)
                 chunks = get_chunks(encAB, DIM_BLOCK)
@@ -151,7 +164,7 @@ if __name__ == "__main__":
                 output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
                 decA = "received/encB_MOD"
 
-            output(out_lck, "Decrypted with Alice's key.")
+            output(out_lck, "Decrypted with Alice's key %s." % keyA)
 
             fout = open(decA, "wb+")
             for chunk in decrypted:
@@ -187,18 +200,18 @@ if __name__ == "__main__":
             output(out_lck, "Doing some magic tricks...Getting chunks :D")
             chunks = get_chunks("received/encA", DIM_BLOCK)
 
-            if algorithm != 4:
+            if algorithm == 5:
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
-
-                if algorithm != 4:
-                    keysB = gen_keys(keyB, len(chunks))
-                    c = Cipher(out_lck, chunks, keysB)
+                keysB = gen_keys(keyB, len(chunks))
+                c = Cipher(out_lck, chunks, keysB)
+            elif algorithm == 4:
+                output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
+                keysB = gen_keys2(keyB, len(chunks))
+                c = Cipher(out_lck, chunks, keysB)
             else:
                 output(out_lck, "Encrypting with Bob's key...")
-
-                if algorithm != 4:
-                    keysB = gen_keys(keyB, len(chunks))
-                    c = Cipher(out_lck, chunks, prime_number)
+                keysB = gen_keys(keyB, len(chunks))
+                c = Cipher(out_lck, chunks, prime_number)
 
             #algoritmo di cifratura
             if algorithm == 1: #XOR
@@ -214,14 +227,18 @@ if __name__ == "__main__":
                 output(out_lck, "Shift!")
                 encAB = "received/encAB_Shift"
                 encB = "received/encB_Shift"
-            elif algorithm == 4: #Exponential
+            elif algorithm == 4:
+                encrypted = c.encryptMul()
+                encAB = "received/encAB_MUL"
+                encB = "received/encB_MUL"
+            elif algorithm == 5: #Exponential
                 c = Cipher(out_lck, chunks, 0)
                 encrypted = c.encryptMOD(7, int(prime_number))
                 encAB = "received/encAB_MOD"
                 encB = "received/encB_MOD"
                 output(out_lck, "Encrypted with Bob's key '%s'." % c.encrypt_A)
 
-            if algorithm != 4:
+            if algorithm != 5:
                 output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
 
             fout = open(encAB, "wb+")
@@ -256,13 +273,17 @@ if __name__ == "__main__":
                 decrypted =c.decryptShift()
                 output(out_lck, "Shift!")
                 fname = "received/decrypted_Shift.jpg"
-            elif algorithm == 4: #Exponential
+            elif algorithm == 4: #Mul
+                c = Cipher(out_lck, chunks, keysB)
+                decrypted = c.decryptMul16()
+                fname = "received/decrypted_MUL.jpg"
+            elif algorithm == 5: #Exponential
                 c.chunks = chunks
                 decrypted = c.decryptMOD()
                 fname = "received/decrypted_MOD.jpg"
                 output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
 
-            if algorithm != 4:
+            if algorithm != 5:
                 output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
 
             fout = open(fname, "wb+")

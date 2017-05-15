@@ -38,11 +38,25 @@ class Cipher:
     def decryptXOR(self):
         towrite = self.algorithmXOR()
         return towrite
+
     def encryptShift(self):
         towrite = self.algorithmShiftL()
         return towrite
+
     def decryptShift(self):
         towrite = self.algorithmShiftR()
+        return towrite
+
+    def encryptMul(self):
+        towrite = self.algorithmMultiply()
+        return towrite
+
+    def decryptMul32(self):
+        towrite = self.algorithmDiv32_to_16()
+        return towrite
+
+    def decryptMul16(self):
+        towrite = self.algorithmDiv16_to_8()
         return towrite
 
     def algorithmXOR(self):
@@ -107,7 +121,6 @@ class Cipher:
             i += 1
 
         return new_chunks
-
 
     def algorithmAdd(self):
 
