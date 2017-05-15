@@ -75,13 +75,15 @@ if __name__ == "__main__":
             filename = copy.copy(fileList[nf])
 
             output(out_lck, "Doing some magic tricks..... :D")
-            chunks = get_chunks("files/" + filename, DIM_BLOCK)
 
             if algorithm != 4 and algorithm != 5:
+                chunks = get_chunks("files/" + filename, 64)
                 keysA = gen_keys(keyA, len(chunks))
                 output(out_lck, "Encrypting with Alice's key %s..." % keyA)
                 # cifro e salvo di nuovo
                 c = Cipher(out_lck, chunks, keysA)
+            else:
+                chunks = get_chunks("files/" + filename, 8)
 
             #algoritmo di cifratura
             if algorithm == 1: #XOR
@@ -101,7 +103,7 @@ if __name__ == "__main__":
                 encAB = "files/encrypted/encAB_SHIFT"
                 output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
             elif algorithm == 4: #Mul
-                keysA = gen_keys(keyA, len(chunks))
+                keysA = gen_keys2(keyA, len(chunks))
                 output(out_lck, "Encrypting with Alice's key %s..." % keyA)
                 # cifro e salvo di nuovo
                 c = Cipher(out_lck, chunks, keysA)
@@ -134,10 +136,13 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyB
             recv_file(sock, encAB)
 
-            if algorithm != 5:
+            if algorithm != 4 and algorithm != 5:
                 output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
                 # decifro con la keyA
-                chunks = get_chunks(encAB, DIM_BLOCK)
+                chunks = get_chunks(encAB, 64)
+                c = Cipher(out_lck, chunks, keysA)
+            else:
+                chunks = get_chunks(encAB, 8)
                 c = Cipher(out_lck, chunks, keysA)
 
             # algoritmo di decifratura
@@ -151,15 +156,10 @@ if __name__ == "__main__":
                 decrypted = c.decryptShift()
                 output(out_lck, "Shift!")
                 decA = "received/encB_Shift"
-            elif algorithm == 4:
-                c.decryptMul32()
+            elif algorithm == 4: #Mul
+                decrypted = c.decryptMul32()
                 decA = "received/encB_MUL"
             elif algorithm == 5: #Exponential
-                #TODO richiamo algoritmo di decrifratura
-                #c.set_chunks(chunks)
-                chunks = get_chunks(encAB, DIM_BLOCK)
-                c.chunks = chunks
-                #c = Cipher(out_lck, chunks, 0)
                 decrypted = c.decryptMOD()
                 output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
                 decA = "received/encB_MOD"
@@ -198,17 +198,19 @@ if __name__ == "__main__":
             recv_file(client_sock, "received/encA")
 
             output(out_lck, "Doing some magic tricks...Getting chunks :D")
-            chunks = get_chunks("received/encA", DIM_BLOCK)
 
             if algorithm == 5:
+                chunks = get_chunks("received/encA", 8)
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 keysB = gen_keys(keyB, len(chunks))
                 c = Cipher(out_lck, chunks, prime_number)
             elif algorithm == 4:
+                chunks = get_chunks("received/encA", 8)
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 keysB = gen_keys2(keyB, len(chunks))
                 c = Cipher(out_lck, chunks, keysB)
             else:
+                chunks = get_chunks("received/encA", 64)
                 output(out_lck, "Encrypting with Bob's key...")
                 keysB = gen_keys(keyB, len(chunks))
                 c = Cipher(out_lck, chunks, keysB)
@@ -255,30 +257,31 @@ if __name__ == "__main__":
             # ricevo file cifrato con keyB
             recv_file(client_sock, encB)
 
-            chunks = get_chunks(encB, DIM_BLOCK)
+            if algorithm != 4 and algorithm != 5:
+                chunks = get_chunks(encB, 64)
+                c = Cipher(out_lck, chunks, keysB)
+            else:
+                chunks = get_chunks(encB, 8)
+                c = Cipher(out_lck, chunks, keysB)
+
 
             output(out_lck, "Decrypting with Bob's key...")
 
             #algoritmo di decifratura
             if algorithm == 1: #XOR
-                c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.decryptXOR()
                 fname = "received/decrypted_XOR.mp4"
             elif algorithm == 2: #Somma
-                c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.algorithmDiff()
                 fname = "received/decrypted_SUM.jpg"
             elif algorithm == 3: #Shift
-                c = Cipher(out_lck, chunks, keysB)
                 decrypted =c.decryptShift()
                 output(out_lck, "Shift!")
                 fname = "received/decrypted_Shift.jpg"
             elif algorithm == 4: #Mul
-                c = Cipher(out_lck, chunks, keysB)
                 decrypted = c.decryptMul16()
                 fname = "received/decrypted_MUL.jpg"
             elif algorithm == 5: #Exponential
-                c.chunks = chunks
                 decrypted = c.decryptMOD()
                 fname = "received/decrypted_MOD.jpg"
                 output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
