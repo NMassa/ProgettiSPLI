@@ -1,5 +1,6 @@
 import threading, os, copy
 
+import time
 from bitarray import *
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_chunks, gen_keys, get_chunks, DIM_BLOCK, \
     gen_keys2
@@ -15,7 +16,7 @@ def send_file (sock, file_path):
     with open(file_path, 'rb') as f:
         data = f.read(1024)
         while data:
-            sock.send(data)
+            sock.sendall(data)
             data = f.read(1024)
 
 ## metodo per ricevere le informazioni da una socket
@@ -24,11 +25,14 @@ def recv_file(sock, file_path):
     ## scrive sul file indicato
     with open(file_path, 'wb') as f:
         data = sock.recv(1024)
+        i = 0
         while len(data) == 1024:
+            print(i)
+            i += 1
             f.write(data)
             data = sock.recv(1024)
         f.write(data)
-
+    return data
 if __name__ == "__main__":
 
     out_lck = threading.Lock()
@@ -58,12 +62,8 @@ if __name__ == "__main__":
 
             output(out_lck, "destination IP:" + _base + host)
 
-            #Zotti
-            if algorithm == 5:
-                prime_number = loop_input(out_lck, "Insert prime number: ")
-            # -Zotti
-            else:
-                keyA = loop_input(out_lck, "Insert Key: ")
+
+            keyA = loop_input(out_lck, "Insert Key: ")
 
             #Get filenames
             i = 1
@@ -116,12 +116,18 @@ if __name__ == "__main__":
                 encA = "files/encrypted/encA_MUL"
                 encAB = "files/encrypted/encAB_MUL"
                 output(out_lck, "Encrypted with key Alice: '%s'" % keyA)
+
+
+            #Zotti
             elif algorithm == 5: #Exponential
                 c = Cipher(out_lck, chunks, 0)
-                encrypted = c.encryptMOD(10, int(prime_number))
+                encrypted = c.encryptMOD(10, int(keyA))
                 encA = "files/encrypted/encA_MOD"
                 encAB = "files/encrypted/encAB_MOD"
                 output(out_lck, "Encrypted with key Alice: '%s'" % c.encrypt_A)
+            #-Zotti
+
+
 
             #Scrivo il file criptato con keyA
             fout = open(encA, "wb+")
@@ -143,7 +149,7 @@ if __name__ == "__main__":
             output(out_lck, "Waiting for Bob...")
             recv_file(sock, encAB)
 
-            #output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
+            output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
 
             if algorithm != 4 and algorithm != 5:
                 # decifro con la keyA
@@ -154,9 +160,12 @@ if __name__ == "__main__":
                 chunks = get_chunks(encAB, 32)
                 c = Cipher(out_lck, chunks, keysA)
 
+
+            #Zotti
             elif algorithm == 5:
                 chunks = get_chunks(encAB, 8)
-                c = Cipher(out_lck, chunks, keysA)
+            #-Zotti
+
 
             # algoritmo di decifratura con keyA
             if algorithm == 1: #XOR
@@ -172,10 +181,14 @@ if __name__ == "__main__":
             elif algorithm == 4: #Mul
                 decrypted = c.decryptMul32()
                 decA = "received/encB_MUL"
+
+            #Zotti
             elif algorithm == 5: #Exponential
                 decrypted = c.decryptMOD()
                 output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
                 decA = "received/encB_MOD"
+            #-Zotti
+
 
             output(out_lck, "Decrypted with Alice's key %s." % keyA)
 
@@ -190,6 +203,9 @@ if __name__ == "__main__":
             output(out_lck, "\n\nDone!\n\n")
             sock.close()
 
+
+        #BOB
+
         elif main_menu == 2:
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
@@ -197,31 +213,34 @@ if __name__ == "__main__":
             if algorithm != 5:
                 keyB = loop_input(out_lck, "Insert key: ")  # key Bob
             else:
-                prime_number = loop_input(out_lck, "Insert prime number: ")
+                keyB = loop_input(out_lck, "Insert prime number: ")
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('', port))
-            sock.listen(1)
+            sock.listen(100)
             output(out_lck, 'Waiting for Alice...')
 
             (client_sock, address) = sock.accept()
 
             # ricevo file cifrato con keyA e cifro di nuovo con la keyB
-            recv_file(client_sock, "received/encA")
+            result = recv_file(client_sock, "received/encA")
 
             output(out_lck, "Doing some magic tricks...Getting chunks :D")
 
-            if algorithm == 5:
-                chunks = get_chunks("received/encA", 8)
-                output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
-                keysB = gen_keys(keyB, len(chunks))
-                c = Cipher(out_lck, chunks, prime_number)
-            elif algorithm == 4:
+            if algorithm == 4:
                 chunks = get_chunks("received/encA", 16)
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 keysB = gen_keys2(keyB, len(chunks))
                 c = Cipher(out_lck, chunks, keysB)
+
+            #Zotti
+            elif algorithm == 5:
+                chunks = get_chunks("received/encA", 8)
+                output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
+                c = Cipher(out_lck, chunks, 0)
+            #-Zotti
+
             else:
                 chunks = get_chunks("received/encA", 64)
                 output(out_lck, "Encrypting with Bob's key...")
@@ -246,12 +265,15 @@ if __name__ == "__main__":
                 encrypted = c.encryptMul16()
                 encAB = "received/encAB_MUL"
                 encB = "received/encB_MUL"
+
+            #Zotti
             elif algorithm == 5: #Exponential
-                c = Cipher(out_lck, chunks, 0)
-                encrypted = c.encryptMOD(7, int(prime_number))
+                encrypted = c.encryptMOD(7, int(keyB))
                 encAB = "received/encAB_MOD"
                 encB = "received/encB_MOD"
                 output(out_lck, "Encrypted with Bob's key '%s'." % c.encrypt_A)
+            #-Zotti
+
 
             if algorithm != 5:
                 output(out_lck, "Encrypted with Bob's key '%s'." % keyB)
@@ -277,9 +299,11 @@ if __name__ == "__main__":
             elif algorithm == 4:
                 chunks = get_chunks(encB, 16)
                 c = Cipher(out_lck, chunks, keysB)
+
+            #Zotti
             elif algorithm == 5:
                 chunks = get_chunks(encB, 8)
-                c = Cipher(out_lck, chunks, keysB)
+            #-Zotti
 
 
             output(out_lck, "Decrypting with Bob's key...")
@@ -298,19 +322,23 @@ if __name__ == "__main__":
             elif algorithm == 4: #Mul
                 decrypted = c.decryptMul16()
                 fname = "received/decrypted_MUL.jpg"
+
+            #Zotti
             elif algorithm == 5: #Exponential
                 decrypted = c.decryptMOD()
                 fname = "received/decrypted_MOD.jpg"
                 output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
+            #-Zotti
 
-            if algorithm != 5:
-                output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+
+            output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
 
             fout = open(fname, "wb+")
 
             for chunk in decrypted:
                 ba = bitarray(chunk)
                 fout.write(ba.tobytes())
+
             fout.close()
             sock.close()
             output(out_lck, "\n\nDone!\n\n")
