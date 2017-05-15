@@ -142,6 +142,8 @@ def gen_keys2(K, num_keys):
         key = int(K) + random.randint(0, 256)
         if key > 255:
             key = key % 255
+        if key == 0:
+            key += 1
         keys.append(key)
 
     return keys
@@ -172,17 +174,24 @@ def toBinary2048(n):
 
 
 def mul(toMul, key):
-    m = int(toMul, 2) * int(toBinary64(key), 2)
+    m = int(toMul, 2) * int(key, 2)
     return toBinary32(m)
 
+def mul8_to_16(toMul, key):
+    m = int(toMul, 2) * int(key, 2)
+    return toBinary16(m)
+
+def mul16_to_32(toMul, key):
+    m = int(toMul, 2) * int(key, 2)
+    return toBinary32(m)
 
 def div32_to_16(toDiv, key):
-    m = int(toDiv, 2) / int(toBinary64(key), 2)
+    m = int(toDiv, 2) / int(key, 2)
     return toBinary16(m)
 
 
 def div16_to_8(toDiv, key):
-    m = int(toDiv, 2) / int(toBinary64(key), 2)
+    m = int(toDiv, 2) / int(key, 2)
     return toBinary8(m)
 
 

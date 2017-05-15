@@ -47,8 +47,12 @@ class Cipher:
         towrite = self.algorithmShiftR()
         return towrite
 
-    def encryptMul(self):
-        towrite = self.algorithmMultiply()
+    def encryptMul8(self):
+        towrite = self.algorithmMultiply8_to_16()
+        return towrite
+
+    def encryptMul16(self):
+        towrite = self.algorithmMultiply16_to_32()
         return towrite
 
     def decryptMul32(self):
@@ -71,53 +75,54 @@ class Cipher:
             i = i + 1
         return new_chunks
 
-    def algorithmMultiply(self):
-
-        num_keys = len(self.chunks)  # una chiave per ogni chunk
-
-        #keys = utils.gen_keys2(self.keys, num_keys)  # generate keys from K
+    def algorithmMultiply8_to_16(self):
 
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.mul(int(m, 2), int(utils.toBinary8(self.keys[i]), 2))
-            new_chunks.append(utils.toBinary32(m))
+            m = utils.mul8_to_16(m, utils.toBinary64(self.keys[i]))
+            new_chunks.append(m)
+            i += 1
+
+        return new_chunks
+
+    def algorithmMultiply16_to_32(self):
+
+        new_chunks = []
+
+        i = 0
+
+        for m in self.chunks:
+            m = utils.mul16_to_32(m, utils.toBinary64(self.keys[i]))
+            new_chunks.append(m)
             i += 1
 
         return new_chunks
 
     def algorithmDiv32_to_16(self):
 
-        num_keys = len(self.chunks)  # una chiave per ogni chunk
-
-        #keys = utils.gen_keys2(self.keys, num_keys)  # generate keys from K
-
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.div32_to_16(int(m, 2), int(utils.toBinary64(self.keys[i]), 2))
-            new_chunks.append(utils.toBinary32(m))
+            m = utils.div32_to_16(m, utils.toBinary64(self.keys[i]))
+            new_chunks.append(m)
             i += 1
 
         return new_chunks
 
     def algorithmDiv16_to_8(self):
 
-        num_keys = len(self.chunks)  # una chiave per ogni chunk
-
-        #keys = utils.gen_keys2(self.keys, num_keys)  # generate keys from K
-
         new_chunks = []
 
         i = 0
 
         for m in self.chunks:
-            m = utils.div16_to_8(int(m, 2), int(utils.toBinary64(self.keys[i]), 2))
-            new_chunks.append(utils.toBinary32(m))
+            m = utils.div16_to_8(m, utils.toBinary64(self.keys[i]))
+            new_chunks.append(m)
             i += 1
 
         return new_chunks
