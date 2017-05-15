@@ -16,7 +16,7 @@ class Cipher:
         self.chunks = chunks
 
         # TODO da modificare
-        self.chunk_len = DIM_BLOCK
+        self.chunk_len = 64
 
         self.keys = key
         #self.key = key
@@ -155,32 +155,22 @@ class Cipher:
 
         num_keys = len(self.keys)
 
-        #keys = utils.gen_keys(self.keys , num_keys)
-
         new_chunks =[]
 
         i=0
-        #print (self.chunks)
         while i < num_keys:
-            #print (self.keys[i])
             leftS = utils.sL(self.chunks[i],int(self.keys[i]))
-            print("lefts"+ str(int(leftS,2)))
             new_chunks.append(leftS)
-
             i +=1
-
-        return new_chunks
+            return new_chunks
 
     def algorithmShiftR(self):
         num_keys = len(self.keys)
-        #keys = utils.gen_keys(self.key,num_keys)
 
         new_chunks =[]
         i=0
         while i < num_keys:
-            #print (self.keys[i])
             rightS = utils.sR(self.chunks[i],int(self.keys[i]))
-            print("rightS"+ str(int(rightS,2)))
             new_chunks.append(rightS)
 
             i += 1

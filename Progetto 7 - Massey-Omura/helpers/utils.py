@@ -203,29 +203,30 @@ def diff(x,y):
     return x - y
 
 
-def sL(ch,sh):
+def sL(ch, sh):
     newC = []
-    i=0
+    i = 0
     while i < len(ch):
-        nl=i+int(sh)
-        while nl > 63 :
-            nl-=64
+        nl = i + int(sh)
+        while nl > 63:
+            nl -= 64
+        #print(i)
         newC.append(ch[nl])
-        i+=1
-    chunk= ''.join(newC)
+        i += 1
+    chunk = ''.join(newC)
     return chunk
 
 
-def sR(ch,sh):
+def sR(ch, sh):
     newC = []
-    i=0
+    i = 0
     while i < len(ch):
-        nr=i-int(sh)
-        while nr < 0 :
-            nr+=64
+        nr = i-int(sh)
+        while nr < 0:
+            nr += 64
         newC.append(ch[nr])
-        i+=1
-    chunk= ''.join(newC)
+        i += 1
+    chunk = ''.join(newC)
     return chunk
 
 
