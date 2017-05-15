@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
             output(out_lck, "destination IP:" + _base + host)
 
-            if algorithm == 4:
+            if algorithm == 5:
                 prime_number = loop_input(out_lck, "Insert prime number: ")
             else:
                 keyA = loop_input(out_lck, "Insert Key: ")
