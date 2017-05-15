@@ -181,7 +181,7 @@ if __name__ == "__main__":
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
 
-            if algorithm != 4:
+            if algorithm != 5:
                 keyB = loop_input(out_lck, "Insert key: ")  # key Bob
             else:
                 prime_number = loop_input(out_lck, "Insert prime number: ")
@@ -203,7 +203,7 @@ if __name__ == "__main__":
             if algorithm == 5:
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 keysB = gen_keys(keyB, len(chunks))
-                c = Cipher(out_lck, chunks, keysB)
+                c = Cipher(out_lck, chunks, prime_number)
             elif algorithm == 4:
                 output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 keysB = gen_keys2(keyB, len(chunks))
@@ -211,7 +211,7 @@ if __name__ == "__main__":
             else:
                 output(out_lck, "Encrypting with Bob's key...")
                 keysB = gen_keys(keyB, len(chunks))
-                c = Cipher(out_lck, chunks, prime_number)
+                c = Cipher(out_lck, chunks, keysB)
 
             #algoritmo di cifratura
             if algorithm == 1: #XOR
