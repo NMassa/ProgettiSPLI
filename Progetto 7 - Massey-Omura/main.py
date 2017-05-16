@@ -116,7 +116,7 @@ if __name__ == "__main__":
             #Zotti
             elif algorithm == 5: #Exponential
                 c = Cipher(out_lck, chunks, 0)
-                encrypted = c.encryptMOD(10, int(keyA))
+                encrypted = c.encryptMOD(10, 257)
                 encA = "files/encrypted/encA_MOD"
                 encAB = "files/encrypted/encAB_MOD"
                 output(out_lck, "Encrypted with key Alice: '%s'" % c.encrypt_A)
@@ -144,7 +144,8 @@ if __name__ == "__main__":
             output(out_lck, "Waiting for Bob...")
             recv_file(sock, encAB)
 
-            output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
+            if algorithm != 5:
+                output(out_lck, "Decrypting with Alice's key '%s'..." % keyA)
 
             if algorithm != 4 and algorithm != 5:
                 # decifro con la keyA
@@ -179,13 +180,13 @@ if __name__ == "__main__":
 
             #Zotti
             elif algorithm == 5: #Exponential
+                c.chunks = chunks
                 decrypted = c.decryptMOD()
-                output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
                 decA = "received/encB_MOD"
             #-Zotti
 
-
-            output(out_lck, "Decrypted with Alice's key %s." % keyA)
+            if algorithm == 5:
+                output(out_lck, "Decrypting with Alice's key '%s'..." % c.decrypt_A)
 
             fout = open(decA, "wb+")
             for chunk in decrypted:
@@ -232,7 +233,6 @@ if __name__ == "__main__":
             #Zotti
             elif algorithm == 5:
                 chunks = get_chunks("received/encA", 8)
-                output(out_lck, "Encrypting with Bob's key '%s'..." % keyB)
                 c = Cipher(out_lck, chunks, 0)
             #-Zotti
 
@@ -262,7 +262,7 @@ if __name__ == "__main__":
 
             #Zotti
             elif algorithm == 5: #Exponential
-                encrypted = c.encryptMOD(7, int(keyB))
+                encrypted = c.encryptMOD(11, 257)
                 encAB = "received/encAB_MOD"
                 encB = "received/encB_MOD"
                 output(out_lck, "Encrypted with Bob's key '%s'." % c.encrypt_A)
@@ -319,13 +319,15 @@ if __name__ == "__main__":
 
             #Zotti
             elif algorithm == 5: #Exponential
+                c.chunks = chunks
                 decrypted = c.decryptMOD()
                 fname = "received/decrypted_MOD.jpg"
-                output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
             #-Zotti
 
-
-            output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+            if algorithm != 5:
+                output(out_lck, "Decrypted with Bob's key '%s'." % keyB)
+            else:
+                output(out_lck, "Decrypted with Bob's key '%s'." % c.decrypt_A)
 
             fout = open(fname, "wb+")
 

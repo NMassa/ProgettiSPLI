@@ -177,8 +177,9 @@ class Cipher:
         return new_chunks
 
     def encryptMOD(self, n, number):
-
-        self.p = number
+        self.p = 0
+        #self.p = utils.calculateP(number)
+        self.p = 257
         self.encrypt_A = utils.calculateEncryptionKey(n, self.p)
         towrite = self.algorithmMOD(self.encrypt_A)
 
