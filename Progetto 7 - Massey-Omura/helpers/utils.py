@@ -1,11 +1,11 @@
-
 from helpers.cipher import *
-from helpers.connection import UDPserver, UDPclient
+from helpers.connection import UDPclient
 from bitarray import bitarray
 from random import randint
 import pyprimes
 import math
 import random
+
 
 def recvall(socket, chunk_size):
     data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
@@ -153,6 +153,10 @@ def xor_func(xs, ys):
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
 
 
+def toBinary4(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(4)[::-1])
+
+
 def toBinary8(n):
     return ''.join(str(1 & int(n) >> i) for i in range(8)[::-1])
 
@@ -177,13 +181,16 @@ def mul(toMul, key):
     m = int(toMul, 2) * int(key, 2)
     return toBinary32(m)
 
+
 def mul8_to_16(toMul, key):
     m = int(toMul, 2) * int(key, 2)
     return toBinary16(m)
 
+
 def mul16_to_32(toMul, key):
     m = int(toMul, 2) * int(key, 2)
     return toBinary32(m)
+
 
 def div32_to_16(toDiv, key):
     m = int(toDiv, 2) / int(key, 2)
@@ -195,11 +202,11 @@ def div16_to_8(toDiv, key):
     return toBinary8(m)
 
 
-def sum(x,y):
+def sum(x, y):
     return x + y
 
 
-def diff(x,y):
+def diff(x, y):
     return x - y
 
 
@@ -210,7 +217,6 @@ def sL(ch, sh):
         nl = i + int(sh)
         while nl > 63:
             nl -= 64
-        #print(i)
         newC.append(ch[nl])
         i += 1
     chunk = ''.join(newC)
@@ -296,10 +302,11 @@ def egcd(a, b):
     gcd = b
     return gcd, x, y
 
+
 def mod(M, a, p):
-    msg = 0
     msg = pow(M, a, p)
     return msg
+
 
 def modinv(a, m):
     # https://en.wikibooks.org/wiki/Algorithm_Implementation/Mathematics/Extended_Euclidean_algorithm
@@ -309,8 +316,3 @@ def modinv(a, m):
     else:
         return x % m
 
-def toBinary8(n):
-    return ''.join(str(1 & int(n) >> i) for i in range(8)[::-1])
-
-def toBinary4(n):
-    return ''.join(str(1 & int(n) >> i) for i in range(4)[::-1])

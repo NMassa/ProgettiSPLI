@@ -1,6 +1,5 @@
 import threading, os, copy
 
-import time
 from bitarray import *
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, gen_keys, get_chunks, \
     gen_keys2
@@ -17,7 +16,6 @@ def send_file (sock, file_path):
         data = f.read(1024)
         while data:
             sock.sendall(data)
-            time.sleep(0.1)     #timeout causa buffer rete
             data = f.read(1024)
 
 ## metodo per ricevere le informazioni da una socket
@@ -25,7 +23,7 @@ def send_file (sock, file_path):
 def recv_file(sock, file_path):
     ## scrive sul file indicato
     with open(file_path, 'wb') as f:
-        data = sock.recv(1024, socket.MSG_WAITALL)
+        data = sock.recv(1024)
         while len(data) == 1024:
             f.write(data)
             data = sock.recv(1024)
@@ -76,7 +74,6 @@ if __name__ == "__main__":
             filename = copy.copy(fileList[nf])
 
             #sender chunks first time
-            output(out_lck, "Doing some magic tricks..... :D")
 
             #Zotti e Massa prendono i primi chunk da 8
             if algorithm != 4 and algorithm != 5:
@@ -256,7 +253,6 @@ if __name__ == "__main__":
                 encB = "received/encB_SUM"
             elif algorithm == 3: #Shift
                 encrypted= c.encryptShift()
-                output(out_lck, "Shift!")
                 encAB = "received/encAB_Shift"
                 encB = "received/encB_Shift"
             elif algorithm == 4:

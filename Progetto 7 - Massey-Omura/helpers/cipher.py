@@ -26,7 +26,7 @@ class Cipher:
         self.decrypt_A = 0
         self.p = 0
         self.fp = self.p - 1
-
+        troia = self.chunks[len(self.chunks) - 1]
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)
@@ -162,7 +162,7 @@ class Cipher:
             leftS = utils.sL(self.chunks[i],int(self.keys[i]))
             new_chunks.append(leftS)
             i +=1
-            return new_chunks
+        return new_chunks
 
     def algorithmShiftR(self):
         num_keys = len(self.keys)
@@ -170,18 +170,16 @@ class Cipher:
         new_chunks =[]
         i=0
         while i < num_keys:
-            rightS = utils.sR(self.chunks[i],int(self.keys[i]))
+            rightS = utils.sR(self.chunks[i], int(self.keys[i]))
             new_chunks.append(rightS)
 
             i += 1
         return new_chunks
 
     def encryptMOD(self, n, number):
-        self.p = 0
-        #self.p = utils.calculateP(number)
+
         self.p = number
         self.encrypt_A = utils.calculateEncryptionKey(n, self.p)
-        #print("eA: " + str(self.encrypt_A))
         towrite = self.algorithmMOD(self.encrypt_A)
 
         return towrite
@@ -190,7 +188,6 @@ class Cipher:
 
         fp = self.p - 1
         self.decrypt_A = utils.modinv(self.encrypt_A, fp)
-        #print("dA: " + str(self.decrypt_A))
         towrite = self.algorithmMOD(self.decrypt_A)
 
         return towrite
@@ -203,7 +200,6 @@ class Cipher:
             c_int = int(c, 2)
             c = utils.mod(c_int, key, self.p)
             new_chunks.append(utils.toBinary8(c))
-            #print(utils.toBinary8(c))
 
         return new_chunks
 
