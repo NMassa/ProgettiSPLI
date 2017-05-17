@@ -26,7 +26,7 @@ class Cipher:
         self.decrypt_A = 0
         self.p = 0
         self.fp = self.p - 1
-        troia = self.chunks[len(self.chunks) - 1]
+        #troia = self.chunks[len(self.chunks) - 1]
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)

@@ -125,12 +125,13 @@ def get_chunks(file, len):
 
 
 def gen_keys(K, num_keys):
-    keys = []
 
-    for i in range(0, num_keys):
-        key = int(K) + randint(0, 32768)
-        if key not in keys:
-            keys.append(str(key))
+    key0 = random.sample(range(0, num_keys), num_keys)
+    for element in key0:
+        element += int(K)
+    keys = []
+    for element in key0:
+        keys.append(str(element))
 
     return keys
 
