@@ -106,7 +106,6 @@ if __name__ == "__main__":
                 output(out_lck, "Encrypted.")
             elif algorithm == 4: #Mul
                 keysA = gen_keys2(keyA, len(chunks))
-                output(out_lck, "Encrypted.")
                 # cifro e salvo di nuovo
                 c = Cipher(out_lck, chunks, keysA)
                 encrypted = c.encryptMul8()
@@ -280,7 +279,7 @@ if __name__ == "__main__":
             output(out_lck, "Sending encrypted file with Bob and Alice's key...")
             send_file(client_sock, encAB)
 
-            output(out_lck, "Waiting for Bob...")
+            output(out_lck, "Waiting for Alice...")
 
             # ricevo file cifrato con keyB
             recv_file(client_sock, encB)
