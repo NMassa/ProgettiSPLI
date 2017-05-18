@@ -178,64 +178,6 @@ def toBinary2048(n):
     return ''.join(str(1 & int(n) >> i) for i in range(2048)[::-1])
 
 
-def mul(toMul, key):
-    m = int(toMul, 2) * int(key, 2)
-    return toBinary32(m)
-
-
-def mul8_to_16(toMul, key):
-    m = int(toMul, 2) * int(key, 2)
-    return toBinary16(m)
-
-
-def mul16_to_32(toMul, key):
-    m = int(toMul, 2) * int(key, 2)
-    return toBinary32(m)
-
-
-def div32_to_16(toDiv, key):
-    m = int(toDiv, 2) / int(key, 2)
-    return toBinary16(m)
-
-
-def div16_to_8(toDiv, key):
-    m = int(toDiv, 2) / int(key, 2)
-    return toBinary8(m)
-
-
-def sum(x, y):
-    return x + y
-
-
-def diff(x, y):
-    return x - y
-
-
-def sL(ch, sh):
-    newC = []
-    i = 0
-    while i < len(ch):
-        nl = i + int(sh)
-        while nl > 63:
-            nl -= 64
-        newC.append(ch[nl])
-        i += 1
-    chunk = ''.join(newC)
-    return chunk
-
-
-def sR(ch, sh):
-    newC = []
-    i = 0
-    while i < len(ch):
-        nr = i-int(sh)
-        while nr < 0:
-            nr += 64
-        newC.append(ch[nr])
-        i += 1
-    chunk = ''.join(newC)
-    return chunk
-
 
 def send_file_crypt(out_lck, chunks, key, _base, host):
     c = Cipher(out_lck, chunks, key)

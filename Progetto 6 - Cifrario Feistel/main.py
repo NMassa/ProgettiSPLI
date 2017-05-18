@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
                 output(out_lck, "Encrypting file...")
                 c.encrypt()
-                output(out_lck, "File encrypted")
+                output(out_lck, "File files")
 
                 data = b''
                 for chunk in c.encrypted:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
                 output(out_lck, "Encrypting file...")
                 b.encrypt()
-                output(out_lck, "File encrypted")
+                output(out_lck, "File files")
                 data = b''
                 for chunk in b.encrypted:
                     data += bitarray(chunk).tobytes()
