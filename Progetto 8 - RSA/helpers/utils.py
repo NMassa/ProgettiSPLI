@@ -118,6 +118,8 @@ def get_dir_list(out_lck, dir_name):
     filename = copy.copy(fileList[nf])
     return filename
 
+def fill(n, len):
+    return n.zfill(len).encode('ascii')
 
 def get_file_size(out_lck, file):
     return os.path.getsize("files/" + file)

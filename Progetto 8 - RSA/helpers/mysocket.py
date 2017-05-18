@@ -1,5 +1,5 @@
 from socket import *
-from helpers.utils import output, get_file_size
+from helpers.utils import output, get_file_size, fill
 
 class MySocket:
 
@@ -49,8 +49,9 @@ class MySocket:
     def sendfile(self, out_lck, sock, address, port, filename):
         sock.connect(address, port)
         size = get_file_size(out_lck, filename)
-        sock.send(str(size).encode('utf-8'))
+        sock.send(fill(str(size), 128))
         with open("files/" + filename, 'rb') as f:
+            output(out_lck, "Sending File...")
             sock.send(f.read(size * 8))
         f.close()
         sock.close()
@@ -64,8 +65,10 @@ class MySocket:
         output(out_lck, "Connection established.")
 
         with open("received/" + filename + "." + extension, 'wb') as f:
-            size = int(myclient_sock.recv(6))
+            size = int(myclient_sock.recv(128))
+            output(out_lck, "Receiving file of %d KB..." % (size / 8))
             received = myclient_sock.recv(size)
+            output(out_lck, "Received..Writing file...")
             f.write(received)
         f.close()
         sock.close()
