@@ -47,28 +47,41 @@ class MySocket:
         return self.__sock.close()
 
     def sendfile(self, out_lck, sock, address, port, filename):
-        sock.connect(address, port)
-        size = get_file_size(out_lck, filename)
-        sock.send(fill(str(size), 128))
-        with open("files/" + filename, 'rb') as f:
-            output(out_lck, "Sending File...")
-            sock.send(f.read(size * 8))
-        f.close()
-        sock.close()
+        try:
+            sock.connect(address, port)
+            size = get_file_size(out_lck, filename)
+            sock.send(fill(filename[-3:], 3))   #send the extension of the file 3 CHAR!!!
+            sock.send(fill(str(size), 128))
+            with open("files/" + filename, 'rb') as f:
+                output(out_lck, "Sending File...")
+                sock.send(f.read(size))
+            f.close()
+            sock.close()
+        except Exception as e:
+            output(out_lck, e)
+            exit(1)
 
-    def receivefile(self, out_lck, sock, port, filename, extension):
-        sock.bind('', port)
-        sock.listen(5)
-        output(out_lck, "Waiting for connection...")
-        (client_sock, address) = sock.accept()
-        myclient_sock = MySocket(client_sock)
-        output(out_lck, "Connection established.")
+    def receivefile(self, out_lck, sock, port, filename):
+        try:
+            sock.bind('', port)
+            sock.listen(5)
+            output(out_lck, "Waiting for connection...")
+            (client_sock, address) = sock.accept()
+            myclient_sock = MySocket(client_sock)
+            output(out_lck, "Connection established.")
 
-        with open("received/" + filename + "." + extension, 'wb') as f:
-            size = int(myclient_sock.recv(128))
-            output(out_lck, "Receiving file of %d KB..." % (size / 8))
-            received = myclient_sock.recv(size)
-            output(out_lck, "Received..Writing file...")
-            f.write(received)
-        f.close()
-        sock.close()
+            #ATTENZIONE! l'extension è sott'intesa di 3 CHAR
+            extension = bytes(myclient_sock.recv(3)).decode('utf-8')
+            output(out_lck, "Receiving %s file.." % extension)
+
+            with open("received/" + filename + "." + extension, 'wb') as f:
+                size = int(myclient_sock.recv(128))
+                output(out_lck, "Receiving file of %d KB..." % (size / 16))
+                received = myclient_sock.recv(size)
+                output(out_lck, "Received..Writing file...")
+                f.write(received)
+            f.close()
+            sock.close()
+        except Exception as e:
+            output(out_lck, e)
+            exit(2)

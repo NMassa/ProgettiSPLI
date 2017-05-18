@@ -12,7 +12,6 @@ if __name__ == "__main__":
     out_lck = threading.Lock()
     network = 0
     port = 3000
-    fileExt = "mp3"
 
     #Get the network...
     while network == 0:
@@ -50,14 +49,14 @@ if __name__ == "__main__":
             sock = mysocket.MySocket()
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            sock.receivefile(out_lck, sock, port, "asd", fileExt)
+            sock.receivefile(out_lck, sock, port, "asd")
             output(out_lck, "Done!\n")
 
         elif main_menu == 3:
-            arpoisoner(out_lck, _base + host)
+            arpoisoner(out_lck)
 
         elif main_menu == 4:
-            analyzer(out_lck, port, fileExt)
+            analyzer(out_lck, port)
 
 
 
