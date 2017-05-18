@@ -1,5 +1,4 @@
 from helpers import utils
-import random
 
 global DIM_BLOCK
 DIM_BLOCK = 8
@@ -15,7 +14,6 @@ class Cipher:
         self.keys = []
         self.chunks = chunks
 
-        # TODO da modificare
         self.chunk_len = 64
 
         self.keys = key

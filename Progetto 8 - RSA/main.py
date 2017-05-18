@@ -1,34 +1,11 @@
-import threading, os, copy
-
-from bitarray import *
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, gen_keys, get_chunks, \
-    gen_keys2
-from helpers.cipher import Cipher
-import socket
+import threading
+from helpers import mysocket
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list
 
 _base = "192.168."
 host = 0
 
-## metodo per inviare un file attraverso una socket
-def send_file (sock, file_path):
-    ## legge il file e lo invia un po' per volta
-    with open(file_path, 'rb') as f:
-        data = f.read(1024)
-        while data:
-            sock.sendall(data)
-            data = f.read(1024)
 
-## metodo per ricevere le informazioni da una socket
-## e le scrive in un file
-def recv_file(sock, file_path):
-    ## scrive sul file indicato
-    with open(file_path, 'wb') as f:
-        data = sock.recv(1024)
-        while len(data) == 1024:
-            f.write(data)
-            data = sock.recv(1024)
-        f.write(data)
-    return data
 if __name__ == "__main__":
 
     out_lck = threading.Lock()
@@ -47,7 +24,6 @@ if __name__ == "__main__":
             output(out_lck, "Your IP: " + my_ip)
 
     while True:
-
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file"])
@@ -55,8 +31,23 @@ if __name__ == "__main__":
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
 
+            #Inizializzo socket
+            sock = mysocket.MySocket()
+
+            # Get filenames
+            filename = get_dir_list(out_lck, "files")
 
 
+            #Il file deve essere nella cartella files
+            sock.sendfile(sock, _base + host, port, filename)
+            output(out_lck, "File sent!\n")
+
+        elif main_menu == 2:
+            sock = mysocket.MySocket()
+
+            #il file verrà salvato nella cartella received con l'estensione indicata
+            sock.receivefile(out_lck, sock, port, "asd", "mp3")
+            output(out_lck, "Done!\n")
 
 
 
