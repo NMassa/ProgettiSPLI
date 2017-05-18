@@ -1,6 +1,7 @@
 import threading
 from helpers import mysocket
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list
+from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
 host = 0
@@ -11,6 +12,7 @@ if __name__ == "__main__":
     out_lck = threading.Lock()
     network = 0
     port = 60000
+    fileExt = "mp3"
 
     #Get the network...
     while network == 0:
@@ -26,7 +28,9 @@ if __name__ == "__main__":
     while True:
         # Main Menu
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
-                                                                                               "Receive file"])
+                                                                                               "Receive file",
+                                                                                               "ARP poisoner",
+                                                                                               "Sniffer"])
         if main_menu == 1:
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
@@ -46,10 +50,14 @@ if __name__ == "__main__":
             sock = mysocket.MySocket()
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            sock.receivefile(out_lck, sock, port, "asd", "mp3")
+            sock.receivefile(out_lck, sock, port, "asd", fileExt)
             output(out_lck, "Done!\n")
 
+        elif main_menu == 3:
+            arpoisoner(out_lck, _base + host)
 
+        elif main_menu == 4:
+            analyzer(out_lck, port, fileExt)
 
 
 
