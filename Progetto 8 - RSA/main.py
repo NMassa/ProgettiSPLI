@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
 
             #Il file deve essere nella cartella files
-            sock.sendfile(sock, _base + host, port, filename)
+            sock.sendfile(out_lck, sock, _base + host, port, filename)
             output(out_lck, "File sent!\n")
 
         elif main_menu == 2:

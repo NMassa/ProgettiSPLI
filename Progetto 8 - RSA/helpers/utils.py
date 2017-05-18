@@ -119,6 +119,9 @@ def get_dir_list(out_lck, dir_name):
     return filename
 
 
+def get_file_size(out_lck, file):
+    return os.path.getsize("files/" + file)
+
 def xor_func(xs, ys):
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
 
