@@ -105,6 +105,18 @@ def get_chunks(file, len):
     return chunks
 
 
+def read_in_chunks(filename, chunk_size):
+    file = open("files/" + filename, "rb")
+    while True:
+        data = file.read(chunk_size)
+        if not data:
+            break
+        if len(data) < chunk_size:      #TODO: controllare grandezza ultimo chunk
+            fill(data, chunk_size)
+        yield data
+    return data
+
+
 def get_dir_list(out_lck, dir_name):
     i = 1
     fileList = []
@@ -118,8 +130,13 @@ def get_dir_list(out_lck, dir_name):
     filename = copy.copy(fileList[nf])
     return filename
 
+
 def fill(n, len):
-    return n.zfill(len).encode('ascii')
+    if bytes(n):
+        return n.zfill(len)
+    else:
+        return n.zfill(len).encode('ascii')
+
 
 def get_file_size(out_lck, file):
     return os.path.getsize("files/" + file)

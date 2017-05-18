@@ -1,6 +1,6 @@
 import threading
 from helpers import mysocket
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, read_in_chunks
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -40,6 +40,9 @@ if __name__ == "__main__":
             # Get filenames
             filename = get_dir_list(out_lck, "files")
 
+            #Cipher
+            for piece in read_in_chunks(filename, 128):                #chunks da 128 bytes
+                output(out_lck, "JUST DO IT")       #TODO: encryption
 
             #Il file deve essere nella cartella files
             sock.sendfile(out_lck, sock, _base + host, port, filename)

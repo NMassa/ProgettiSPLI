@@ -58,7 +58,7 @@ class MySocket:
             f.close()
             sock.close()
         except Exception as e:
-            output(out_lck, e)
+            output(out_lck, "Error: " + str(e))
             exit(1)
 
     def receivefile(self, out_lck, sock, port, filename):
@@ -83,5 +83,5 @@ class MySocket:
             f.close()
             sock.close()
         except Exception as e:
-            output(out_lck, e)
+            output(out_lck, "Error: " + str(e))
             exit(2)
