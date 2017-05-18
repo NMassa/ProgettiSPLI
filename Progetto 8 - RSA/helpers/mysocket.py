@@ -19,7 +19,7 @@ class MySocket:
                 raise RuntimeError("Connection interrupted.")
             totalsent = totalsent + sent
 
-    def receive(self, msglen):
+    def recv(self, msglen):
         msg = b''
         while len(msg) < msglen:
             chunk = self.__sock.recv(msglen - len(msg))
@@ -60,11 +60,12 @@ class MySocket:
         sock.listen(5)
         output(out_lck, "Waiting for connection...")
         (client_sock, address) = sock.accept()
+        myclient_sock = MySocket(client_sock)
         output(out_lck, "Connection established.")
 
         with open("received/" + filename + "." + extension, 'wb') as f:
-            size = int(client_sock.recv(6))
-            received = client_sock.recv(size * 8)
+            size = int(myclient_sock.recv(6))
+            received = myclient_sock.recv(size)
             f.write(received)
         f.close()
         sock.close()

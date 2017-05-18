@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     out_lck = threading.Lock()
     network = 0
-    port = 60000
+    port = 3000
     fileExt = "mp3"
 
     #Get the network...
