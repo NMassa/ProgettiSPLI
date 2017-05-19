@@ -1,23 +1,4 @@
-from helpers.cipher import *
-from helpers.connection import UDPclient
-from bitarray import bitarray
-from random import randint
-import pyprimes
-import math
-import random
-
-
-def recvall(socket, chunk_size):
-    data = socket.recvfrom(chunk_size)  # Lettura di chunk_size byte dalla socket
-    actual_length = len(data)
-
-    # Se sono stati letti meno byte di chunk_size continua la lettura finche non si raggiunge la dimensione specificata
-    while actual_length < chunk_size:
-        new_data = socket.recvfrom(chunk_size - actual_length)
-        actual_length += len(new_data)
-        data += new_data
-
-    return data
+import os, copy, pyprimes, math
 
 
 def output(lock, message):
@@ -124,31 +105,41 @@ def get_chunks(file, len):
     return chunks
 
 
-def gen_keys(K, num_keys):
+def read_in_chunks(filename, chunk_size):
+    file = open("files/" + filename, "rb")
+    while True:
+        data = file.read(chunk_size)
+        if not data:
+            break
+        if len(data) < chunk_size:      #TODO: controllare grandezza ultimo chunk
+            fill(data, chunk_size)
+        yield data
+    return data
 
-    key0 = random.sample(range(0, num_keys), num_keys)
-    for element in key0:
-        element += int(K)
-    keys = []
-    for element in key0:
-        keys.append(str(element))
 
-    return keys
+def get_dir_list(out_lck, dir_name):
+    i = 1
+    fileList = []
+    for file in os.listdir(dir_name):
+        output(out_lck, "%s %s" % (i, file))
+        fileList.append(str(file))
+        i += 1
+
+    nfile = loop_int_input(out_lck, "Choose file")
+    nf = int(nfile) - 1
+    filename = copy.copy(fileList[nf])
+    return filename
 
 
-def gen_keys2(K, num_keys):
-    keys = []
-    random.seed(int(K))
-    for i in range(0, num_keys):
-        key = int(K) + random.randint(0, 256)
-        if key > 255:
-            key = key % 255
-        if key == 0:
-            key += 1
-        keys.append(key)
+def fill(n, len):
+    if bytes(n):
+        return n.zfill(len)
+    else:
+        return n.zfill(len).encode('ascii')
 
-    return keys
 
+def get_file_size(out_lck, file):
+    return os.path.getsize("files/" + file)
 
 def xor_func(xs, ys):
     return "".join(str(ord(x) ^ ord(y)) for x, y in zip(xs, ys))
@@ -176,42 +167,6 @@ def toBinary64(n):
 
 def toBinary2048(n):
     return ''.join(str(1 & int(n) >> i) for i in range(2048)[::-1])
-
-
-
-def send_file_crypt(out_lck, chunks, key, _base, host):
-    c = Cipher(out_lck, chunks, key)
-    output(out_lck, "Encrypting file...")
-    c.encryptXOR(key)
-    output(out_lck, "File files")
-
-    data = b''
-    for chunk in chunks:
-        data += bitarray(chunk).tobytes()
-
-    output(out_lck, "Sending file...")
-    UDPclient(out_lck, _base + host, 60000, data)
-    output(out_lck, "File Crypted sent")
-
-
-def send_file_decrypt(out_lck, chunks, key, _base, host):
-    c = Cipher(out_lck, chunks, key)
-    output(out_lck, "Decrypting file...")
-    chunkstowrite = c.decryptXOR(key)
-    output(out_lck, "File decrypted.jpg")
-    filetowrite = open("received/prova.jpg", "wb+")
-
-    for element in chunkstowrite:
-        filetowrite.write(bitarray(element).tobytes())
-    filetowrite.close()
-
-    data = b''
-    for chunk in c.encrypted:
-        data += bitarray(chunk).tobytes()
-
-    output(out_lck, "Sending file...")
-    UDPclient(out_lck, _base + host, 60000, data)
-    output(out_lck, "File Decrypted sent")
 
 
 def calculateP(n):
