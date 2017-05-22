@@ -1,6 +1,6 @@
 import threading
-from helpers import mysocket
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, read_in_chunks
+from helpers import mysocket, cipher
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -45,14 +45,15 @@ if __name__ == "__main__":
             sock.connect(_base + host, port)
             sock.send_key(out_lck, sock, key_input, len(key_input))
 
-            #Cipher
-            #for piece in read_in_chunks(filename, 128):                #chunks da 128 bytes
-                #output(out_lck, "JUST DO IT")       #TODO: encryption
+            #Get Chunks
+            chunks = get_chunks(out_lck, filename, 128)
+            c = cipher.Cipher(out_lck, chunks, 123)
+            #TODO: encryption
 
             #Il file deve essere nella cartella files
             sock.sendfile(out_lck, sock, filename)
             output(out_lck, "File sent!\n")
-
+            sock.close()
         elif main_menu == 2:
             sock = mysocket.MySocket()
             sock.bind('', port)
@@ -62,6 +63,8 @@ if __name__ == "__main__":
             #il file verrà salvato nella cartella received con l'estensione indicata
             new_sock.receivefile(out_lck, new_sock, "asd")
             output(out_lck, "Done!\n")
+            sock.close()
+            new_sock.close()
         elif main_menu == 3:
             arpoisoner(out_lck)
 

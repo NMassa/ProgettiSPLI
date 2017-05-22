@@ -84,24 +84,9 @@ def loop_int_input(lock, header):
                 return selected
 
 
-def get_chunks(file, len):
-    f = open(file, "rb")
-    chunks = []
-    chunk = ''
-    n = 0
-    while (1):
-        byte = f.read(1)
-        if not byte:
-            if chunk != '':
-                chunks.append(chunk)
-            break
-        chunk = chunk + format(ord(byte), 'b').zfill(8)
-        n = n + 1
-        if n == len // 8:  # controllore se voglio chunk piu lunghi
-            chunks.append(chunk)
-            chunk = ''
-            n = 0
-    f.close()
+def get_chunks(out_lck, filename, len):
+    for piece in read_in_chunks(filename, 128):  # chunks da 128 bytes
+        output(out_lck, "JUST DO IT")
     return chunks
 
 
