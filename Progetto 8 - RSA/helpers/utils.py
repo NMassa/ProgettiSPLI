@@ -85,8 +85,9 @@ def loop_int_input(lock, header):
 
 
 def get_chunks(out_lck, filename, len):
-    for piece in read_in_chunks(filename, 128):  # chunks da 128 bytes
-        output(out_lck, "JUST DO IT")
+    chunks = []
+    for piece in read_in_chunks(filename, len):  # chunks da 128 bytes
+        chunks.append(toBinary128(int.from_bytes(piece, byteorder='big')))
     return chunks
 
 
@@ -148,6 +149,9 @@ def toBinary32(n):
 
 def toBinary64(n):
     return ''.join(str(1 & int(n) >> i) for i in range(64)[::-1])
+
+def toBinary128(n):
+    return ''.join(str(1 & int(n) >> i) for i in range(128)[::-1])
 
 
 def toBinary2048(n):

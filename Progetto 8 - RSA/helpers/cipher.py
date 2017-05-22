@@ -52,4 +52,3 @@ class Cipher:
             new_chunks.append(utils.toBinary8(c))
 
         return new_chunks
-

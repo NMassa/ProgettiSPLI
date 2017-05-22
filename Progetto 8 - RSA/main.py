@@ -46,8 +46,8 @@ if __name__ == "__main__":
             sock.send_key(out_lck, sock, key_input, len(key_input))
 
             #Get Chunks
-            chunks = get_chunks(out_lck, filename, 128)
-            c = cipher.Cipher(out_lck, chunks, 123)
+            chunks = get_chunks(out_lck, filename, 16)          #qui va in bytes
+            c = cipher.Cipher(out_lck, chunks, 128)
             #TODO: encryption
 
             #Il file deve essere nella cartella files
