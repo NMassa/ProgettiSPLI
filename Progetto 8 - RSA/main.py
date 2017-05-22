@@ -1,5 +1,5 @@
 import threading
-from helpers import mysocket, cipher
+from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks
 from helpers.netutils import arpoisoner, analyzer
 
@@ -40,14 +40,28 @@ if __name__ == "__main__":
             # Get filenames
             filename = get_dir_list(out_lck, "files")
 
+            # Generate keys
+            bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
+                                                                                                   "128 bits",])
+            if bits_keys == 1:
+                # Get Chunks
+                chunks = get_chunks(out_lck, filename, 1)  # qui va in bytes
+                c = cipher.Cipher(out_lck, chunks, 0, 8)
+
+            else:
+                # Get Chunks
+                chunks = get_chunks(out_lck, filename, 16)  # qui va in bytes
+                c = cipher.Cipher(out_lck, chunks, 0, 128)
+
             #Send the key
             key_input = loop_input(out_lck, "Please insert a Key..")
             sock.connect(_base + host, port)
+            # c.e
+            # c.n
+            key_input = utils.toBinary128(c.e) + '@' + utils.toBinary128(c.n)
             sock.send_key(out_lck, sock, key_input, len(key_input))
 
-            #Get Chunks
-            chunks = get_chunks(out_lck, filename, 16)          #qui va in bytes
-            c = cipher.Cipher(out_lck, chunks, 0, 128)
+
             #TODO: encryption
 
             #Il file deve essere nella cartella files
@@ -70,8 +84,6 @@ if __name__ == "__main__":
 
         elif main_menu == 4:
             analyzer(out_lck, port)
-
-
 
 
 

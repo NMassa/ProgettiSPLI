@@ -1,5 +1,5 @@
-from helpers.utils import output
-import math
+from helpers.utils import output, calculateEncryptionKey, egcd
+import math, rsa
 
 class Cipher:
     file = None
@@ -16,11 +16,14 @@ class Cipher:
 
         self.keys = key
 
-        # chiavi MOD
-        self.encrypt_A = 0
-        self.decrypt_A = 0
         self.p = 0
-        self.fp = self.p - 1
+        self.q = 0
+        self.n = 0
+        self.fn = 0
+        self.e = 0
+        self.d = 0
+
+        self.generate_keys()
 
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
@@ -41,3 +44,17 @@ class Cipher:
         for chunk in self.intchunks:
             decryptedchunks.append(pow(chunk, pubkey, mod))
         return decryptedchunks
+
+    def generate_keys(self):
+        (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
+        self.p = priv_key['p']
+        self.q = priv_key['q']
+
+        self.n = self.p * self.q
+        self.fn = (self.p - 1) * (self.q - 1)
+        self.e = calculateEncryptionKey(self.n, self.fn)
+        gcd, x, y = egcd(self.e, self.fn)
+        if gcd != 1:
+            output("no d key exist")
+        else:
+            self.d = x % self.fn
