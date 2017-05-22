@@ -1,8 +1,5 @@
 from helpers import utils
 
-global DIM_BLOCK
-DIM_BLOCK = 8
-
 class Cipher:
     file = None
     keys = None
@@ -13,22 +10,23 @@ class Cipher:
     def __init__(self, out_lck, chunks, key):
         self.keys = []
         self.chunks = chunks
-
-        self.chunk_len = 64
+        self.intchunks = []
+        self.chunk_len = 128
 
         self.keys = key
-        #self.key = key
 
         # chiavi MOD
         self.encrypt_A = 0
         self.decrypt_A = 0
         self.p = 0
         self.fp = self.p - 1
-        #troia = self.chunks[len(self.chunks) - 1]
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)
 
+        #ottengo i chunk in intero
+        for chunk in self.chunks:
+            self.intchunks.append(int(chunk, 2))
 
     def encryptMOD(self, n, number):
         self.p = 0
@@ -57,11 +55,3 @@ class Cipher:
             new_chunks.append(utils.toBinary8(c))
 
         return new_chunks
-
-    def set_chunks(self, chunks):
-
-        self.chunks = chunks
-
-        # controllo lunghezza chunk, se e piu corta metto "0"
-        if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
-            self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)

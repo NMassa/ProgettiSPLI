@@ -1,6 +1,6 @@
 import threading
-from helpers import mysocket
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, read_in_chunks
+from helpers import mysocket, cipher
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -42,24 +42,29 @@ if __name__ == "__main__":
 
             #Send the key
             key_input = loop_input(out_lck, "Please insert a Key..")
-            sock.send_key(out_lck, sock, _base + host, port, key_input, len(key_input))
+            sock.connect(_base + host, port)
+            sock.send_key(out_lck, sock, key_input, len(key_input))
 
-            #Cipher
-            #for piece in read_in_chunks(filename, 128):                #chunks da 128 bytes
-                #output(out_lck, "JUST DO IT")       #TODO: encryption
+            #Get Chunks
+            chunks = get_chunks(out_lck, filename, 16)          #qui va in bytes
+            c = cipher.Cipher(out_lck, chunks, 128)
+            #TODO: encryption
 
             #Il file deve essere nella cartella files
-            sock.sendfile(out_lck, sock, _base + host, port, filename)
+            sock.sendfile(out_lck, sock, filename)
             output(out_lck, "File sent!\n")
-
+            sock.close()
         elif main_menu == 2:
             sock = mysocket.MySocket()
-            key, lenght_key, new_sock = sock.recv_key(out_lck, sock, port)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
+            sock.bind('', port)
+            sock.listen(5)
+            key, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            sock.receivefile(out_lck, new_sock, "asd")
+            new_sock.receivefile(out_lck, new_sock, "asd")
             output(out_lck, "Done!\n")
-
+            sock.close()
+            new_sock.close()
         elif main_menu == 3:
             arpoisoner(out_lck)
 

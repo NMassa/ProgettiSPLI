@@ -27,8 +27,11 @@ def analyzer(out_lck, port):
     array = []
     sniff(filter="port %s" % port, timeout=time, prn=lambda x: array.append(bytes(x[TCP].payload)))
 
+    extension = bytes(array.pop(3)).decode('utf-8')
+    array[4] = str(array[4])[10:].encode('ascii')
     for el in array:
-        file.write(el)
+        if el != b'':
+            file.write(el)
     file.close()
 
 
