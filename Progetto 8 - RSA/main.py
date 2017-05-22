@@ -3,7 +3,8 @@ import threading
 from bitarray import bitarray
 
 from helpers import mysocket, cipher, utils
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, write_decrypted_from_chunks, write_encrypted_from_chunks
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, \
+    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -32,7 +33,8 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "ARP poisoner",
-                                                                                               "Sniffer"])
+                                                                                               "Sniffer",
+                                                                                               "Bruteforce"])
         if main_menu == 1:
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
@@ -48,7 +50,7 @@ if __name__ == "__main__":
                                                                                                    "128 bits"])
             if bits_keys == 1:
                 # Get Chunks
-                chunks = get_chunks(out_lck, 'files/' + filename, 1)  # qui va in bytes
+                chunks = get_chunks_8bit(out_lck, 'files/' + filename, 1)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 8)
                 key_input = utils.toBinary8(c.d) + '@' + utils.toBinary8(c.n)
 
@@ -62,7 +64,7 @@ if __name__ == "__main__":
             #key_input = loop_input(out_lck, "Please insert a Key..")
             sock.connect(_base + host, port)
 
-            key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
+            #key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
             sock.send_key(out_lck, sock, key_input, len(key_input))
             output(out_lck, "Key Sent.\nEncrypting file with %d key.." % c.e)
 
@@ -81,10 +83,23 @@ if __name__ == "__main__":
 
             pkey, mod, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
-            #il file verrà salvato nella cartella received con l'estensione indicata
+            bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
+                                                                                                     "128 bits"])
+
             enc_filename = new_sock.receivefile(out_lck, new_sock, "enc")
-            chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
-            c = cipher.Cipher(out_lck, chunks, 0, 128)
+
+            if bits_keys == 1:
+                # Get Chunks
+                chunks = get_chunks_8bit(out_lck, enc_filename, 1)  # qui va in bytes
+                c = cipher.Cipher(out_lck, chunks, 0, 8)
+
+            else:
+                # Get Chunks
+                chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
+                c = cipher.Cipher(out_lck, chunks, 0, 128)
+
+            #il file verrà salvato nella cartella received con l'estensione indicata
+
 
             decrypted_chunks = c.signature_decrypt(pkey, mod)
 
@@ -104,8 +119,8 @@ if __name__ == "__main__":
             output(out_lck,"\n Start Bruteforce")
             output(out_lck,"\nInsert public mod : ")
             mod = input()
-            filename = get_dir_list(out_lck, "files")
-            chunks = get_chunks(out_lck, filename, 1)
+            filename = get_dir_list(out_lck, "received")
+            chunks = get_chunks_8bit(out_lck, "received/"+filename, 1)
             n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
             #creo i file a seconda del formato che ho creato
             if n == 0:

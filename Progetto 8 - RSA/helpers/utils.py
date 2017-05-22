@@ -90,6 +90,12 @@ def get_chunks(out_lck, filename, len):
         chunks.append(toBinary128(int.from_bytes(piece, byteorder='big')))
     return chunks
 
+def get_chunks_8bit(out_lck, filename, len):
+    chunks = []
+    for piece in read_in_chunks(filename, len):  # chunks da 128 bytes
+        chunks.append(toBinary8(int.from_bytes(piece, byteorder='big')))
+    return chunks
+
 
 def read_in_chunks(filename, chunk_size):
     file = open(filename, "rb")
