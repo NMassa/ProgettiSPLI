@@ -1,4 +1,4 @@
-import os, copy, pyprimes, math
+import os, copy, pyprimes, math, rsa
 
 
 def output(lock, message):
