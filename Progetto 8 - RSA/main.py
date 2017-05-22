@@ -50,19 +50,18 @@ if __name__ == "__main__":
                 #output(out_lck, "JUST DO IT")       #TODO: encryption
 
             #Il file deve essere nella cartella files
-            sock.sendfile(out_lck, sock, _base + host, port, filename)
+            sock.sendfile(out_lck, sock, filename)
             output(out_lck, "File sent!\n")
 
         elif main_menu == 2:
             sock = mysocket.MySocket()
             sock.bind('', port)
             sock.listen(5)
-            #key, lenght_key = sock.recv_key(out_lck, sock, port)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
+            key, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            sock.receivefile(out_lck, sock, "asd")
+            new_sock.receivefile(out_lck, new_sock, "asd")
             output(out_lck, "Done!\n")
-
         elif main_menu == 3:
             arpoisoner(out_lck)
 
