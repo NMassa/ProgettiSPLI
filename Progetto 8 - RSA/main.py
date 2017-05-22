@@ -42,7 +42,8 @@ if __name__ == "__main__":
 
             #Send the key
             key_input = loop_input(out_lck, "Please insert a Key..")
-            sock.send_key(out_lck, sock, _base + host, port, key_input, len(key_input))
+            sock.connect(_base + host, port)
+            sock.send_key(out_lck, sock, key_input, len(key_input))
 
             #Cipher
             #for piece in read_in_chunks(filename, 128):                #chunks da 128 bytes
@@ -54,10 +55,12 @@ if __name__ == "__main__":
 
         elif main_menu == 2:
             sock = mysocket.MySocket()
-            key, lenght_key, new_sock = sock.recv_key(out_lck, sock, port)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
+            sock.bind('', port)
+            sock.listen(5)
+            #key, lenght_key = sock.recv_key(out_lck, sock, port)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            sock.receivefile(out_lck, new_sock, "asd")
+            sock.receivefile(out_lck, sock, "asd")
             output(out_lck, "Done!\n")
 
         elif main_menu == 3:
