@@ -1,7 +1,7 @@
 import socket
 socket.has_ipv6=False
-from scapy.all import *
-from scapy.layers.inet import TCP
+#from scapy.all import *
+#from scapy.layers.inet import TCP
 from helpers.utils import *
 import os
 

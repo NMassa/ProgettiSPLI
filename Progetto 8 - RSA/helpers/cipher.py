@@ -1,5 +1,5 @@
 from helpers.utils import output, calculateEncryptionKey, egcd
-import math, rsa
+import math, rsa, random
 
 from helpers import utils
 from helpers.utils import output, toBinary8
@@ -52,29 +52,42 @@ class Cipher:
         return decryptedchunks
 
     def generate_keys(self):
-        (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
-        self.p = priv_key['p']
-        self.q = priv_key['q']
-        self.n = priv_key['n']
-        self.d = priv_key['d']
-        self.e = pub_key['e']
-        return self.p, self.q, self.n, self.d, self.e
-
-        """
-        self.n = self.p * self.q
-        self.fn = (self.p - 1) * (self.q - 1)
-        #self.e = calculateEncryptionKey(self.n, self.fn)
-        #self.e = calculateEncryptionKey(self.n, self.fn)
-        self.e = pub_key['e']
-        gcd, x, y = egcd(self.e, self.fn)
-        if gcd != 1:
-            output(out_lck, "no d key exist")
+        list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+        if self.chunk_len < 9:
+            self.p = random.choice(list_Prime)
+            self.q = random.choice(list_Prime)
+            self.n = self.p * self.q
+            self.fn = (self.p - 1) * (self.q - 1)
+            self.e = calculateEncryptionKey(self.n, self.fn)
+            gcd, x, y = egcd(self.e, self.fn)
+            if gcd != 1:
+                output(self.out_lck, "no d key exist")
+            else:
+                self.d = x % self.fn
+            return self.p, self.q, self.n, self.d, self.e
         else:
-            self.d = x % self.fn
-        """
+            (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
+            self.p = priv_key['p']
+            self.q = priv_key['q']
+            self.n = priv_key['n']
+            self.d = priv_key['d']
+            self.e = pub_key['e']
+            return self.p, self.q, self.n, self.d, self.e
 
+            """
+            self.n = self.p * self.q
+            self.fn = (self.p - 1) * (self.q - 1)
+            #self.e = calculateEncryptionKey(self.n, self.fn)
+            #self.e = calculateEncryptionKey(self.n, self.fn)
+            self.e = pub_key['e']
+            gcd, x, y = egcd(self.e, self.fn)
+            if gcd != 1:
+                output(out_lck, "no d key exist")
+            else:
+                self.d = x % self.fn
+            """
 
-    def bruteforce(self,out_lck,chunks,mod):
+    def bruteforce(self, out_lck, chunks, mod):
         stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181', '474946','FF FB']
         out = 0
         new_chunks = []
@@ -118,5 +131,5 @@ class Cipher:
             #trasformo chunk in intero e applico modulo
             decryptedchunks.append(toBinary8(pow(int(chunk, 2), key, mod)))
 
-        return out,decryptedchunks
+        return out, decryptedchunks
 

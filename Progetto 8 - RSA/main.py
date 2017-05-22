@@ -45,16 +45,18 @@ if __name__ == "__main__":
 
             # Generate keys
             bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
-                                                                                                   "128 bits",])
+                                                                                                   "128 bits"])
             if bits_keys == 1:
                 # Get Chunks
                 chunks = get_chunks(out_lck, 'files/' + filename, 1)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 8)
+                key_input = utils.toBinary8(c.d) + '@' + utils.toBinary8(c.n)
 
             else:
                 # Get Chunks
                 chunks = get_chunks(out_lck, 'files/' + filename, 16)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 128)
+                key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
 
             #Send the key
             #key_input = loop_input(out_lck, "Please insert a Key..")
@@ -91,6 +93,7 @@ if __name__ == "__main__":
             output(out_lck, "Done!\n")
             sock.close()
             new_sock.close()
+
         elif main_menu == 3:
             arpoisoner(out_lck)
 
@@ -103,7 +106,7 @@ if __name__ == "__main__":
             mod = input()
             filename = get_dir_list(out_lck, "files")
             chunks = get_chunks(out_lck, filename, 1)
-            n,new_chunks = cipher.bruteforce(out_lck, chunks, mod)
+            n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
             #creo i file a seconda del formato che ho creato
             if n == 0:
                 print("not found valid key")
