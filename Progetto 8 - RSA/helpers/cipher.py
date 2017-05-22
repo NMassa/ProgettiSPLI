@@ -10,7 +10,7 @@ class Cipher:
     def __init__(self, out_lck, chunks, key):
         self.keys = []
         self.chunks = chunks
-
+        self.intchunks = []
         self.chunk_len = 128
 
         self.keys = key
@@ -24,6 +24,9 @@ class Cipher:
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)
 
+        #ottengo i chunk in intero
+        for chunk in self.chunks:
+            self.intchunks.append(int(chunk, 2))
 
     def encryptMOD(self, n, number):
         self.p = 0
