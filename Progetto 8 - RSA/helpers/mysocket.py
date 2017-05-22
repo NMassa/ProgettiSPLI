@@ -48,27 +48,20 @@ class MySocket:
 
     def sendfile(self, out_lck, sock, address, port, filename):
         try:
-            sock.connect(address, port)
             size = get_file_size(out_lck, filename)
-            sock.send(fill(filename[-3:], 3))   #send the extension of the file 3 CHAR!!!
-            sock.send(fill(str(size), 128))
+            sock.send(fill(str(filename[-3:]).encode('utf-8'), 3))   #send the extension of the file 3 CHAR!!!
+            sock.send(fill(str(size).encode('utf-8'), 128))
             with open("files/" + filename, 'rb') as f:
                 output(out_lck, "Sending File...")
                 sock.send(f.read(size))
             f.close()
             sock.close()
         except Exception as e:
-            output(out_lck, "Error: " + str(e))
+            output(out_lck, e)
             exit(1)
 
-    def receivefile(self, out_lck, sock, port, filename):
+    def receivefile(self, out_lck, myclient_sock, filename):
         try:
-            sock.bind('', port)
-            sock.listen(5)
-            output(out_lck, "Waiting for connection...")
-            (client_sock, address) = sock.accept()
-            myclient_sock = MySocket(client_sock)
-            output(out_lck, "Connection established.")
 
             #ATTENZIONE! l'extension è sott'intesa di 3 CHAR
             extension = bytes(myclient_sock.recv(3)).decode('utf-8')
@@ -81,7 +74,36 @@ class MySocket:
                 output(out_lck, "Received..Writing file...")
                 f.write(received)
             f.close()
-            sock.close()
+            myclient_sock.close()
+        except Exception as e:
+            output(out_lck, e)
+            exit(2)
+
+    def send_key(self, out_lck, sock, address, port, key, len):
+        try:
+            sock.connect(address, port)
+            sock.send(fill(str(len).encode('utf-8'), 128))   #send the lenght of the key
+            sock.send(fill(str(key).encode('utf-8'), len))
+            output(out_lck, "Key sent.")
+            sock.shutdown(0)
         except Exception as e:
             output(out_lck, "Error: " + str(e))
-            exit(2)
+            exit(3)
+
+    def recv_key(self, out_lck, sock, port):
+        try:
+            sock.bind('', port)
+            sock.listen(5)
+            output(out_lck, "Waiting for key...")
+            (client_sock, address) = sock.accept()
+            myclient_sock = MySocket(client_sock)
+            output(out_lck, "Connection established.")
+
+            key_lenght = int(myclient_sock.recv(128))
+            key = myclient_sock.recv(key_lenght)
+            output(out_lck, "Received Key: %s of length %d bits" % (bytes(key).decode('utf-8'), key_lenght))
+            sock.shutdown(0)
+            return key, key_lenght, myclient_sock
+        except Exception as e:
+            output(out_lck, "Error: " + str(e))
+            exit(3)
