@@ -1,4 +1,4 @@
-import os, copy, pyprimes, math, rsa
+import os, copy, pyprimes, math
 
 
 def output(lock, message):
@@ -92,7 +92,7 @@ def get_chunks(out_lck, filename, len):
 
 
 def read_in_chunks(filename, chunk_size):
-    file = open("files/" + filename, "rb")
+    file = open(filename, "rb")
     while True:
         data = file.read(chunk_size)
         if not data:
@@ -116,6 +116,23 @@ def get_dir_list(out_lck, dir_name):
     filename = copy.copy(fileList[nf])
     return filename
 
+
+def write_encrypted_from_chunks(int_chunks, filename):
+    bytes_chunks = []
+    for int_chunk in int_chunks:
+        bytes_chunks.append(int_chunk.to_bytes(16, byteorder='big'))
+    f = open('files/encrypted/' + filename, 'wb')
+    for chunk in bytes_chunks:
+        f.write(chunk)
+    f.close()
+    return 'encrypted/' + filename
+
+def write_decrypted_from_chunks(byte_chunks):
+    f = open('received/decrypted.jpg', 'wb')
+    for element in byte_chunks:
+        asd = element.to_bytes(16, byteorder='big')
+        f.write(asd)
+    f.close()
 
 def fill(n, len):
     if bytes(n):

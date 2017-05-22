@@ -55,16 +55,23 @@ class Cipher:
         (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
         self.p = priv_key['p']
         self.q = priv_key['q']
+        self.n = priv_key['n']
+        self.d = priv_key['d']
+        self.e = pub_key['e']
+        return self.p, self.q, self.n, self.d, self.e
 
+        """
         self.n = self.p * self.q
         self.fn = (self.p - 1) * (self.q - 1)
+        #self.e = calculateEncryptionKey(self.n, self.fn)
         #self.e = calculateEncryptionKey(self.n, self.fn)
         self.e = pub_key['e']
         gcd, x, y = egcd(self.e, self.fn)
         if gcd != 1:
-            output("no d key exist")
+            output(out_lck, "no d key exist")
         else:
             self.d = x % self.fn
+        """
 
 
     def bruteforce(self,out_lck,chunks,mod):

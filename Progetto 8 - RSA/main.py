@@ -2,9 +2,8 @@ import threading
 
 from bitarray import bitarray
 
-from helpers import mysocket, cipher
 from helpers import mysocket, cipher, utils
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, write_decrypted_from_chunks, write_encrypted_from_chunks
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -33,8 +32,7 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "ARP poisoner",
-                                                                                               "Sniffer",
-                                                                                               "Bruteforce"])
+                                                                                               "Sniffer"])
         if main_menu == 1:
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
@@ -50,38 +48,46 @@ if __name__ == "__main__":
                                                                                                    "128 bits",])
             if bits_keys == 1:
                 # Get Chunks
-                chunks = get_chunks(out_lck, filename, 1)  # qui va in bytes
+                chunks = get_chunks(out_lck, 'files/' + filename, 1)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 8)
 
             else:
                 # Get Chunks
-                chunks = get_chunks(out_lck, filename, 16)  # qui va in bytes
+                chunks = get_chunks(out_lck, 'files/' + filename, 16)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 128)
 
             #Send the key
-            key_input = loop_input(out_lck, "Please insert a Key..")
+            #key_input = loop_input(out_lck, "Please insert a Key..")
             sock.connect(_base + host, port)
-            # c.e
-            # c.n
-            key_input = utils.toBinary128(c.e) + '@' + utils.toBinary128(c.n)
+
+            key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
             sock.send_key(out_lck, sock, key_input, len(key_input))
+            output(out_lck, "Key Sent.\nEncrypting file with %d key.." % c.e)
 
-
-            #TODO: encryption
+            encrypted_chunks = c.signature_encrypt(c.e, c.n)
+            enc_file = write_encrypted_from_chunks(encrypted_chunks, "RSA")
 
             #Il file deve essere nella cartella files
-            sock.sendfile(out_lck, sock, filename)
+            sock.sendfile(out_lck, sock, enc_file)
             output(out_lck, "File sent!\n")
             sock.close()
+
         elif main_menu == 2:
             sock = mysocket.MySocket()
             sock.bind('', port)
             sock.listen(5)
-            key, lenght_key, new_sock = sock.recv_key(out_lck, sock)
-            # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
+
+            pkey, mod, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-            new_sock.receivefile(out_lck, new_sock, "asd")
+            enc_filename = new_sock.receivefile(out_lck, new_sock, "enc")
+            chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
+            c = cipher.Cipher(out_lck, chunks, 0, 128)
+
+            decrypted_chunks = c.signature_decrypt(pkey, mod)
+
+            write_decrypted_from_chunks(decrypted_chunks)
+
             output(out_lck, "Done!\n")
             sock.close()
             new_sock.close()

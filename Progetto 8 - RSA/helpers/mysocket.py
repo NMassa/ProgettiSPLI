@@ -49,7 +49,7 @@ class MySocket:
     def sendfile(self, out_lck, sock, filename):
         try:
             size = get_file_size(out_lck, filename)
-            sock.send(fill(str(filename[-3:]).encode('utf-8'), 3))   #send the extension of the file 3 CHAR!!!
+            #sock.send(fill(str(filename[-3:]).encode('utf-8'), 3))   #send the extension of the file 3 CHAR!!!
             sock.send(fill(str(size).encode('utf-8'), 8))
             with open("files/" + filename, 'rb') as f:
                 output(out_lck, "Sending File...")
@@ -66,16 +66,17 @@ class MySocket:
             output(out_lck, "Connection established.")
 
             #ATTENZIONE! l'extension è sott'intesa di 3 CHAR
-            extension = bytes(sock.recv(3)).decode('utf-8')
-            output(out_lck, "Receiving %s file.." % extension)
+            #extension = bytes(sock.recv(3)).decode('utf-8')
+            output(out_lck, "Receiving file..")
 
-            with open("received/" + filename + "." + extension, 'wb') as f:
+            with open("received/" + filename, 'wb') as f:
                 size = int(sock.recv(8))
                 output(out_lck, "Receiving file of %d KB..." % (size / 16))
                 received = sock.recv(size)
                 output(out_lck, "Received..Writing file...")
                 f.write(received)
             f.close()
+            return 'received/' + filename
         except Exception as e:
             output(out_lck, e)
             exit(2)
@@ -97,9 +98,11 @@ class MySocket:
             output(out_lck, "Connection established.")
 
             key_lenght = int(myclient_sock.recv(128))
-            key = myclient_sock.recv(key_lenght)
-            output(out_lck, "Received Key: %s of length %d bits" % (bytes(key).decode('utf-8'), key_lenght))
-            return key, key_lenght, myclient_sock
+            pkey, mod = bytes(myclient_sock.recv(key_lenght)).decode('utf-8').split('@')
+            pkey = int(pkey, 2)
+            mod = int(mod, 2)
+            output(out_lck, "Received Key: %s\nReceived module: %s" % (pkey, mod))
+            return pkey, mod, key_lenght, myclient_sock
         except Exception as e:
             output(out_lck, "Error: " + str(e))
             exit(4)
