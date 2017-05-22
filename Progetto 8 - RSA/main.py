@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
             if bits_keys == 1:
                 # Get Chunks
-                chunks = get_chunks_8bit(out_lck, enc_filename, 1)  # qui va in bytes
+                chunks = get_chunks_8bit(out_lck, enc_filename, 16)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 8)
 
             else:
@@ -99,7 +99,6 @@ if __name__ == "__main__":
                 c = cipher.Cipher(out_lck, chunks, 0, 128)
 
             #il file verrà salvato nella cartella received con l'estensione indicata
-
 
             decrypted_chunks = c.signature_decrypt(pkey, mod)
 
@@ -120,7 +119,7 @@ if __name__ == "__main__":
             output(out_lck,"\nInsert public mod : ")
             mod = input()
             filename = get_dir_list(out_lck, "received")
-            chunks = get_chunks_8bit(out_lck, "received/"+filename, 1)
+            chunks = get_chunks_8bit(out_lck, "received/"+filename, 16)
             n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
             #creo i file a seconda del formato che ho creato
             if n == 0:
@@ -159,16 +158,3 @@ if __name__ == "__main__":
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
                 fout.close()
-
-
-
-
-
-
-
-
-
-
-
-
-

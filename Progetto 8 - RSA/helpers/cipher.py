@@ -91,45 +91,49 @@ class Cipher:
 
 def bruteforce(out_lck, chunks, mod):
     stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181', '474946',
-               'FF FB']
+               'FFFB']
     out = 0
-    new_chunks = []
+    pippo = 0
     decryptedchunks = []
 
     for i in range(1, 256):
+        if pippo == 0:
+            new_chunks = ''
+            # prendo primi 8 chunks da 8 bit
+            for chunk in chunks[0:6]:
+                # trasformo chunk in intero e applico modulo
+                new = (toBinary8(pow(int(chunk, 2), i, int(mod))))
+                new_chunks = new_chunks + new
 
-        # prendo primi 8 chunks da 8 bit
-        for chunk in chunks[0:6]:
-            # trasformo chunk in intero e applico modulo
-            new_chunks.append(toBinary8(pow(int(chunk, 2), i, int(mod,2))))
+            for a in stringa:
+                check = bin(int(a, 16))[2:]
+                if new_chunks.find(check) != -1:
+                    #any(check in s for s in new_chunks) != -1:
+                    # if chunks.find(check) != -1:
+                    if a == '89504e470d0a1a0a':
+                        output(out_lck, '\ndetect format file: PNG')
+                        out = 1
+                    elif a == 'ffd8ffe000104a46':
+                        output(out_lck, '\ndetect format file: JPG')
+                        out = 2
+                    elif a == '424df640000':
+                        output(out_lck, '\ndetect format file: BMP')
+                        out = 3
+                    elif a == '474946':
+                        output(out_lck, '\ndetect format file: GIF')
+                        out = 4
+                    elif a == 'FFFB':
+                        output(out_lck, '\ndetect format file: MP3')
+                        out = 5
+                    key = i
+                    pippo = 1
+                    break
+        else:
+            break
 
-        for a in stringa:
-            check = bin(int(i, 16))[2:]
-            if any(check in s for s in new_chunks) != -1:
-                # if chunks.find(check) != -1:
-                if a == '89504e470d0a1a0a':
-                    output(out_lck, '\ndetect format file: PNG')
-                    out = 1
-                elif a == 'ffd8ffe000104a46':
-                    output(out_lck, '\ndetect format file: JPG')
-                    out = 2
-                elif a == '424df640000':
-                    output(out_lck, '\ndetect format file: BMP')
-                    out = 3
-                elif a == '474946':
-                    output(out_lck, '\ndetect format file: GIF')
-                    out = 4
-                elif a == 'FFFB':
-                    output(out_lck, '\ndetect format file: MP3')
-                    out = 5
-                key = i
-                break
-            else:
-                output(out_lck, '\nNot found private key')
-                exit("Terminate")
 
     for chunk in chunks:
         # trasformo chunk in intero e applico modulo
-        decryptedchunks.append(toBinary8(pow(int(chunk, 2), key, mod)))
+        decryptedchunks.append(toBinary8(pow(int(chunk, 2), key, int(mod))))
 
     return out, decryptedchunks
