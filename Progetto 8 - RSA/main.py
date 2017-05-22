@@ -1,4 +1,8 @@
 import threading
+
+from bitarray import bitarray
+
+from helpers import mysocket, cipher
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks
 from helpers.netutils import arpoisoner, analyzer
@@ -29,7 +33,8 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "ARP poisoner",
-                                                                                               "Sniffer"])
+                                                                                               "Sniffer",
+                                                                                               "Bruteforce"])
         if main_menu == 1:
             if network == 2:
                 host = loop_input(out_lck, "Insert destination IP:")
@@ -72,7 +77,8 @@ if __name__ == "__main__":
             sock = mysocket.MySocket()
             sock.bind('', port)
             sock.listen(5)
-            key, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
+            key, lenght_key, new_sock = sock.recv_key(out_lck, sock)
+            # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
 
             #il file verrà salvato nella cartella received con l'estensione indicata
             new_sock.receivefile(out_lck, new_sock, "asd")
@@ -84,6 +90,58 @@ if __name__ == "__main__":
 
         elif main_menu == 4:
             analyzer(out_lck, port)
+
+        elif main_menu == 5:
+            output(out_lck,"\n Start Bruteforce")
+            output(out_lck,"\nInsert public mod : ")
+            mod = input()
+            filename = get_dir_list(out_lck, "files")
+            chunks = get_chunks(out_lck, filename, 1)
+            n,new_chunks = cipher.bruteforce(out_lck, chunks, mod)
+            #creo i file a seconda del formato che ho creato
+            if n == 0:
+                print("not found valid key")
+            elif n == 1:
+                fout = open("received/bruteforce/Brute_Force.png", "wb+")
+                for chunk in new_chunks:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+                fout.close()
+
+            elif n == 2:
+                fout = open("received/bruteforce/Brute_Force.jpg", "wb+")
+                for chunk in new_chunks:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+                fout.close()
+
+            elif n == 3:
+                fout = open("received/bruteforce/Brute_Force.bmp", "wb+")
+                for chunk in new_chunks:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+                fout.close()
+
+            elif n == 4:
+                fout = open("received/bruteforce/Brute_Force.GIF", "wb+")
+                for chunk in new_chunks:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+                fout.close()
+
+            elif n == 5:
+                fout = open("received/bruteforce/Brute_Force.mp3", "wb+")
+                for chunk in new_chunks:
+                    ba = bitarray(chunk)
+                    fout.write(ba.tobytes())
+                fout.close()
+
+
+
+
+
+
+
 
 
 
