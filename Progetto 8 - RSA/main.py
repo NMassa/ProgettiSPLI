@@ -1,12 +1,12 @@
 import threading
 
 from bitarray import bitarray
-
+from helpers import key_generator
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
     write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
 
-_base = "192.168."
+_base = "192.168.0."
 host = 0
 
 
@@ -15,6 +15,9 @@ if __name__ == "__main__":
     out_lck = threading.Lock()
     network = 0
     port = 3000
+    my_private_key = 0
+    my_module = 0
+    public_keys_list = []
 
     #Get the network...
     while network == 0:
@@ -29,92 +32,181 @@ if __name__ == "__main__":
 
     while True:
         # Main Menu
-        main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
+        main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Generate Keys",
+                                                                                               "View Keys",
+                                                                                               "Send file",
                                                                                                "Receive file",
-                                                                                               "ARP poisoner",
                                                                                                "Fermat",
                                                                                                "Bruteforce"])
+
+        #Zotti: la tua funzione genera chiavi la trovi in utils.generate_keys. Non toccare altro, basta che torna i valori che vedi
         if main_menu == 1:
-            if network == 2:
-                host = loop_input(out_lck, "Insert destination IP:")
-
-            #Inizializzo socket
-            sock = mysocket.MySocket()
-
-            # Get filenames
-            filename = get_dir_list(out_lck, "files")
-
-            # Generate keys
-            bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
-                                                                                                   "128 bits"])
-            if bits_keys == 1:
-                # Get Chunks
-                chunks = get_chunks_8bit(out_lck, 'files/' + filename, 1)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 16)
-                key_input = utils.toBinary16(c.d) + '@' + utils.toBinary16(c.n)
-                leng = 2
-
-            else:
-                # Get Chunks
-                chunks = get_chunks(out_lck, 'files/' + filename, 8)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 128)
-                key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
-                leng = 16
-
-            #Send the key
-            #key_input = loop_input(out_lck, "Please insert a Key..")
-            sock.connect(_base + host, port)
-
-            #key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
-            sock.send_key(out_lck, sock, key_input, len(key_input))
-            output(out_lck, "Key Sent.\nEncrypting file with %d key.." % c.e)
-
-            encrypted_chunks = c.signature_encrypt(c.e, c.n)
-            enc_file = write_encrypted_from_chunks(encrypted_chunks, "RSA", leng)
-
-            #Il file deve essere nella cartella files
-            sock.sendfile(out_lck, sock, enc_file)
-            output(out_lck, "File sent!\n")
-            sock.close()
+            my_private_key, pub_key, my_module = key_generator.keys(out_lck, _base, host, port)
+            public_keys_list.append([pub_key[0][0], pub_key[0][1], pub_key[0][2]])
 
         elif main_menu == 2:
-            sock = mysocket.MySocket()
-            sock.bind('', port)
-            sock.listen(5)
-
-            pkey, mod, lenght_key, new_sock = sock.recv_key(out_lck, sock)           # la key è in bytes: per avere una stringa bytes(key).decode('utf-8')
-
-            bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
-                                                                                                     "128 bits"])
-
-            enc_filename = new_sock.receivefile(out_lck, new_sock, "enc")
-
-            if bits_keys == 1:
-                # Get Chunks
-                chunks = get_chunks_16bit(out_lck, enc_filename, 2)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 16)
-                lenght = 1
-
-            elif bits_keys == 2:
-                # Get Chunks
-                chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 128)
-                lenght = 8
-
-            #il file verrà salvato nella cartella received con l'estensione indicata
-
-            decrypted_chunks = c.signature_decrypt(pkey, mod)
-
-            write_decrypted_from_chunks(decrypted_chunks, lenght)
-
-            output(out_lck, "Done!\n")
-            sock.close()
-            new_sock.close()
+            for index in range(0, len(public_keys_list)):
+                output(out_lck, "Host: %s\tPublic Key: %d\tModule: %d\n" % (str(public_keys_list[index][0]).replace("'", ""), public_keys_list[index][1],
+                                                                            public_keys_list[index][2]))
 
         elif main_menu == 3:
-            arpoisoner(out_lck)
+
+            option_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["RSA",
+                                                                                                     "Authentication"])
+            if option_menu == 1:
+                sock = mysocket.MySocket()
+                if network == 2:
+                    host = loop_input(out_lck, "Insert destination IP:")
+
+                # Get filenames
+                filename = get_dir_list(out_lck, "files")
+
+                pub_key_to_send, mod_to_send = 0, 0
+
+                for index in range(0, len(public_keys_list)):
+                    if str(public_keys_list[index][0]).replace("'", "") == _base + host:
+                        pub_key_to_send, mod_to_send = public_keys_list[index][1], public_keys_list[index][2]
+                        output(out_lck, "Sending file to %s\nEncryption key: %d" % (public_keys_list[index][0], public_keys_list[index][1]))
+
+                bits_keys = loop_menu(out_lck, "Select one of the following length ('e' to exit): ", ["8 bits",
+                                                                                                       "128 bits"])
+                if bits_keys == 1:
+                    # Get Chunks
+                    chunks = get_chunks_8bit(out_lck, 'files/' + filename, 1)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 16)
+                    leng = 2
+
+                else:
+                    # Get Chunks
+                    chunks = get_chunks(out_lck, 'files/' + filename, 8)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 128)
+                    leng = 16
+
+                output(out_lck, "Done chunks.")
+
+                output(out_lck, "Encrypting file with %d key.." % pub_key_to_send)
+
+                encrypted_chunks = c.encrypt_and_decrypt(pub_key_to_send, mod_to_send)
+                enc_file = write_encrypted_from_chunks(encrypted_chunks, "RSA", leng)
+
+                #Il file deve essere nella cartella files
+                sock.connect(_base + host, port)
+                sock.sendfile(out_lck, sock, enc_file)
+                output(out_lck, "File sent!\n")
+                sock.close()
+
+            if option_menu == 2:
+                sock = mysocket.MySocket()
+                if network == 2:
+                    host = loop_input(out_lck, "Insert destination IP:")
+
+                # Get filenames
+                filename = get_dir_list(out_lck, "files")
+
+
+                bits_keys = loop_menu(out_lck, "Select one of the following length ('e' to exit): ", ["8 bits",
+                                                                                                      "128 bits"])
+                if bits_keys == 1:
+                    # Get Chunks
+                    chunks = get_chunks_8bit(out_lck, 'files/' + filename, 1)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 16)
+                    leng = 2
+
+                else:
+                    # Get Chunks
+                    chunks = get_chunks(out_lck, 'files/' + filename, 8)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 128)
+                    leng = 16
+
+                output(out_lck, "Done chunks.")
+                #encrypt with private key
+                output(out_lck, "Encrypting file with %d key.." % my_private_key)
+                #crypt chunk private key
+                encrypted_chunks = c.encrypt_and_decrypt(my_private_key, my_module)
+                enc_file = write_encrypted_from_chunks(encrypted_chunks, "AUTHENTICATION", leng)
+
+                # Il file deve essere nella cartella files
+                sock.connect(_base + host, port)
+                sock.sendfile(out_lck, sock, enc_file)
+                output(out_lck, "File sent!\n")
+                sock.close()
+
 
         elif main_menu == 4:
+            option_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["RSA",
+                                                                                                     "Authentication"])
+            if option_menu == 1:
+                sock = mysocket.MySocket()
+                sock.bind('', port)
+                sock.listen(5)
+
+                bits_keys = loop_menu(out_lck, "Select one of the following algorithm ('e' to exit): ", ["8 bits",
+                                                                                                         "128 bits"])
+                enc_filename, address = sock.receivefile(out_lck, sock, "enc")
+                received_mod = 0
+
+                for index in range(0, len(public_keys_list)):
+                    if str(public_keys_list[index][0]).replace("'", "") == _base + host:
+                        received_mod = public_keys_list[index][2]
+                        output(out_lck, "Received file from %s" % (public_keys_list[index][0]))
+
+                if bits_keys == 1:
+                    # Get Chunks
+                    chunks = get_chunks_16bit(out_lck, enc_filename, 2)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 16)
+                    lenght = 1
+
+                elif bits_keys == 2:
+                    # Get Chunks
+                    chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 128)
+                    lenght = 8
+
+
+                #il file verrà salvato nella cartella received con l'estensione indicata
+                output(out_lck, "Decrypting with private key %d" % my_private_key)
+                decrypted_chunks = c.encrypt_and_decrypt(my_private_key, my_module)
+
+                write_decrypted_from_chunks(decrypted_chunks, lenght)
+
+                output(out_lck, "Done!\n")
+                sock.close()
+            elif option_menu == 2:
+                sock = mysocket.MySocket()
+                sock.bind('', port)
+                sock.listen(5)
+
+                bits_keys = loop_menu(out_lck, "Select one of the following length ('e' to exit): ", ["8 bits",
+                                                                                                         "128 bits"])
+                enc_filename, address = sock.receivefile(out_lck, sock, "enc")
+
+                for index in range(0, len(public_keys_list)):
+                    if str(public_keys_list[index][0]).replace("'", "") == _base + host:
+                        pub_key, received_mod = public_keys_list[index][1], public_keys_list[index][2]
+                        output(out_lck, "Received file from %s" % (public_keys_list[index][0]))
+
+                if bits_keys == 1:
+                    # Get Chunks
+                    chunks = get_chunks_16bit(out_lck, enc_filename, 2)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 16)
+                    lenght = 1
+
+                elif bits_keys == 2:
+                    # Get Chunks
+                    chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
+                    c = cipher.Cipher(out_lck, chunks, 128)
+                    lenght = 8
+
+                # il file verrà salvato nella cartella received con l'estensione indicata
+                output(out_lck, "Decrypting with private key %d" % my_private_key)
+                decrypted_chunks = c.encrypt_and_decrypt(pub_key, received_mod)
+
+                write_decrypted_from_chunks(decrypted_chunks, lenght)
+
+                output(out_lck, "Done!\n")
+                sock.close()
+
+        elif main_menu == 5:
             output(out_lck, "Fermat Factorization Attack")
 
             #TODO: recupero (e,n) in base a chi voglio attaccare
@@ -126,7 +218,7 @@ if __name__ == "__main__":
 
             #TODO: decifro file con d
 
-        elif main_menu == 5:
+        elif main_menu == 6:
             output(out_lck,"\n Start Bruteforce")
             output(out_lck,"\nInsert public mod : ")
             mod = input()

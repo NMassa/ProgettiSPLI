@@ -1,12 +1,6 @@
-from helpers.utils import output, calculateEncryptionKey, egcd
-import math, rsa, random
-
-from helpers import utils
-from helpers.utils import output, toBinary8,toBinary16
+from helpers.utils import toBinary8
 
 from helpers.utils import output
-import math
-
 
 class Cipher:
     file = None
@@ -15,13 +9,11 @@ class Cipher:
     encrypted = []
     decrypted = []
 
-    def __init__(self, out_lck, chunks, key, chunklen):
+    def __init__(self, out_lck, chunks, chunklen):
         self.keys = []
         self.chunks = chunks
         self.intchunks = []
         self.chunk_len = chunklen
-
-        self.keys = key
 
         self.p = 0
         self.q = 0
@@ -30,32 +22,23 @@ class Cipher:
         self.e = 0
         self.d = 0
 
-        self.generate_keys()
-
-        for index in range(0,len(self.chunks)):
+        #paddo i chunk
+        for index in range(0, len(self.chunks)):
             if len(self.chunks[index]) < self.chunk_len:
                 self.chunks[index] = self.chunks[index].zfill(self.chunk_len)
-        '''
-        # controllo lunghezza chunk, se e piu corta metto "0"
-        if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
-            self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)
-        '''
+
         # ottengo i chunk in intero
         for chunk in self.chunks:
             self.intchunks.append(int(chunk, 2))
 
-    def signature_encrypt(self, prvkey, mod):
-        cryptedchunks = []
+    def encrypt_and_decrypt(self, key, mod):
+        chunks = []
         for chunk in self.intchunks:
-            cryptedchunks.append(pow(chunk, prvkey, mod))
-        return cryptedchunks
+            chunks.append(pow(chunk, key, mod))
+        return chunks
 
-    def signature_decrypt(self, pubkey, mod):
-        decryptedchunks = []
-        for chunk in self.intchunks:
-            decryptedchunks.append(pow(chunk, pubkey, mod))
-        return decryptedchunks
 
+    '''
     def generate_keys(self):
         list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
         controller = 0
@@ -113,7 +96,7 @@ class Cipher:
             else:
                 self.d = x % self.fn
             """
-
+'''
 
 def check_controller(e, d, n):
     # controllo che le chiavi generate a 8 bit funzionino

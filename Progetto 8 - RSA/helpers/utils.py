@@ -1,4 +1,7 @@
 import os, copy, pyprimes, math
+import random
+
+import rsa
 
 
 def output(lock, message):
@@ -139,6 +142,7 @@ def write_encrypted_from_chunks(int_chunks, filename, len):
 
 
 def write_decrypted_from_chunks(byte_chunks, lenght):
+    first_chunk = byte_chunks[0].to_bytes(lenght, byteorder='big')
     f = open('received/decrypted.jpg', 'wb')
     for element in byte_chunks:
         asd = element.to_bytes(lenght, byteorder='big')
@@ -230,6 +234,61 @@ def modinv(a, m):
         return None  # modular inverse does not exist
     else:
         return x % m
+
+
+def check_controller(e, d, n):
+    # controllo che le chiavi generate a 8 bit funzionino
+    m = 255
+    c = pow(m, e, n)
+    m1 = pow(c, d, n)
+    if m == m1:
+        return 1
+    else:
+        return 0
+
+
+def generate_keys(out_lck, chunk_len):
+    list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+    controller = 0
+
+    if chunk_len < 68:
+        p = random.choice(list_Prime)
+        q = random.choice(list_Prime)
+        n = p * q
+        while n < 256 or p == q:
+            p = random.choice(list_Prime)
+            q = random.choice(list_Prime)
+            n = p * q
+        fn = (p - 1) * (q - 1)
+        e = calculateEncryptionKey(n, fn)
+        gcd, x, y = egcd(e, fn)
+        if gcd != 1:
+            output(out_lck, "no d key exist")
+        else:
+            d = x % fn
+        while d > 255 and controller == 1:
+            n = n - 1
+            e = calculateEncryptionKey(n, fn)
+            gcd, x, y = egcd(e, fn)
+            if gcd != 1:
+                y = 0  # modular inverse does not exist
+            else:
+                d = x % fn
+            controller = check_controller(e, d, n)
+        p = 23
+        q = 29
+        n = 667
+        e = 449
+        d = 225
+        return n, d, e
+    else:
+        (pub_key, priv_key) = rsa.newkeys(chunk_len)
+        p = priv_key['p']
+        q = priv_key['q']
+        n = priv_key['n']
+        d = priv_key['d']
+        e = pub_key['e']
+        return n, d, e
 
 
 def intsqrt(n):

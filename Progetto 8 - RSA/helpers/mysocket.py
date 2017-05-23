@@ -61,22 +61,21 @@ class MySocket:
 
     def receivefile(self, out_lck, sock, filename):
         try:
+            (client_sock, address) = sock.accept()
+            myclient_sock = MySocket(client_sock)
             output(out_lck, "Waiting for connection...")
 
             output(out_lck, "Connection established.")
 
-            #ATTENZIONE! l'extension è sott'intesa di 3 CHAR
-            #extension = bytes(sock.recv(3)).decode('utf-8')
             output(out_lck, "Receiving file..")
 
             with open("received/" + filename, 'wb') as f:
-                size = int(sock.recv(8))
-                output(out_lck, "Receiving file of %d KB..." % (size / 16))
-                received = sock.recv(size)
+                size = int(myclient_sock.recv(8))
+                received = myclient_sock.recv(size)
                 output(out_lck, "Received..Writing file...")
                 f.write(received)
             f.close()
-            return 'received/' + filename
+            return 'received/' + filename, address[0]
         except Exception as e:
             output(out_lck, e)
             exit(2)
@@ -90,19 +89,21 @@ class MySocket:
             output(out_lck, "Error: " + str(e))
             exit(3)
 
-    def recv_key(self, out_lck, sock):
+    def recv_key(self, out_lck, sock, port):
         try:
+            sock.bind('', port)
+            sock.listen(5)
             output(out_lck, "Waiting for key...")
             (client_sock, address) = sock.accept()
             myclient_sock = MySocket(client_sock)
             output(out_lck, "Connection established.")
 
             key_lenght = int(myclient_sock.recv(128))
-            pkey, mod = bytes(myclient_sock.recv(key_lenght)).decode('utf-8').split('@')
+            mod, pkey = bytes(myclient_sock.recv(key_lenght)).decode('utf-8').split('@')
             pkey = int(pkey, 2)
             mod = int(mod, 2)
             output(out_lck, "Received Key: %s\nReceived module: %s" % (pkey, mod))
-            return pkey, mod, key_lenght, myclient_sock
+            return pkey, mod, address
         except Exception as e:
             output(out_lck, "Error: " + str(e))
             exit(4)
