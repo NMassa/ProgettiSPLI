@@ -3,9 +3,8 @@ import threading
 from bitarray import bitarray
 
 from helpers import mysocket, cipher, utils
-from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, \
+from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
     write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
-from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
 host = 0
