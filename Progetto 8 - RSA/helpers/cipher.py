@@ -2,7 +2,7 @@ from helpers.utils import output, calculateEncryptionKey, egcd
 import math, rsa, random
 
 from helpers import utils
-from helpers.utils import output, toBinary8
+from helpers.utils import output, toBinary8,toBinary16
 
 from helpers.utils import output
 import math
@@ -85,7 +85,7 @@ class Cipher:
                     self.d = x % self.fn
                 controller = check_controller(self.e, self.d, self.n)
 
-            return self.p, self.q, self.n, self.d, self.e
+            return self.p, self.q, self.n, self.e, self.d
         else:
             (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
             self.p = priv_key['p']
@@ -131,7 +131,7 @@ def bruteforce(out_lck, chunks, mod):
         if pippo == 0:
             new_chunks = ''
             # prendo primi 8 chunks da 8 bit
-            for chunk in chunks[0:6]:
+            for chunk in chunks[0:8]:
                 # trasformo chunk in intero e applico modulo
                 new = (toBinary8(pow(int(chunk, 2), i, int(mod))))
                 new_chunks = new_chunks + new
@@ -158,6 +158,7 @@ def bruteforce(out_lck, chunks, mod):
                         out = 5
                     key = i
                     pippo = 1
+                    print("\nKey found : ",key)
                     break
         else:
             break

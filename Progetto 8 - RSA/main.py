@@ -131,41 +131,41 @@ if __name__ == "__main__":
             output(out_lck,"\nInsert public mod : ")
             mod = input()
             filename = get_dir_list(out_lck, "received")
-            chunks = get_chunks_8bit(out_lck, "received/"+filename, 16)
+            chunks = get_chunks_16bit(out_lck, "received/"+filename, 2)
             n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
             #creo i file a seconda del formato che ho creato
             if n == 0:
                 print("not found valid key")
             elif n == 1:
-                fout = open("received/bruteforce/Brute_Force.png", "wb+")
+                fout = open("received/Brute_Force.png", "wb+")
                 for chunk in new_chunks:
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
                 fout.close()
 
             elif n == 2:
-                fout = open("received/bruteforce/Brute_Force.jpg", "wb+")
+                fout = open("received/Brute_Force.jpg", "wb+")
                 for chunk in new_chunks:
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
                 fout.close()
 
             elif n == 3:
-                fout = open("received/bruteforce/Brute_Force.bmp", "wb+")
+                fout = open("received/Brute_Force.bmp", "wb+")
                 for chunk in new_chunks:
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
                 fout.close()
 
             elif n == 4:
-                fout = open("received/bruteforce/Brute_Force.GIF", "wb+")
+                fout = open("received/Brute_Force.GIF", "wb+")
                 for chunk in new_chunks:
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
                 fout.close()
 
             elif n == 5:
-                fout = open("received/bruteforce/Brute_Force.mp3", "wb+")
+                fout = open("received/Brute_Force.mp3", "wb+")
                 for chunk in new_chunks:
                     ba = bitarray(chunk)
                     fout.write(ba.tobytes())
