@@ -4,7 +4,7 @@ from bitarray import bitarray
 
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, \
-    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_16bit, get_chunks_8bit
+    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         main_menu = loop_menu(out_lck, "Select one of the following actions ('e' to exit): ", ["Send file",
                                                                                                "Receive file",
                                                                                                "ARP poisoner",
-                                                                                               "Sniffer",
+                                                                                               "Fermat",
                                                                                                "Bruteforce"])
         if main_menu == 1:
             if network == 2:
@@ -116,7 +116,16 @@ if __name__ == "__main__":
             arpoisoner(out_lck)
 
         elif main_menu == 4:
-            analyzer(out_lck, port)
+            output(out_lck, "Fermat Factorization Attack")
+
+            #TODO: recupero (e,n) in base a chi voglio attaccare
+
+            n = 1189
+            e = 9629
+
+            d = factoring(out_lck, n, e)
+
+            #TODO: decifro file con d
 
         elif main_menu == 5:
             output(out_lck,"\n Start Bruteforce")

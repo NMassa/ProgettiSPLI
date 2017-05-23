@@ -231,3 +231,38 @@ def modinv(a, m):
     else:
         return x % m
 
+
+def intsqrt(n):
+    x = n
+    y = (x + n // x) // 2
+    while y < x:
+        x = y
+        y = (x + n // x) // 2
+    return x
+
+
+def factoring(out_lck, n, e):
+    output(out_lck, 'Factoring %s ...' % n)
+    a = intsqrt(n)
+    b2 = a*a - n
+    b = intsqrt(n)
+    count = 0
+    while b*b != b2:
+        a = a + 1
+        b2 = a*a - n
+        b = intsqrt(b2)
+        count += 1
+    p=a+b
+    q=a-b
+    assert n == p * q
+    output(out_lck, 'p = %s' % p)
+    output(out_lck, 'q = %s' % q)
+    mode = (p-1)*(q-1)
+    #print('(p-1)*(q-1)= ', mode)
+    output(out_lck, 'Finding d ...')
+    for d in range(0, n):
+        if e*d % mode == 1:
+            output(out_lck, 'd = %s' % d)
+            break
+
+    return d
