@@ -4,7 +4,7 @@ from bitarray import bitarray
 
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, \
-    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit
+    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_16bit, get_chunks_8bit
 from helpers.netutils import arpoisoner, analyzer
 
 _base = "192.168."
@@ -51,14 +51,16 @@ if __name__ == "__main__":
             if bits_keys == 1:
                 # Get Chunks
                 chunks = get_chunks_8bit(out_lck, 'files/' + filename, 1)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 8)
-                key_input = utils.toBinary8(c.d) + '@' + utils.toBinary8(c.n)
+                c = cipher.Cipher(out_lck, chunks, 0, 16)
+                key_input = utils.toBinary16(c.d) + '@' + utils.toBinary16(c.n)
+                leng = 2
 
             else:
                 # Get Chunks
-                chunks = get_chunks(out_lck, 'files/' + filename, 16)  # qui va in bytes
+                chunks = get_chunks(out_lck, 'files/' + filename, 8)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 128)
                 key_input = utils.toBinary128(c.d) + '@' + utils.toBinary128(c.n)
+                leng = 16
 
             #Send the key
             #key_input = loop_input(out_lck, "Please insert a Key..")
@@ -69,7 +71,7 @@ if __name__ == "__main__":
             output(out_lck, "Key Sent.\nEncrypting file with %d key.." % c.e)
 
             encrypted_chunks = c.signature_encrypt(c.e, c.n)
-            enc_file = write_encrypted_from_chunks(encrypted_chunks, "RSA")
+            enc_file = write_encrypted_from_chunks(encrypted_chunks, "RSA", leng)
 
             #Il file deve essere nella cartella files
             sock.sendfile(out_lck, sock, enc_file)
@@ -90,19 +92,21 @@ if __name__ == "__main__":
 
             if bits_keys == 1:
                 # Get Chunks
-                chunks = get_chunks_8bit(out_lck, enc_filename, 16)  # qui va in bytes
-                c = cipher.Cipher(out_lck, chunks, 0, 8)
+                chunks = get_chunks_16bit(out_lck, enc_filename, 2)  # qui va in bytes
+                c = cipher.Cipher(out_lck, chunks, 0, 16)
+                lenght = 1
 
-            else:
+            elif bits_keys == 2:
                 # Get Chunks
                 chunks = get_chunks(out_lck, enc_filename, 16)  # qui va in bytes
                 c = cipher.Cipher(out_lck, chunks, 0, 128)
+                lenght = 8
 
             #il file verrà salvato nella cartella received con l'estensione indicata
 
             decrypted_chunks = c.signature_decrypt(pkey, mod)
 
-            write_decrypted_from_chunks(decrypted_chunks)
+            write_decrypted_from_chunks(decrypted_chunks, lenght)
 
             output(out_lck, "Done!\n")
             sock.close()

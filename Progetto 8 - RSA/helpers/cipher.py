@@ -32,18 +32,22 @@ class Cipher:
 
         self.generate_keys()
 
+        for index in range(0,len(self.chunks)):
+            if len(self.chunks[index]) < self.chunk_len:
+                self.chunks[index] = self.chunks[index].zfill(self.chunk_len)
+        '''
         # controllo lunghezza chunk, se e piu corta metto "0"
         if len(self.chunks[len(self.chunks) - 1]) < self.chunk_len:
             self.chunks[len(self.chunks) - 1] = self.chunks[len(self.chunks) - 1].zfill(self.chunk_len)
-
+        '''
         # ottengo i chunk in intero
         for chunk in self.chunks:
             self.intchunks.append(int(chunk, 2))
 
-    def signature_encrypt(self, privkey, mod):
+    def signature_encrypt(self, prvkey, mod):
         cryptedchunks = []
         for chunk in self.intchunks:
-            cryptedchunks.append(pow(chunk, privkey, mod))
+            cryptedchunks.append(pow(chunk, prvkey, mod))
         return cryptedchunks
 
     def signature_decrypt(self, pubkey, mod):
@@ -55,8 +59,8 @@ class Cipher:
     def generate_keys(self):
         list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
         if self.chunk_len < 9:
-            self.p = random.choice(list_Prime)
-            self.q = random.choice(list_Prime)
+            self.p = 17#random.choice(list_Prime)
+            self.q = 29#random.choice(list_Prime)
             self.n = self.p * self.q
             self.fn = (self.p - 1) * (self.q - 1)
             self.e = calculateEncryptionKey(self.n, self.fn)

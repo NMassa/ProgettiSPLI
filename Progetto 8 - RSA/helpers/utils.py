@@ -92,8 +92,14 @@ def get_chunks(out_lck, filename, len):
 
 def get_chunks_8bit(out_lck, filename, len):
     chunks = []
-    for piece in read_in_chunks(filename, len):  # chunks da 128 bytes
+    for piece in read_in_chunks(filename, len):  # chunks da 1 bytes
         chunks.append(toBinary8(int.from_bytes(piece, byteorder='big')))
+    return chunks
+
+def get_chunks_16bit(out_lck, filename, len):
+    chunks = []
+    for piece in read_in_chunks(filename, len):  # chunks da 2 bytes
+        chunks.append(toBinary16(int.from_bytes(piece, byteorder='big')))
     return chunks
 
 
@@ -103,8 +109,6 @@ def read_in_chunks(filename, chunk_size):
         data = file.read(chunk_size)
         if not data:
             break
-        if len(data) < chunk_size:      #TODO: controllare grandezza ultimo chunk
-            fill(data, chunk_size)
         yield data
     return data
 
@@ -123,20 +127,21 @@ def get_dir_list(out_lck, dir_name):
     return filename
 
 
-def write_encrypted_from_chunks(int_chunks, filename):
+def write_encrypted_from_chunks(int_chunks, filename, len):
     bytes_chunks = []
     for int_chunk in int_chunks:
-        bytes_chunks.append(int_chunk.to_bytes(16, byteorder='big'))
+        bytes_chunks.append(int_chunk.to_bytes(len, byteorder='big'))
     f = open('files/encrypted/' + filename, 'wb')
     for chunk in bytes_chunks:
         f.write(chunk)
     f.close()
     return 'encrypted/' + filename
 
-def write_decrypted_from_chunks(byte_chunks):
+
+def write_decrypted_from_chunks(byte_chunks, lenght):
     f = open('received/decrypted.jpg', 'wb')
     for element in byte_chunks:
-        asd = element.to_bytes(16, byteorder='big')
+        asd = element.to_bytes(lenght, byteorder='big')
         f.write(asd)
     f.close()
 
