@@ -17,6 +17,7 @@ if __name__ == "__main__":
     port = 3000
     my_private_key = 0
     my_module = 0
+    my_public_key = 0
     public_keys_list = []
 
     #Get the network...
@@ -41,7 +42,7 @@ if __name__ == "__main__":
 
         #Zotti: la tua funzione genera chiavi la trovi in utils.generate_keys. Non toccare altro, basta che torna i valori che vedi
         if main_menu == 1:
-            my_private_key, pub_key, my_module = key_generator.keys(out_lck, _base, host, port)
+            my_private_key, pub_key, my_module, my_public_key = key_generator.keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key)
             public_keys_list.append([pub_key[0][0], pub_key[0][1], pub_key[0][2]])
 
         elif main_menu == 2:
