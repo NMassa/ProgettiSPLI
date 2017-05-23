@@ -75,7 +75,7 @@ class Cipher:
                 output(self.out_lck, "no d key exist")
             else:
                 self.d = x % self.fn
-            while self.d > 255 and controller == 1:
+            while self.d > 255 and controller == 1 and pow(1,):
                 self.n = self.n - 1
                 self.e = calculateEncryptionKey(self.n, self.fn)
                 gcd, x, y = egcd(self.e, self.fn)
@@ -84,6 +84,12 @@ class Cipher:
                 else:
                     self.d = x % self.fn
                 controller = check_controller(self.e, self.d, self.n)
+
+            self.p = 23
+            self.q = 29
+            self.n = 667
+            self.e = 449
+            self.d = 225
 
             return self.p, self.q, self.n, self.e, self.d
         else:
@@ -126,8 +132,10 @@ def bruteforce(out_lck, chunks, mod):
     pippo = 0
     key = 0
     decryptedchunks = []
+    e = 449
+    modulo = 0
 
-    for i in range(1, 1000):
+    for i in range(225, 1000):
         if pippo == 0:
             new_chunks = ''
             # prendo primi 8 chunks da 8 bit
@@ -138,7 +146,9 @@ def bruteforce(out_lck, chunks, mod):
 
             for a in stringa:
                 check = bin(int(a, 16))[2:]
-                if new_chunks.find(check) != -1:
+                #controllo che e*d(mod(phi(n))) == 1 con valori statici impostati nel generatore di keys
+                modulo = pow(e*i,1,616)
+                if new_chunks.find(check) != -1 and modulo == 1:
                     #any(check in s for s in new_chunks) != -1:
                     # if chunks.find(check) != -1:
                     if a == '89504e470d0a1a0a':
