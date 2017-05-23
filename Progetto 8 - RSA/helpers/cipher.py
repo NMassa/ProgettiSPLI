@@ -59,9 +59,13 @@ class Cipher:
     def generate_keys(self):
         list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
         if self.chunk_len < 9:
-            self.p = 17#random.choice(list_Prime)
-            self.q = 29#random.choice(list_Prime)
+            self.p = random.choice(list_Prime)
+            self.q = random.choice(list_Prime)
             self.n = self.p * self.q
+            while self.n < 256 or self.p == self.q:
+                self.p = random.choice(list_Prime)
+                self.q = random.choice(list_Prime)
+                self.n = self.p * self.q
             self.fn = (self.p - 1) * (self.q - 1)
             self.e = calculateEncryptionKey(self.n, self.fn)
             gcd, x, y = egcd(self.e, self.fn)
@@ -69,6 +73,15 @@ class Cipher:
                 output(self.out_lck, "no d key exist")
             else:
                 self.d = x % self.fn
+            while self.d > 255:
+                self.n = self.n - 1
+                self.e = calculateEncryptionKey(self.n, self.fn)
+                gcd, x, y = egcd(self.e, self.fn)
+                if gcd != 1:
+                    y = 0  # modular inverse does not exist
+                else:
+                    self.d = x % self.fn
+
             return self.p, self.q, self.n, self.d, self.e
         else:
             (pub_key, priv_key) = rsa.newkeys(self.chunk_len)
