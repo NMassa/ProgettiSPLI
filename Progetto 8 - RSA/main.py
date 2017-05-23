@@ -178,7 +178,7 @@ if __name__ == "__main__":
                 sock.listen(5)
 
                 bits_keys = loop_menu(out_lck, "Select one of the following length ('e' to exit): ", ["8 bits",
-                                                                                                         "128 bits"])
+                                                                                                      "128 bits"])
                 enc_filename, address = sock.receivefile(out_lck, sock, "enc")
 
                 for index in range(0, len(public_keys_list)):
@@ -203,7 +203,7 @@ if __name__ == "__main__":
                 decrypted_chunks = c.encrypt_and_decrypt(pub_key, received_mod)
 
                 write_decrypted_from_chunks(decrypted_chunks, lenght)
-
+                output(out_lck, "Decrypted file coming from %s." % str(address).replace("'", ""))
                 output(out_lck, "Done!\n")
                 sock.close()
 
@@ -220,15 +220,15 @@ if __name__ == "__main__":
             #TODO: decifro file con d
 
         elif main_menu == 6:
-            output(out_lck,"\n Start Bruteforce")
-            output(out_lck,"\nInsert public mod : ")
+            output(out_lck, "\n Start Bruteforce")
+            output(out_lck, "\nInsert public mod : ")
             mod = input()
             filename = get_dir_list(out_lck, "received")
-            chunks = get_chunks_16bit(out_lck, "received/"+filename, 2)
+            chunks = get_chunks_16bit(out_lck, "received/" + filename, 2)
             n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
             #creo i file a seconda del formato che ho creato
             if n == 0:
-                print("not found valid key")
+                output(out_lck, "not found valid key")
             elif n == 1:
                 fout = open("received/Brute_Force.png", "wb+")
                 for chunk in new_chunks:
