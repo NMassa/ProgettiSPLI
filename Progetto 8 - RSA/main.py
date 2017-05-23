@@ -6,7 +6,7 @@ from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
     write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
 
-_base = "192.168.1."
+_base = "192.168.0."
 host = 0
 
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
                 received_mod = 0
 
                 for index in range(0, len(public_keys_list)):
-                    if str(public_keys_list[index][0]).replace("'", "") == _base + host:
+                    if str(public_keys_list[index][0]).replace("'", "") == str(address).replace("'", ""):
                         received_mod = public_keys_list[index][2]
                         output(out_lck, "Received file from %s" % (public_keys_list[index][0]))
 
@@ -186,7 +186,7 @@ if __name__ == "__main__":
                 enc_filename, address = sock.receivefile(out_lck, sock, "enc")
 
                 for index in range(0, len(public_keys_list)):
-                    if str(public_keys_list[index][0]).replace("'", "") == _base + host:
+                    if str(public_keys_list[index][0]).replace("'", "") == str(address).replace("'", ""):
                         pub_key, received_mod = public_keys_list[index][1], public_keys_list[index][2]
                         output(out_lck, "Received file from %s" % (public_keys_list[index][0]))
 
@@ -203,7 +203,7 @@ if __name__ == "__main__":
                     lenght = 8
 
                 # il file verrà salvato nella cartella received con l'estensione indicata
-                output(out_lck, "Decrypting with private key %d" % my_private_key)
+                output(out_lck, "Decrypting with pubic key %d" % my_public_key)
                 decrypted_chunks = c.encrypt_and_decrypt(pub_key, received_mod)
 
                 write_decrypted_from_chunks(decrypted_chunks, lenght)
