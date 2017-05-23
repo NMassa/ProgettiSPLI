@@ -2,7 +2,7 @@ from helpers.utils import loop_menu, generate_keys, toBinary16, toBinary128, out
 from helpers import mysocket, utils
 
 
-def keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key):
+def keys(out_lck, my_ip, port, my_private_key, my_module, my_public_key):
     public_keys_list = []
     send_or_receive = loop_menu(out_lck, "Select one of the following actions ('e' to exit):", ["Send Key",
                                                                                                 "Receive Key"])
@@ -23,8 +23,8 @@ def keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key):
                 e = my_public_key
 
             key_to_send = toBinary16(n) + '@' + toBinary16(e)
-            output(out_lck, "Sending key to %s" % str(_base + host))
-            sock.connect(_base + host, port)
+            output(out_lck, "Sending key to %s" % my_ip)
+            sock.connect(my_ip, port)
             sock.send_key(out_lck, sock, key_to_send, len(key_to_send))
             sock.close()
             # Inizializzo socket
@@ -44,8 +44,8 @@ def keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key):
 
             key_to_send = toBinary128(n) + '@' + toBinary128(e)
 
-            output(out_lck, "Sending key to %s" % str(_base + host))
-            sock.connect(_base + host, port)
+            output(out_lck, "Sending key to %s" % my_ip)
+            sock.connect(my_ip, port)
             sock.send_key(out_lck, sock, key_to_send, len(key_to_send))
             sock.close()
             # Inizializzo socket
@@ -79,9 +79,9 @@ def keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key):
 
             # Send the key
             # Inizializzo socket
-            output(out_lck, "Sending key to %s" % str(_base + host))
+            output(out_lck, "Sending key to %s" % my_ip)
             sock = mysocket.MySocket()
-            sock.connect(_base + host, port + 1)
+            sock.connect(my_ip, port + 1)
             sock.send_key(out_lck, sock, key_to_send, len(key_to_send))
 
         elif bits_keys == 2:
@@ -100,9 +100,9 @@ def keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key):
 
             # Send the key
             # Inizializzo socket
-            output(out_lck, "Sending key to %s" % str(_base + host))
+            output(out_lck, "Sending key to %s" % my_ip)
             sock = mysocket.MySocket()
-            sock.connect(_base + host, port + 1)
+            sock.connect(my_ip, port + 1)
             sock.send_key(out_lck, sock, key_to_send, len(key_to_send))
         sock.close()
     return my_private_key, public_keys_list, my_module, e

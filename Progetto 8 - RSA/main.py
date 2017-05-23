@@ -6,7 +6,7 @@ from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
     write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
 
-_base = "192.168.0."
+_base = "192.168.1."
 host = 0
 
 
@@ -42,7 +42,11 @@ if __name__ == "__main__":
 
         #Zotti: la tua funzione genera chiavi la trovi in utils.generate_keys. Non toccare altro, basta che torna i valori che vedi
         if main_menu == 1:
-            my_private_key, pub_key, my_module, my_public_key = key_generator.keys(out_lck, _base, host, port, my_private_key, my_module, my_public_key)
+            if network == 2:
+                dest = loop_input(out_lck, "Please insert the destination...")
+            else:
+                dest == 1
+            my_private_key, pub_key, my_module, my_public_key = key_generator.keys(out_lck, _base + dest, port, my_private_key, my_module, my_public_key)
             public_keys_list.append([pub_key[0][0], pub_key[0][1], pub_key[0][2]])
 
         elif main_menu == 2:
