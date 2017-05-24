@@ -177,7 +177,7 @@ if __name__ == "__main__":
                     sel = 128
 
                 for index in range(0, len(public_keys_list)):
-                    if str(public_keys_list[index][0]).replace("'", "") == _base + host and public_keys_list[index][3] == sel:
+                    if str(public_keys_list[index][0]).replace("'", "") == (_base + dest) and str(public_keys_list[index][3]) == str(sel):
                         pub_key_to_send, mod_to_send = public_keys_list[index][1], public_keys_list[index][2]
                         output(out_lck, "Sending file to %s\nEncryption key: %d" % (public_keys_list[index][0],
                                                                                     public_keys_list[index][1]))
@@ -216,7 +216,7 @@ if __name__ == "__main__":
                     sel = 128
 
                 for index in range(0, len(public_keys_list)):
-                    if str(public_keys_list[index][0]).replace("'", "") == _base + host and public_keys_list[index][3] == sel:
+                    if str(public_keys_list[index][0]).replace("'", "") == _base + host and str(public_keys_list[index][3]) == str(sel):
                         pub_key_to_send, mod_to_send = public_keys_list[index][1], public_keys_list[index][2]
                         output(out_lck, "Sending file to %s\nEncryption key: %d" % (public_keys_list[index][0],
                                                                                     public_keys_list[index][1]))
