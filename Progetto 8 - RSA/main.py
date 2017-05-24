@@ -54,8 +54,12 @@ if __name__ == "__main__":
 
         #Mostra le chiavi presenti nella lista
         elif main_menu == 2:
+
+            output(out_lck, "My keys: \nPublic Key: %d\nModule: %d\nPrivate Key: %d\n" % (int(my_public_key),
+                   int(my_module), int(my_private_key)))
+
             for index in range(0, len(public_keys_list)):
-                output(out_lck, "Host: %s\tPublic Key: %d\tModule: %d\tLength: %d bits" % (str(public_keys_list[index][0]).replace("'",
+                output(out_lck, "Host: %s\nPublic Key: %d\nModule: %d\nLength: %d bits" % (str(public_keys_list[index][0]).replace("'",
                                                                             ""), public_keys_list[index][1],
                                                                             public_keys_list[index][2], public_keys_list[index][3]))
 
