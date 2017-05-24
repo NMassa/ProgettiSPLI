@@ -248,38 +248,41 @@ def check_controller(e, d, n):
 
 
 def generate_keys(out_lck, chunk_len):
-    list_Prime = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+    list_Prime = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
     controller = 0
 
     if chunk_len < 68:
-        p = random.choice(list_Prime)
-        q = random.choice(list_Prime)
-        n = p * q
-        while n < 256 or p == q:
+
+        d = 1000
+        p = 0
+        q = 0
+        n = 0
+        e = 0
+        fn = 0
+        phi = 0
+
+        while d > 255:  # and controller == 0 and phi == 0:
+
             p = random.choice(list_Prime)
             q = random.choice(list_Prime)
             n = p * q
-        fn = (p - 1) * (q - 1)
-        e = calculateEncryptionKey(n, fn)
-        gcd, x, y = egcd(e, fn)
-        if gcd != 1:
-            output(out_lck, "no d key exist")
-        else:
-            d = x % fn
-        while d > 255 and controller == 1:
-            n = n - 1
+            while n < 256 or p == q:
+                p = random.choice(list_Prime)
+                q = random.choice(list_Prime)
+                n = p * q
+            fn = (p - 1) * (q - 1)
             e = calculateEncryptionKey(n, fn)
+            # d = math.pow((1/e), fn)
             gcd, x, y = egcd(e, fn)
             if gcd != 1:
                 y = 0  # modular inverse does not exist
             else:
                 d = x % fn
+            phi = pow(1, d * e, n)
             controller = check_controller(e, d, n)
-        p = 23
-        q = 29
-        n = 667
-        e = 449
-        d = 225
+
+        if controller == 0 and phi == 0:
+            print("errore")
         return n, d, e
     else:
         (pub_key, priv_key) = rsa.newkeys(chunk_len)

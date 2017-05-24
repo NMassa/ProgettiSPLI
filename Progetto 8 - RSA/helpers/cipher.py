@@ -118,7 +118,7 @@ def bruteforce(out_lck, chunks, mod):
     e = 449
     modulo = 0
 
-    for i in range(225, 1000):
+    for i in range(1, 1000):
         if pippo == 0:
             new_chunks = ''
             # prendo primi 8 chunks da 8 bit
@@ -130,8 +130,8 @@ def bruteforce(out_lck, chunks, mod):
             for a in stringa:
                 check = bin(int(a, 16))[2:]
                 #controllo che e*d(mod(phi(n))) == 1 con valori statici impostati nel generatore di keys
-                modulo = pow(e*i,1,616)
-                if new_chunks.find(check) != -1 and modulo == 1:
+                #modulo = pow(e*i,1,616)
+                if new_chunks.find(check) != -1:# and modulo == 1:
                     #any(check in s for s in new_chunks) != -1:
                     # if chunks.find(check) != -1:
                     if a == '89504e470d0a1a0a':
