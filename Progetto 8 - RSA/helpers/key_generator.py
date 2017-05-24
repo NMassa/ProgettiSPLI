@@ -98,7 +98,9 @@ def keys(out_lck, my_ip, port, my_private_key, my_module, my_public_key, len_key
             sock = mysocket.MySocket()
             sock.connect(my_ip, port + 1)
             sock.send_key(out_lck, sock, key_to_send, len(key_to_send))
+            sock.close()
             return my_private_key, public_keys_list, my_module, e, rec_len_key
+
         elif bits_keys == 2:
             output(out_lck, "Waiting for connection... ")
             pkey, mod, rec_len_key, address = sock.recv_key(out_lck, sock, port)
