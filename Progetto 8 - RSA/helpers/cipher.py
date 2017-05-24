@@ -156,7 +156,6 @@ def bruteforce(out_lck, chunks, mod):
         else:
             break
 
-
     for chunk in chunks:
         # trasformo chunk in intero e applico modulo
         decryptedchunks.append(toBinary8(pow(int(chunk, 2), key, int(mod))))

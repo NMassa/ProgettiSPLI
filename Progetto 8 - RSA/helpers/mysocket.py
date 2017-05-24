@@ -61,18 +61,15 @@ class MySocket:
 
     def receivefile(self, out_lck, sock, filename):
         try:
+            output(out_lck, "Waiting for connection...")
             (client_sock, address) = sock.accept()
             myclient_sock = MySocket(client_sock)
-            output(out_lck, "Waiting for connection...")
-
             output(out_lck, "Connection established.")
-
             output(out_lck, "Receiving file..")
-
             with open("received/" + filename, 'wb') as f:
                 size = int(myclient_sock.recv(8))
                 received = myclient_sock.recv(size)
-                output(out_lck, "Received..Writing file...")
+                output(out_lck, "Received!\nWriting file...")
                 f.write(received)
             f.close()
             return 'received/' + filename, address[0]
@@ -93,17 +90,17 @@ class MySocket:
         try:
             sock.bind('', port)
             sock.listen(5)
-            output(out_lck, "Waiting for key...")
             (client_sock, address) = sock.accept()
             myclient_sock = MySocket(client_sock)
             output(out_lck, "Connection established.")
 
             key_lenght = int(myclient_sock.recv(128))
-            mod, pkey = bytes(myclient_sock.recv(key_lenght)).decode('utf-8').split('@')
+            mod, pkey, len_key = bytes(myclient_sock.recv(key_lenght)).decode('utf-8').split('@')
             pkey = int(pkey, 2)
             mod = int(mod, 2)
+            len_key = int(len_key, 2)
             output(out_lck, "Received Key: %s\nReceived module: %s" % (pkey, mod))
-            return pkey, mod, address
+            return pkey, mod, len_key, address
         except Exception as e:
             output(out_lck, "Error: " + str(e))
             exit(4)
