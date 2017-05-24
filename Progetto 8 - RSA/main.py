@@ -45,7 +45,7 @@ if __name__ == "__main__":
             if network == 2:
                 dest = loop_input(out_lck, "Please insert the destination...")
             else:
-                dest == 1
+                dest = '1'
             my_private_key, pub_key, my_module, my_public_key = key_generator.keys(out_lck, _base + dest, port, my_private_key, my_module, my_public_key)
             public_keys_list.append([pub_key[0][0], pub_key[0][1], pub_key[0][2]])
 
