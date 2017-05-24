@@ -81,7 +81,6 @@ class MySocket:
         try:
             sock.send(fill(str(len).encode('utf-8'), 128))   #send the lenght of the key
             sock.send(fill(str(key).encode('utf-8'), len))
-            output(out_lck, "Key sent.")
         except Exception as e:
             output(out_lck, "Error: " + str(e))
             exit(3)

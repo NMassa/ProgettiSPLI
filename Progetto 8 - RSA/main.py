@@ -233,14 +233,25 @@ if __name__ == "__main__":
         elif main_menu == 5:
             output(out_lck, "Fermat Factorization Attack")
 
-            #TODO: recupero (e,n) in base a chi voglio attaccare
+            # Selezione del mittente
+            output(out_lck, "Select sender to attack:")
 
-            n = 1189
-            e = 9629
+            for idx, key in enumerate(public_keys_list):
+                output(out_lck, "%s: %s" % (idx+1, public_keys_list[idx][0]))
+
+            option = int(input())
+
+            e, n = public_keys_list[option - 1][1], public_keys_list[option - 1][2]
 
             d = factoring(out_lck, n, e)
 
-            #TODO: decifro file con d
+            output(out_lck, "Reading encrypted file ...")
+            chunks = get_chunks_16bit(out_lck, "received/enc", 2)  # qui va in bytes
+            c = cipher.Cipher(out_lck, chunks, 16)
+            output(out_lck, "Decrypting with private key %s" % d)
+            decrypted_chunks = c.encrypt_and_decrypt(d, n)
+            write_decrypted_from_chunks(decrypted_chunks, 1)
+            output(out_lck, "Decrypted!\n")
 
         elif main_menu == 6:
             output(out_lck, "\n Start Bruteforce")
