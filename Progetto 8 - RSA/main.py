@@ -4,7 +4,8 @@ from bitarray import bitarray
 from helpers import key_generator
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
-    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring
+    write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring, \
+    write_decrypted_from_chunks_fermat
 
 _base = "192.168.0."
 host = 0
@@ -179,8 +180,7 @@ if __name__ == "__main__":
                 for index in range(0, len(public_keys_list)):
                     if str(public_keys_list[index][0]).replace("'", "") == (_base + dest) and str(public_keys_list[index][3]) == str(sel):
                         pub_key_to_send, mod_to_send = public_keys_list[index][1], public_keys_list[index][2]
-                        output(out_lck, "Sending file to %s\nEncryption key: %d" % (public_keys_list[index][0],
-                                                                                    public_keys_list[index][1]))
+
 
                 #il file verrà salvato nella cartella received con l'estensione indicata
                 output(out_lck, "Decrypting with private key %d" % my_private_key)
@@ -216,14 +216,13 @@ if __name__ == "__main__":
                     sel = 128
 
                 for index in range(0, len(public_keys_list)):
-                    if str(public_keys_list[index][0]).replace("'", "") == _base + host and str(public_keys_list[index][3]) == str(sel):
+                    if str(public_keys_list[index][0]).replace("'", "") == (_base + dest) and str(public_keys_list[index][3]) == str(sel):
                         pub_key_to_send, mod_to_send = public_keys_list[index][1], public_keys_list[index][2]
-                        output(out_lck, "Sending file to %s\nEncryption key: %d" % (public_keys_list[index][0],
-                                                                                    public_keys_list[index][1]))
+
 
                 # il file verrà salvato nella cartella received con l'estensione indicata
                 output(out_lck, "Decrypting with pubic key %d" % my_public_key)
-                decrypted_chunks = c.encrypt_and_decrypt(pub_key, received_mod)
+                decrypted_chunks = c.encrypt_and_decrypt(pub_key_to_send, mod_to_send)
 
                 write_decrypted_from_chunks(decrypted_chunks, lenght)
                 output(out_lck, "Decrypted file coming from %s." % str(address).replace("'", ""))
@@ -233,33 +232,23 @@ if __name__ == "__main__":
         elif main_menu == 5:
             output(out_lck, "Fermat Factorization Attack")
 
-            # Selezione del mittente
-            output(out_lck, "Select sender to attack:")
-
-            for idx, key in enumerate(public_keys_list):
-                output(out_lck, "%s: %s" % (idx+1, public_keys_list[idx][0]))
-
-            option = int(input())
-
-            e, n = public_keys_list[option - 1][1], public_keys_list[option - 1][2]
-
-            d = factoring(out_lck, n, e)
+            d = factoring(out_lck, my_module, my_public_key)
 
             output(out_lck, "Reading encrypted file ...")
             chunks = get_chunks_16bit(out_lck, "received/enc", 2)  # qui va in bytes
             c = cipher.Cipher(out_lck, chunks, 16)
             output(out_lck, "Decrypting with private key %s" % d)
-            decrypted_chunks = c.encrypt_and_decrypt(d, n)
-            write_decrypted_from_chunks(decrypted_chunks, 1)
+            decrypted_chunks = c.encrypt_and_decrypt(d, my_module)
+            write_decrypted_from_chunks_fermat(decrypted_chunks, 2)
             output(out_lck, "Decrypted!\n")
 
         elif main_menu == 6:
             output(out_lck, "\n Start Bruteforce")
-            output(out_lck, "\nInsert public mod : ")
-            mod = input()
+            #output(out_lck, "\nInsert public mod : ")
+            #mod = input()
             filename = get_dir_list(out_lck, "received")
             chunks = get_chunks_16bit(out_lck, "received/" + filename, 2)
-            n, new_chunks = cipher.bruteforce(out_lck, chunks, mod)
+            n, new_chunks = cipher.bruteforce(out_lck, chunks, my_module)
             #creo i file a seconda del formato che ho creato
             if n == 0:
                 output(out_lck, "not found valid key")

@@ -149,6 +149,14 @@ def write_decrypted_from_chunks(byte_chunks, lenght):
         f.write(asd)
     f.close()
 
+def write_decrypted_from_chunks_fermat(byte_chunks, lenght):
+    first_chunk = byte_chunks[0].to_bytes(lenght, byteorder='big')
+    f = open('received/decrypted_fermat.jpg', 'wb')
+    for element in byte_chunks:
+        asd = element.to_bytes(lenght, byteorder='big')
+        f.write(asd)
+    f.close()
+
 def fill(n, len):
     if bytes(n):
         return n.zfill(len)
