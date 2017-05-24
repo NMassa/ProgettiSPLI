@@ -5,7 +5,7 @@ from helpers import key_generator
 from helpers import mysocket, cipher, utils
 from helpers.utils import loop_menu, loop_input, output, loop_int_input, get_dir_list, get_chunks, get_chunks_16bit, \
     write_decrypted_from_chunks, write_encrypted_from_chunks, get_chunks_8bit, factoring, \
-    write_decrypted_from_chunks_fermat
+    write_decrypted_from_chunks_fermat, recon_file_and_write
 
 _base = "192.168.0."
 host = 0
@@ -55,11 +55,11 @@ if __name__ == "__main__":
         #Mostra le chiavi presenti nella lista
         elif main_menu == 2:
 
-            output(out_lck, "My keys: \nPublic Key: %d\nModule: %d\nPrivate Key: %d\n" % (int(my_public_key),
+            output(out_lck, "\nMy keys: \nPublic Key: %d\nModule: %d\nPrivate Key: %d\n" % (int(my_public_key),
                    int(my_module), int(my_private_key)))
 
             for index in range(0, len(public_keys_list)):
-                output(out_lck, "Host: %s\nPublic Key: %d\nModule: %d\nLength: %d bits" % (str(public_keys_list[index][0]).replace("'",
+                output(out_lck, "\nHost: %s\nPublic Key: %d\nModule: %d\nLength: %d bits\n" % (str(public_keys_list[index][0]).replace("'",
                                                                             ""), public_keys_list[index][1],
                                                                             public_keys_list[index][2], public_keys_list[index][3]))
 
@@ -116,6 +116,7 @@ if __name__ == "__main__":
                 sock.sendfile(out_lck, sock, enc_file)
                 output(out_lck, "File sent!\n")
                 sock.close()
+
             #Send Authentication
             if option_menu == 2:
                 sock = mysocket.MySocket()
@@ -190,7 +191,7 @@ if __name__ == "__main__":
                 output(out_lck, "Decrypting with private key %d" % my_private_key)
                 decrypted_chunks = c.encrypt_and_decrypt(my_private_key, my_module)
 
-                write_decrypted_from_chunks(decrypted_chunks, lenght)
+                recon_file_and_write(out_lck, decrypted_chunks, lenght, 0)
 
                 output(out_lck, "Done!\n")
                 sock.close()
@@ -228,7 +229,7 @@ if __name__ == "__main__":
                 output(out_lck, "Decrypting with pubic key %d" % my_public_key)
                 decrypted_chunks = c.encrypt_and_decrypt(pub_key_to_send, mod_to_send)
 
-                write_decrypted_from_chunks(decrypted_chunks, lenght)
+                recon_file_and_write(out_lck, decrypted_chunks, lenght, 0)
                 output(out_lck, "Decrypted file coming from %s." % str(address).replace("'", ""))
                 output(out_lck, "Done!\n")
                 sock.close()
@@ -243,7 +244,7 @@ if __name__ == "__main__":
             c = cipher.Cipher(out_lck, chunks, 16)
             output(out_lck, "Decrypting with private key %s" % d)
             decrypted_chunks = c.encrypt_and_decrypt(d, my_module)
-            write_decrypted_from_chunks_fermat(decrypted_chunks, 2)
+            recon_file_and_write(out_lck, decrypted_chunks, 1, 1)
             output(out_lck, "Decrypted!\n")
 
         elif main_menu == 6:

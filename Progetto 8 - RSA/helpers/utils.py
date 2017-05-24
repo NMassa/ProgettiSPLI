@@ -140,17 +140,66 @@ def write_encrypted_from_chunks(int_chunks, filename, len):
     f.close()
     return 'encrypted/' + filename
 
+def recon_file_and_write(out_lck, chunks, lunghezza, isFermat):
+    stringa = ['89504e470d0a1a0a', 'ffd8ffe000104a46', '424df640000', '89504e47da1aa', '47496383961181', '474946',
+               'FFFB']
+    new_chunks = ''
+    if lunghezza == 1:
+        for chunk in chunks[0:8]:
+            new = toBinary8(chunk)
+            new_chunks = new_chunks + new
+    elif lunghezza == 8:
+        for chunk in chunks[0:1]:
+            new = toBinary128(chunk)
+            new_chunks = new_chunks + new
 
-def write_decrypted_from_chunks(byte_chunks, lenght):
-    first_chunk = byte_chunks[0].to_bytes(lenght, byteorder='big')
-    f = open('received/decrypted.jpg', 'wb')
+    for a in stringa:
+        check = bin(int(a, 16))[2:]
+
+        if new_chunks.find(check) != -1:
+
+            if a == '89504e470d0a1a0a':
+                output(out_lck, '\nDetect format file: PNG')
+                if isFermat == 1:
+                    write_decrypted_from_chunks(chunks, "decrypted_fermat.png", lunghezza)
+                else:
+                    write_decrypted_from_chunks(chunks, "decrypted.png", lunghezza)
+            elif a == 'ffd8ffe000104a46':
+                output(out_lck, '\nDetect format file: JPG')
+                if isFermat == 1:
+                    write_decrypted_from_chunks(chunks, "decrypted_fermat.jpg", lunghezza)
+                else:
+                    write_decrypted_from_chunks(chunks, "decrypted.jpg", lunghezza)
+            elif a == '424df640000':
+                output(out_lck, '\nDetect format file: BMP')
+                if isFermat == 1:
+                    write_decrypted_from_chunks(chunks, "decrypted_fermat.bmp", lunghezza)
+                else:
+                    write_decrypted_from_chunks(chunks, "decrypted.bmp", lunghezza)
+            elif a == '474946':
+                output(out_lck, '\nDetect format file: GIF')
+                if isFermat == 1:
+                    write_decrypted_from_chunks(chunks, "decrypted_fermat.gif", lunghezza)
+                else:
+                    write_decrypted_from_chunks(chunks, "decrypted.gif", lunghezza)
+            elif a == 'FFFB':
+                output(out_lck, '\nDetect format file: MP3')
+                if isFermat == 1:
+                    write_decrypted_from_chunks(chunks, "decrypted_fermat.mp3", lunghezza)
+                else:
+                    write_decrypted_from_chunks(chunks, "decrypted.mp3", lunghezza)
+            break
+
+
+def write_decrypted_from_chunks(byte_chunks, filename, lenght):
+    f = open('received/' + filename, 'wb')
     for element in byte_chunks:
         asd = element.to_bytes(lenght, byteorder='big')
         f.write(asd)
     f.close()
 
+
 def write_decrypted_from_chunks_fermat(byte_chunks, lenght):
-    first_chunk = byte_chunks[0].to_bytes(lenght, byteorder='big')
     f = open('received/decrypted_fermat.jpg', 'wb')
     for element in byte_chunks:
         asd = element.to_bytes(lenght, byteorder='big')
