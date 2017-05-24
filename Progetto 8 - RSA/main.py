@@ -247,12 +247,12 @@ if __name__ == "__main__":
             output(out_lck, "Decrypted!\n")
 
         elif main_menu == 6:
-            output(out_lck, "\n Start Bruteforce")
+            output(out_lck, "\n Start Bruteforce\n")
             #output(out_lck, "\nInsert public mod : ")
             #mod = input()
             filename = get_dir_list(out_lck, "received")
             chunks = get_chunks_16bit(out_lck, "received/" + filename, 2)
-            n, new_chunks = cipher.bruteforce(out_lck, chunks, my_module)
+            n, new_chunks = cipher.bruteforce(out_lck, chunks, my_module, my_private_key)
             #creo i file a seconda del formato che ho creato
             if n == 0:
                 output(out_lck, "not found valid key")
