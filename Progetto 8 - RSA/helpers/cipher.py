@@ -69,7 +69,7 @@ def bruteforce(out_lck, chunks, mod, d):
             for a in stringa:
                 check = bin(int(a, 16))[2:]
 
-                if new_chunks.find(check) != -1:
+                if new_chunks.find(check) != -1 and i == d:
 
                     if a == '89504e470d0a1a0a':
                         output(out_lck, '\ndetect format file: PNG')
@@ -87,10 +87,9 @@ def bruteforce(out_lck, chunks, mod, d):
                         output(out_lck, '\ndetect format file: MP3')
                         out = 5
                     key = i
-                    if i == d:
-                        pippo = 1
-                        print("\nKey found : \n", key)
-                        break
+                    pippo = 1
+                    print("\nKey found : \n", key)
+                    break
         else:
             break
 
